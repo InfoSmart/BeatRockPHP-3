@@ -1,0 +1,8 @@
+# Lista de Robots recomendados para BeatRock.
+# Dependiendo de tu sitio web. puede ir agregando o eliminando nuevas
+# opciones de robots y/o bloqueos.
+
+User-agent: *
+Disallow: /Kernel/
+Disallow: /Setup/
+Disallow: /imgod/
