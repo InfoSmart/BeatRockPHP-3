@@ -1,0 +1,341 @@
+/**
+ * BeatRock Estilos - Base del sistema.
+ *
+ * Archivo de estilo predeterminado recomendado para
+ * todas las aplicaciones desarrolladas en BeatRock.
+ *
+ * InfoSmart. Todos los derechos reservados.
+ * Copyright 2012 - Iván Bravo Bravo.
+ * http://www.infosmart.mx/
+**/
+
+/* Descomenta para activar la tipografía "Open Sans"
+@import url(//fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,700italic,400,600,700&subset=latin,latin-ext);
+*/
+ 
+/* Predeterminado */
+
+* 
+{ 
+	margin: 0;
+	padding: 0;	
+	behavior: url(./PIE.htc);
+}
+
+div::after,
+p::after,
+header::after,
+footer::after,
+nav::after,
+section::after,
+hgroup::after,
+article::after,
+details::after,
+figure::after,
+li::after,
+aside::after,
+.clearfix::after,
+.clear::after
+{	
+	clear: both;
+	content: " ";
+	display: block;
+	visibility: hidden;
+}
+
+body 
+{	
+	background: transparent;
+	direction: ltr;
+	font-family: "Segoe UI", Lucida Grande, Tahoma, Verdana, Arial;	
+	font-size: 13px;	
+	line-height: 18px;
+	text-align: left;
+	text-size-adjust: 100%;
+}
+
+figure, form
+{
+	margin: 0;
+}
+
+img 
+{
+	-ms-interpolation-mode: nearest-neighbor;
+    image-rendering: optimizeQuality;
+    position: relative;
+}
+
+h1, h2, h3, h4, h5 
+{
+	color: black;
+	text-rendering: optimizeLegibility;
+}
+
+label, span, b, h1, h2, h3, h4, p, i, s, a, summary
+{
+	font-smoothing: antialiased;
+	text-shadow: 0 1px 0 rgba(0,0,0, .1);
+}
+
+i, s, nav a 
+{
+	display: inline-block;
+}
+
+a 
+{
+	cursor: pointer;
+	text-decoration: none;
+}
+
+a:hover 
+{
+	text-decoration: underline;
+}
+
+a img 
+{
+	border: none;
+}
+
+nav a:hover
+{
+	text-decoration: none;
+}
+
+h3, h4 
+{
+	margin: 10px 0;
+}
+
+h1, h2 
+{
+	margin: 20px 0;
+	line-height: 25px;
+}
+
+p, .p
+{
+	margin: 12px 0;
+}
+
+.sp
+{
+	margin: 25px 0;
+}
+
+details summary 
+{
+	cursor: pointer;
+}
+
+/* Predeterminado - Globales */
+
+.page .light 
+{
+	font-family: "Segoe UI Light", "Segoe UI", Lucida Grande, Tahoma, Verdana, Arial, sans-serif;
+}
+
+.page .left 
+{
+	float: left !important;
+}
+
+.page .right 
+{
+	float: right !important;
+}
+
+.page .center 
+{
+	text-align: center;
+}
+
+.page .none, [hidden]
+{
+	display: none;
+}
+
+.page .block 
+{
+	display: block !important;
+}
+
+.page .wrapper
+{
+	margin: auto auto;
+	width: 980px;
+}
+
+.page .fb_wrapper
+{
+	width: 500px;
+}
+
+/* Otros & Fixes */
+
+svg:not(:root) 
+{
+	overflow: hidden; 
+}
+
+[disabled]
+{
+	cursor: default !important;
+}
+
+[draggable]
+{
+	user-select: none;
+}
+
+.chromeframe 
+{
+	background: #ccc; 
+	color: black; 
+	margin: 0.2em 0; 
+	padding: 0.2em 0; 
+}
+
+table, tbody
+{
+	margin: 0;
+	padding: 0;
+}
+
+/* Formularios */
+
+input:not([type='submit']), textarea, select, .fk-input 
+{
+	border: 1px solid #DFDFDF;
+	border-radius: 2px;
+	font-family: "Tahoma", Verdana, Arial;
+	font-size: 12px;
+	outline: 0;
+	padding: 5px;
+}
+
+input[type='submit']
+{
+	padding: 5px;
+}
+
+input[type='range']
+{
+	cursor: pointer;
+}
+
+.fk-input, .fk-input * 
+{
+	cursor: text !important;
+}
+
+input:not([type='submit']), select, .fk-input 
+{
+	-webkit-transition: all .4s ease-in-out;
+	-moz-transition: all .4s ease-in-out;
+	-o-transition: all .4s ease-in-out;
+	transition: all .4s ease-in-out;
+}
+
+input[type='search'] 
+{
+	-webkit-appearance: textfield;
+	-moz-appearance: textfield;
+	-o-appearance: textfield;
+	appearance: textfield;
+
+	box-sizing: content-box;
+}
+
+form label,
+label.f 
+{
+	display: block;
+	font-size: 13px;
+	font-weight: bold;
+	margin-bottom: 6px;
+	text-shadow: 0 1px 0 rgba(0, 0, 0, .15);
+	opacity: .9;
+}
+
+label[for] 
+{
+	cursor: pointer;
+}
+
+textarea 
+{
+	padding: 5px 10px;
+}
+
+/* Tablas */
+
+.intable
+{
+	border-collapse: collapse;
+	border: 1px solid #D8D8D8;
+	font-family: "Segoe UI", Open Sans, Ubuntu, Arial;
+	width: 100%;
+}
+
+.intable thead tr
+{
+	background: #F5F5F5;
+	border-bottom: 1px solid #D8D8D8;
+}
+
+.intable thead tr th
+{
+	font-size: 14px;
+	font-weight: normal;
+	padding: 10px;
+}
+
+.intable thead th
+{
+	text-align: left;
+	padding: 3px 15px;
+}
+
+.intable tbody tr
+{
+	border-bottom: 1px solid #EBEBEB;
+	border-collapse: collapse;
+	border-top: 1px solid white;
+	box-shadow: 0 1px 0 rgba(255, 255, 255, .8) inset;
+}
+
+.intable tbody tr:last-child
+{
+	border-bottom-color: #D8D8D8;
+}
+
+.intable tbody tr:hover
+{
+	color: black;
+	cursor: default !important;
+}
+
+.intable tbody tr:nth-child(even):hover,
+.intable tbody tr:nth-child(odd):hover
+{
+	background: rgba(206, 227, 246, .3);
+}
+
+.intable tbody tr:nth-child(odd)
+{
+	background: white;
+}
+
+.intable tbody tr:nth-child(even)
+{
+	background: #F4F4F4;
+}
+
+.intable tbody tr th
+{
+	font-weight: normal;
+	padding: 8px 15px;
+}

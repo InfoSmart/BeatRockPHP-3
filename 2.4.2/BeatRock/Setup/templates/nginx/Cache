@@ -1,0 +1,41 @@
+		# ---------------------------------------------------
+		# Optimización de caché.
+		# ---------------------------------------------------
+
+		# cache.appcache, your document html and data
+		location ~* \.(?:manifest|appcache|html|xml|json)$
+		{
+		    expires -1;
+		    access_log logs/static.log;
+		}
+
+		# Feed
+		location ~* \.(?:rss|atom)$
+		{
+			expires 1h;
+			add_header Cache-Control "public";
+		}
+
+		# Favicon
+		location ~* \.ico$
+		{
+			expires 1w;
+			access_log off;
+			add_header Cache-Control "public";
+		}
+
+		# Media: images, video, audio, HTC, WebFonts
+		location ~* \.(?:jpg|jpeg|gif|png|ico|gz|svg|svgz|ttf|otf|woff|eot|mp4|ogg|ogv|webm)$
+		{
+			expires 1M;
+			access_log off;
+			add_header Cache-Control "public";
+		}
+
+		# CSS and Javascript
+		location ~* \.(?:css|js)$
+		{
+			expires 1y;
+			access_log off;
+			add_header Cache-Control "public";
+		}
