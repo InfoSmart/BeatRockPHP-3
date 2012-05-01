@@ -1,0 +1,1 @@
+<div class="content" data-role="content">	<p>		Empieza a programar para "%SITE_NAME%" (Versión móvil) en Kernel/Templates/mobile/index.tpl ;D	</p></div>
