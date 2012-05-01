@@ -1,0 +1,239 @@
+/**
+ * InfoSmart Estilos - Administración.
+ *
+ * Archivo de estilo predeterminado recomendado para
+ * todas las aplicaciones de InfoSmart.
+ *
+ * Versión: 1 - Mie 19/10/2011 - Kolesias123 & Marco Arnoldo Molina Mayberry
+ * Copyright © 2011 - InfoSmart Todos los derechos reservados.
+ * http://www.infosmart.mx/
+**/
+
+/* Predeterminado */
+
+.block {
+	display: block;
+}
+
+.red {
+	color: red;
+}
+
+.green {
+	color: green;
+}
+
+.hint {
+	font-size: 12px;
+	color: gray;
+}
+
+/* Cabecera */
+
+header {
+	border-bottom: 2px solid #F2F2F2;
+	padding: 10px 0;
+}
+
+header nav a {
+	background: rgb(250,250,250); /* Old browsers */
+	background: -moz-linear-gradient(top, rgba(250,250,250,1) 0%, rgba(245,245,245,1) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(250,250,250,1)), color-stop(100%,rgba(245,245,245,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, rgba(250,250,250,1) 0%,rgba(245,245,245,1) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, rgba(250,250,250,1) 0%,rgba(245,245,245,1) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, rgba(250,250,250,1) 0%,rgba(245,245,245,1) 100%); /* IE10+ */
+	background: linear-gradient(top, rgba(250,250,250,1) 0%,rgba(245,245,245,1) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fafafa', endColorstr='#f5f5f5',GradientType=0 ); /* IE6-9 */
+	
+	color: gray;
+	padding: 5px 20px;
+	
+	margin: 5px;
+	border-radius: 5px;
+	
+	border: 1px solid #E6E6E6;
+	border-bottom: 2px solid #E6E6E6;
+}
+
+header nav a:hover {
+	color: black;
+	border-color: #D8D8D8;
+}
+
+/* Contenido */
+
+.content {
+	margin: 10px 0;
+}
+
+.content section {
+	float: left;
+	margin: 5px 10px;
+	
+	min-width: 300px;
+	
+	padding: 5px 10px;
+	border-radius: 5px;
+	
+	border: 1px solid #E6E6E6;
+	border-bottom: 2px solid #E6E6E6;
+}
+
+.content .c1 {
+	width: 450px;
+	float: left;
+	
+	margin-right: 10px;
+}
+
+.content .c2 {
+	width: 450px;
+	float: left;
+}
+
+.content h1 {
+	font-weight: normal;
+	font-size: 24px;
+}
+
+.content h2 {
+	font-weight: normal;
+	font-size: 20px;
+	
+	padding-bottom: 5px;
+	
+	margin-top: 10px;
+	border-bottom: 1px solid #F2F2F2;
+}
+
+/* Contenido - Mini Logs */
+
+.content .min-log {
+	color: gray;	
+	border-bottom: 1px solid #F2F2F2;
+	
+	padding: 3px 0;
+}
+
+.content .min-log:last-child {
+	border-bottom: 0;
+}
+
+/* Contenido - Tablas */
+
+.content .cc tr:hover {
+	background: #F5F5F5;
+}
+
+.content .cc td {
+	padding: 2px 5px;
+	padding-right: 220px;
+}
+
+.content .cc td.s {
+	padding-left: 15px;
+	font-size: 12px;
+}
+
+/* Contenido - Noticias */
+
+.content article {
+	padding: 3px 5px;
+	border-bottom: 1px solid #E6E6E6;
+}
+
+.content article:hover {
+	background: #F5F5F5;
+}
+
+.content article:last-child {
+	border-bottom: 0;
+}
+
+/* Contenido - Usuarios */
+
+.content .u td {
+	padding: 3px 20px;	
+}
+
+.content .u tr:first-child {
+	font-weight: bold;
+}
+
+.content .u tr:first-child:hover {
+	background: white !important;
+}
+
+.content .u tr:hover {
+	background: #F5F5F5;
+}
+
+/* Contenido - Visitas */
+
+.content .v td {
+	padding: 3px;
+	border-bottom: 1px solid #F2F2F2;
+}
+
+.content .v tr:first-child {
+	font-weight: bold;
+}
+
+.content .v tr:first-child:hover {
+	background: white !important;
+}
+
+.content .v tr:hover {
+	background: #F5F5F5;
+}
+
+/* Formularios */
+
+form {
+	display: block;
+}
+
+form span {
+	float: right;
+	width: 300px;
+	
+	color: gray;
+}
+
+form span[role] {
+	float: left;
+}
+
+input[type='text'],
+input[type='email'],
+input[type='number'],
+input[type='url'] {
+	width: 400px;
+	height: 20px;
+	
+	padding: 5px;
+}
+
+select {
+	width: 410px;
+	height: 30px;
+	
+	padding: 5px;
+}
+
+textarea {
+	width: 390px;
+	height: 100px;
+	
+	padding: 5px;
+}
+
+/* Pie de página */
+
+footer {
+	border-top: 2px solid #F2F2F2;
+	padding: 8px 0;
+	
+	font-size: 12px;
+	color: gray;
+}

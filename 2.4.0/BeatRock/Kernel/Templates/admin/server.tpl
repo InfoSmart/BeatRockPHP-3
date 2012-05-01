@@ -1,0 +1,1 @@
+<div class="c2">	<section>		<h2>Servidor</h2>		<p>			Esta es una imagen del escritorio del servidor. Si aparece en negro significa que el servicio de Apache no tiene permisos para interactuar con el escritorio.		</p>		<img src="%PATH%/imgod/?page=snapshot.server" class="snapshot" />	</section></div><div class="clear"></div>
