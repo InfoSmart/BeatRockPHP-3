@@ -1,0 +1,74 @@
+{
+	/*######################################################
+	//	CONEXIÓN AL SERVIDOR [MYSQL]
+	//####################################################*/
+	"mysql": 
+	{
+		"host": 		"{mysql_host}",
+		"user": 		"{mysql_user}",
+		"pass": 		"{mysql_pass}",
+		"name": 		"{mysql_name}",
+		"prefix": 		"{mysql_alias}",
+		"port":			"3306",
+		"optimize.error": 		{mysql_optimize_error},
+		"repair.error": 		{mysql_repair_error}
+	},
+
+	/*######################################################
+	//	UBICACIÓN DEL SITIO WEB
+	//####################################################*/
+	"site": 
+	{
+		"country": 			"{site_country}",
+		"path": 			"{site_path}",
+		"admin": 			"{site_admin}",
+		"resources": 		"{site_resources}",
+		"resources.sys": 	"{site_resources_sys}"
+	},
+
+	/*######################################################
+	//	SEGURIDAD
+	//####################################################*/
+	"security": 
+	{
+		"enabled": 	{security_enabled},
+		"level": 	{security_level},
+		"hash": 	"{security_hash}"
+	},
+
+	/*######################################################
+	//	ERRORES	& CONSOLA
+	//####################################################*/
+	"errors": 
+	{
+		"details": 	true,
+		"hidden": 	{errors_hidden},
+		"report": 	{errors_report},
+		"email.to": "{errors_email_to}"
+	},
+
+	"logs": 
+	{
+		"capture": 	{logs_capture},
+		"save": 	"{logs_save}"
+	},
+
+	/*######################################################
+	//	PARAMETROS EXTRA DE SERVIDOR
+	//####################################################*/
+	"server": 
+	{
+		"gzip": {server_gzip},
+		"host": {server_host},
+		"ssl": 	{server_ssl}
+	},
+
+	/*######################################################
+	//	MEMCACHE
+	//####################################################*/
+	"memcache": 
+	{
+		"host": "{memcache_host}",
+		"port": {memcache_port}
+	}
+}
