@@ -44,8 +44,8 @@ class Curl
 		if(!self::Ready())
 			return false;
 			
-		self::$host = null;
-		self::$opts = array();
+		self::$host 	= null;
+		self::$params 	= array();
 	}
 	
 	// Preparar una conexión cURL.
@@ -76,7 +76,7 @@ class Curl
 		$params['header'][] = 'Expect: ';
 		
 		self::$host 	= $host;
-		self::$params 	= $opts;
+		self::$params 	= $params;
 		
 		Reg('%configuration%');
 	}
