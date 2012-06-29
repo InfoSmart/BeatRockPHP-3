@@ -1,1 +1,0 @@
-<div class="content">	<p>		<!-- Esta linea se traducira incluso con el "smart_translate" en false. -->		||¡Saludos %IP% (IP)! Empieza a programar para "%SITE_NAME%" en Kernel/Templates/index.tpl :D||	</p>		<p>		Recuerda que %PATH% es lo mismo que <?php echo PATH; ?>	</p></div>

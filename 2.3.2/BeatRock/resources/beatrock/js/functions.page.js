@@ -1,1 +1,0 @@
-/** * JavaScript - Página principal. * ???. Todos los derechos reservados. * * Copyright 2011 - ??? and jQuery Technology. * http://www. - http://www.jquery.com/**/$(document).on("ready", function() {});
