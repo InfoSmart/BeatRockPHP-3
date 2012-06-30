@@ -216,7 +216,7 @@ class Core
 			exit;
 		}
 		
-		if(!Core::isValid($url, 'url') AND !self::Contains($url, './') AND !self::Contains($url, 'localhost'))
+		if(!Core::isValid($url, 'url') AND !self::Contains($url, './') AND !self::Contains($url, '//localhost'))
 			$url = PATH . $url;
 
 		if($javascript)
@@ -395,6 +395,8 @@ class Core
 			
 		if(!is_array($words))
 			$wordss[] 	= $words;
+		else
+			$wordss 	= $words;
 			
 		foreach($wordss as $w)
 		{
@@ -481,7 +483,7 @@ class Core
 		if(!is_string($str))
 			return $str;
 			
-		$str 	= self::CleanHTML($str);
+		$str 	= strip_tags($str);
 		$n 		= strlen($str);
 		
 		$s 		= 0;
@@ -854,15 +856,15 @@ class Core
 		
 		foreach($calendar as $n => $month)
 		{
-			$month = strtolower(_l($month));
+			$month = strtolower($month);
 
 			if(preg_match("/$month/i", $name))
-				return $n;
+				return _l($n);
 				
 			$month = substr($month, 0, 3);
 			
 			if(preg_match("/$month/i", $name))
-				return $n;
+				return _l($n);
 		}
 	}
 
@@ -1232,7 +1234,7 @@ class Core
 		$str = rawurlencode(_c($str));
 		$url = "http://api.microsofttranslator.com/v2/Http.svc/Translate?appId=$id&text=$str&from=$from&to=$to";
 
-		$data = self::CleanHTML(Io::Read($url));
+		$data = strip_tags(Io::Read($url));
 		$data = ucfirst($data);
 
 		self::TheCache('translate_' . $sstr, $data);
