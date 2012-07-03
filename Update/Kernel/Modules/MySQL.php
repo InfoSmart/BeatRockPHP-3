@@ -310,10 +310,7 @@ class MySQL
 			return self::Error('mysql.query.need', __FUNCTION__);			
 		
 		if(empty($q))
-		{
 			$q = self::$last_resource;
-			self::$last_resource = null;
-		}
 			
 		return mysql_num_rows($q);
 	}
@@ -326,10 +323,7 @@ class MySQL
 			return self::Error('mysql.query.need', __FUNCTION__);
 		
 		if(empty($q))
-		{
 			$q = self::$last_resource;
-			//self::$last_resource = null;
-		}
 			
 		return mysql_fetch_assoc($q);
 	}
@@ -343,10 +337,7 @@ class MySQL
 			return self::Error('mysql.query.need', __FUNCTION__);
 		
 		if(empty($q))
-		{
 			$q = self::$last_resource;
-			self::$last_resource = null;
-		}
 			
 		$r = self::fetch_assoc($q);
 		return $r[$row];
