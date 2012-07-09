@@ -308,7 +308,7 @@ class Social
 			$me['profile_image_url'] = $me['image']['url'];
 			
 		if(empty($me['profile_image_url']))
-			$me['profile_image_url'] = 'http://graph.facebook.com/$me[id]/picture?type=large';
+			$me['profile_image_url'] = 'http://graph.facebook.com/' . $me['id'] . '/picture?type=large';
 		
 		return $me;
 	}
@@ -414,7 +414,7 @@ class Social
 			return 'NOT_EXIST';
 			
 		Users::UpdateService(array(
-			'info' => json_encode($info)
+			'info' => _f(json_encode($info), false)
 		), $data['id']);
 			
 		Core::theSession('service_info', $data['info']);
@@ -443,7 +443,7 @@ class Social
 		if(empty($info))
 			$info = self::Init($service);
 			
-		$hash = Users::NewService($info['id'], $service, $info['username'], json_encode($info));
+		$hash = Users::NewService($info['id'], $service, $info['username'], _f(json_encode($info), false));
 		
 		self::$reg_data['user_hash'] 	= $hash;
 		self::$reg_data['service'] 		= $service;
