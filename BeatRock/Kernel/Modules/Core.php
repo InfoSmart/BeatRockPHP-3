@@ -1183,8 +1183,17 @@ class Core
 	// - $url: Dirección web.
 	static function GetHost($url)
 	{
-		$parseUrl = parse_url(trim($url));		
-		return trim($parseUrl[host] ? $parseUrl[host] : array_shift(explode('/', $parseUrl[path], 2))); 
+		$parseUrl = parse_url(trim($url));
+
+		if($parseUrl['host'])
+			$result = trim($parseUrl['host']);
+		else
+		{
+			$exp = explode('/', $parseUrl['path'], 2);
+			$result = array_shift($ep);
+		}
+
+		return $result;
 	}
 	
 	// Obtener la página de una dirección web.
