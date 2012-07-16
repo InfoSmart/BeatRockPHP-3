@@ -40,7 +40,7 @@ require 'Header.php';
 	</section>
 
 	<figure class="right">
-		<img src="<?=RESOURCES_INS?>/system/setup/images/<?=$page['id']?>.png" />
+		<img src="<?=RESOURCES_INS?>/systemv2/setup/images/<?=$page['id']?>.png" />
 	</figure>
 </div>
 </div>
@@ -168,7 +168,7 @@ require 'Header.php';
 	
 	<figure class="res">
 		<a href="http://www.w3schools.com/html5/default.asp" target="_blank" title="HTML 5"><img src="http://www.w3.org/html/logo/downloads/HTML5_Logo_512.png" /></a>
-		<a href="http://php.net/?beta=1" target="_blank" title="PHP"><img src="<?php echo RESOURCES_INS; ?>/system/setup/images/PHP.png" /></a>
+		<a href="http://php.net/?beta=1" target="_blank" title="PHP"><img src="<?php echo RESOURCES_INS; ?>/systemv2/setup/images/PHP.png" /></a>
 		<a href="http://www.opensource.org/" target="_blank" title="Open Source"><img src="http://www.opensource.org/files/garland_logo.png" /></a>
 	</figure>
 </div>

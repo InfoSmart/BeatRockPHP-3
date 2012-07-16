@@ -56,6 +56,7 @@ require('./Header.php');
 	
 	<p>
 		- ¡Empieza a desarrollar tu aplicación!<br />
+		- Observa los video tutoriales en <a href="https://vimeo.com/album/2001269" target="_blank">Vimeo</a>.<br />
 		- Visita la sección de <b><a href="http://dev.infosmart.mx/forum/index.php?board=13.0" target="_blank">"Guías y tutoriales"</a></b> en nuestro foro para obtener más información acerca del funcionamiento de BeatRock.<br />
 		- Lee los comentarios en los archivos del Kernel, así entenderás su funcionamiento.<br />
 		- Te recomendamos <a href="http://notepad-plus-plus.org/" target="_blank">Notepad++</a> o <a href="http://www.sublimetext.com/2" target="_blank">Sublime Text 2</a> como IDE para desarrollar en PHP.<br />

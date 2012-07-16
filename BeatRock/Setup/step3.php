@@ -72,7 +72,7 @@ require('./Header.php');
 	</section>
 
 	<figure class="right">
-		<img src="<?=RESOURCES_INS?>/system/setup/images/step3.png" />
+		<img src="<?=RESOURCES_INS?>/systemv2/setup/images/step3.png" />
 	</figure>
 </div>
 
@@ -83,8 +83,8 @@ require('./Header.php');
 
 <div class="content">	
 	<form id="process-form">
-		<details>
-			<summary>Documentos de error</summary>
+		<section>
+			<h2>Documentos de error</h2>
 
 			<div class="c1">			
 				<p>
@@ -124,10 +124,10 @@ require('./Header.php');
 					<span>Escriba la dirección física, dirección web o mensaje del error 500. Cuando se produce un error interno del servidor.</span>
 				</p>
 			</div>
-		</details>
+		</section>
 
-		<details>
-			<summary>Módulos</summary>
+		<section>
+			<h2>Módulos</h2>
 
 			<div class="c1">
 				<p data-apache="true" data-nginx>
@@ -142,10 +142,10 @@ require('./Header.php');
 					<span>Permite usar la compresión GZIP fuera de los archivos PHP de BeatRock.</span>
 				</p>
 			</div>
-		</details>
+		</section>
 		
-		<details data-apache data-required>
-			<summary>Configuración PHP</summary>
+		<section data-apache data-required>
+			<h2>Configuración PHP</h2>
 
 			<div class="c1">			
 				<p>
@@ -178,10 +178,10 @@ require('./Header.php');
 					<span>Seleccione el peso limite (MB) para la subida de archivos.</span>
 				</p>
 			</div>
-		</details>
+		</section>
 
-		<details hidden data-nginx data-required>
-			<summary>Configuración Nginx</summary>
+		<section hidden data-nginx data-required>
+			<h2>Configuración Nginx</h2>
 
 			<input type="hidden" name="root" id="root" value="<?=ROOT?>" />
 			<input type="hidden" name="server_name" id="server_name" value="localhost" />
@@ -218,7 +218,7 @@ require('./Header.php');
 					</select>
 				</p>
 			</div>
-		</details>
+		</section>
 		
 		<p>
 			<input type="submit" value="Guardar y continuar" class="ibtn" id="save_step3" />

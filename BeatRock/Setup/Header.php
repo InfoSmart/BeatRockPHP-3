@@ -37,7 +37,7 @@ define('RESOURCES_INS', '//resources.infosmart.mx');
 	Resources_Sys = "<?=RESOURCES_INS?>/systemv2";
 	</script>
 	
-	<link href="<?=RESOURCES_INS?>/systemv2/setup/style.css" rel="stylesheet" />
+	<link href="<?=RESOURCES_INS?>/systemv2/css/style.css" rel="stylesheet" />
 	<link href="<?=RESOURCES_INS?>/systemv2/setup/style.install.css" rel="stylesheet" />
 	
 	<script src="<?=RESOURCES_INS?>/systemv2/js/jquery.js"></script>
@@ -49,7 +49,7 @@ define('RESOURCES_INS', '//resources.infosmart.mx');
 		<header>
 			<div class="wrapper">
 				<figure>
-					<img src="<?=RESOURCES_INS?>/system/setup/images/Logo.png" />
+					<img src="<?=RESOURCES_INS?>/systemv2/setup/images/Logo.png" />
 				</figure>
 			
 				<h1><?=$page['name']?></h1>

@@ -40,14 +40,14 @@ require('./Header.php');
 	</section>
 
 	<figure class="right">
-		<img src="<?=RESOURCES_INS?>/system/setup/images/step4.png" />
+		<img src="<?=RESOURCES_INS?>/systemv2/setup/images/step4.png" />
 	</figure>
 </div>
 
 <div class="content">	
 	<form action="./actions/save_step4.php" method="POST">
-		<details open>
-			<summary>General</summary>
+		<section open>
+			<h2>General</h2>
 
 			<div class="c1">			
 				<p>
@@ -75,8 +75,8 @@ require('./Header.php');
 					<label>Mapa del sitio:</label>
 					
 					<select name="site_sitemap" class="btn">
-						<option value="true">Si</option>
 						<option value="false">No</option>
+						<option value="true">Si</option>	
 					</select>
 					
 					<span>Seleccione si su aplicación tendrá un "mapa del sitio" que será ubicado <b><?=PATH?>/sitemap</b>.</span>
@@ -121,8 +121,8 @@ require('./Header.php');
 					<label>RSS:</label>
 					
 					<select name="site_rss" class="btn">
-						<option value="true">Si</option>
 						<option value="false">No</option>
+						<option value="true">Si</option>
 					</select>
 					
 					<span>Seleccione si su aplicación tendrá un RSS de noticias que será ubicado en <b><?=PATH?>/rss</b>.</span>
@@ -135,10 +135,10 @@ require('./Header.php');
 					<span>Escriba el nombre del archivo de su imagen Logo.</span>
 				</p>
 			</div>
-		</details>
+		</section>
 
-		<details>
-			<summary>Técnico</summary>
+		<section>
+			<h2>Técnico</h2>
 
 			<div class="c1">
 				<p>
@@ -161,7 +161,7 @@ require('./Header.php');
 						<option value="60">60%</option>
 						<option value="70">70%</option>
 						<option value="80">80%</option>
-						<option value="90" selected>90%</option>
+						<option value="90">90%</option>
 						<option value="95">95%</option>
 					</select>
 					
@@ -186,8 +186,8 @@ require('./Header.php');
 					<label>Optimización de JavaScript:</label>
 					
 					<select name="site_optimized_javascript" class="btn">
+						<option value="false">No</option>
 						<option value="true">Si</option>
-						<option value="false">No</option>					
 					</select>
 					
 					<span>La optimización de JavaScript carga los archivos JavaScript de su aplicación en el pie de página de la misma.</span>
@@ -217,7 +217,7 @@ require('./Header.php');
 						<option value="104857600">100 MB</option>
 						<option value="157286400">150 MB</option>
 						<option value="209715200">200 MB</option>
-						<option value="314572800" selected>300 MB</option>
+						<option value="314572800">300 MB</option>
 						<option value="419430400">400 MB</option>
 						<option value="524288000">500 MB</option>
 						<option value="629145600">600 MB</option>
@@ -246,10 +246,10 @@ require('./Header.php');
 					<span>Escriba el dominio en donde será válido las Cookies, dejelo en blanco para omitir esta opción.</span>
 				</p>
 			</div>
-		</details>
+		</section>
 
-		<details>
-			<summary>Idioma y traducción</summary>
+		<section>
+			<h2>Idioma y traducción</h2>
 
 			<div class="c1">
 				<p>
@@ -258,7 +258,9 @@ require('./Header.php');
 					
 					<span>Escriba las dos primeras letras del idioma de la aplicación, la misma como una referencia para robots como Google y para un estandar recomendado por la W3C.</span>
 				</p>
+			</div>
 
+			<div class="c2">
 				<p>
 					<label>Obligar idioma:</label>					
 					<input type="text" name="site_translate" id="site_translate" value="<?=$site['site_translate']?>" placeholder="es" autocomplete="off" maxlength="2" />
@@ -266,23 +268,10 @@ require('./Header.php');
 					<span>Si desea obligar a usar un idioma/traducción en su aplicación indique las dos primeras letras del idioma, dejelo en blanco para usar el idioma nativo del usuario.</span>
 				</p>
 			</div>
-
-			<div class="c2">
-				<p>
-					<label>Traducción inteligente:</label>
-					
-					<select name="site_smart_translate" class="btn">
-						<option value="false">No</option>
-						<option value="true">Si</option>
-					</select>
-					
-					<span>La traducción inteligente traduce cualquier palabra que tenga una traducción en la base de datos, aunque activarlo puede ocacionar resultados no deseados en aplicaciones con contenido generado por el usuario.</span>
-				</p>
-			</div>
-		</details>
+		</section>
 		
-		<details>
-			<summary>Información</summary>
+		<section>
+			<h2>Información</h2>
 
 			<div class="c1">			
 				<p>
@@ -312,10 +301,10 @@ require('./Header.php');
 					<span>Escriba la empresa / compañia / organización que mantiene esta aplicación y se encarga de distribuirla.</span>
 				</p>
 			</div>			
-		</details>
+		</section>
 
-		<details>
-			<summary>Open Graph</summary>
+		<section>
+			<h2>Open Graph</h2>
 
 			<div class="c1">
 				<p>
@@ -473,10 +462,10 @@ require('./Header.php');
 					<a href="http://ogp.me/" target="_blank">Más información de Open Graph</a>
 				</p>
 			</div>			
-		</details>
+		</section>
 		
-		<details>
-			<summary>Tareas cronometradas</summary>
+		<section>
+			<h2>Tareas cronometradas</h2>
 
 			<div class="c1">			
 				<p>
@@ -616,10 +605,10 @@ require('./Header.php');
 					<span>Elimina los archivos dentro de los directorios "Logs", "Backups" y "Temp" del directorio "Kernel/BitRock/".</span>
 				</p>
 			</div>
-		</details>
+		</section>
 		
-		<details>
-			<summary>Otros</summary>
+		<section>
+			<h2>Otros</h2>
 
 			<div class="c1">			
 				<p>
@@ -627,7 +616,7 @@ require('./Header.php');
 					<span>Serás enviado a la página de Creative Commons para escojer una licencia que se adapte a tu aplicación, cuando termines serás redireccionado a la página de finalización y los datos de tu licencia se guardaran en el directorio raiz de BeatRock.</span>
 				</p>
 			</div>			
-		</details>
+		</section>
 		
 		<p>
 			<input type="submit" value="Guardar y terminar" class="ibtn" />

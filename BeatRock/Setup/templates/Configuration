@@ -10,8 +10,8 @@
 		"name": 		"{mysql_name}",
 		"prefix": 		"{mysql_prefix}",
 		"port":			"3306",
-		"repair": 		{mysql_repair},
-		"repair.error": {mysql_repair_error}
+		"optimize.error": 		{mysql_optimize_error},
+		"repair.error": 		{mysql_repair_error}
 	},
 
 	/*######################################################
