@@ -1,0 +1,37 @@
+# ---------------------------------------------------
+# Denegar acceso a los archivos HTACCESS.
+# ---------------------------------------------------
+
+<Files .htaccess>
+deny from all
+</Files>
+
+# ---------------------------------------------------
+# No indexar directorios.
+# ---------------------------------------------------
+
+Options +FollowSymlinks
+Options -Indexes
+
+# ---------------------------------------------------
+# Permisos de acceso a directorios.
+# ---------------------------------------------------
+
+Order allow,deny
+Allow from all
+
+# ---------------------------------------------------
+# Denegar acceso a archivos delicados.
+# ---------------------------------------------------
+
+<FilesMatch "(\.(bak|config|sql|fla|psd|ini|log|sh|inc|swp|dist|json)|~)$">
+  Order allow,deny
+  Deny from all
+  Satisfy All
+</FilesMatch>
+
+<FilesMatch "Secret_Hash$">
+  Order allow,deny
+  Deny from all
+  Satisfy All
+</FilesMatch>
