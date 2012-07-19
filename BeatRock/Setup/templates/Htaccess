@@ -102,7 +102,7 @@ FileETag None
 # Denegar acceso a archivos delicados.
 # ---------------------------------------------------
 
-<FilesMatch "(\.(bak|config|sql|fla|psd|ini|log|sh|inc|swp|dist|tpl)|~)$">
+<FilesMatch "(\.(bak|config|sql|fla|psd|ini|log|sh|inc|swp|dist|tpl|json)|~)$">
   Order allow,deny
   Deny from all
   Satisfy All

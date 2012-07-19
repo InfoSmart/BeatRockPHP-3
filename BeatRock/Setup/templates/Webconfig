@@ -121,6 +121,7 @@
                     <add fileExtension=".swp" allowed="false" />
                     <add fileExtension=".dist" allowed="false" />
                     <add fileExtension=".tpl" allowed="false" />
+                    <add fileExtension=".json" allowed="false" />
                 </fileExtensions>
             </requestFiltering>
         </security>
