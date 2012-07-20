@@ -61,10 +61,11 @@ if(empty($error))
 	$errorspage = '';
 	$cache = '';
 	$gzip = '';
+
 	foreach($errors as $param => $value)
 	{
 		$errs['apache'] .= "ErrorDocument $param \"$value\"\r\n";
-		$errs['iis'] .= "		<error statusCode=\"$param\" redirect=\"$value\" />\r\n";
+		$errs['iis'] 	.= "		<error statusCode=\"$param\" redirect=\"$value\" />\r\n";
 		$errs['nginx'] .= "		error_page $param \"$value\"\r\n";
 	}
 
@@ -90,7 +91,7 @@ if(empty($error))
 		$errorspage .= $errs[$P['server']];
 
 		if($P['server'] == 'iis')
-			$errorspage = '<customErrors mode="RemoteOnly" defaultRedirect="/error.php?code=404">\r\n' . $errorspage . '</customErrors>';
+			$errorspage = '<customErrors mode="RemoteOnly" defaultRedirect="/error.php?code=404">' . $errorspage . '</customErrors>';
 	}
 
 	$data = str_ireplace('{config_cache}', $cache, $data);
