@@ -1,0 +1,103 @@
+#user       www www;
+
+worker_processes {worker_processes};
+worker_rlimit_nofile {worker_rlimit_nofile};
+
+events
+{
+    worker_connections  {worker_connections};
+}
+
+http
+{
+    include             nginx-mime.types;
+    default_type        application/octet-stream;
+
+    log_format          main '$remote_addr - $remote_user [$time_local]  $status '
+    '"$request" $body_bytes_sent "$http_referer" '
+    '"$http_user_agent" "$http_x_forwarded_for"';
+
+    keepalive_timeout   {max_execution};
+    sendfile on;
+
+    tcp_nopush on;
+    tcp_nodelay off;
+
+    {config_gzip}
+
+    server
+    {
+        listen  {port} default;
+        server_name {server_name};
+
+        root    {folder};
+        index   index.php index.html;
+        charset iso-8859-15;
+
+        add_header "X-UA-Compatible" "IE=Edge,chrome=1";
+
+        {config_errors}
+
+        {config_cache}
+
+        location ~* \.(?:jpg|jpeg|gif|png|ico|gz|svg|svgz|ttf|otf|woff|eot|mp4|ogg|ogv|webm)$ 
+        {
+            #expires 1M;
+            access_log off;
+            add_header Cache-Control "public";
+        }
+
+        location ~* \.ico$ 
+        {
+            expires 1w;
+            access_log off;
+            add_header Cache-Control "public";
+        }
+
+        location / 
+        {
+            root   {folder};
+            index  index.php index.html;
+
+            try_files $uri $uri/ @handler;
+        }
+
+        location @handler
+        {
+            internal;            
+
+            if (!-f $request_filename.php)
+            {
+                return 404;
+            }
+
+            rewrite ^(.*)$ /$1.php last;
+            rewrite ^([^/]*)/(.*)$ /$1/$2.php last;          
+        }
+
+        location ~ \.php$ 
+        {
+            root           {folder};
+            fastcgi_pass   127.0.0.1:9000;
+            fastcgi_index  index.php;
+            fastcgi_param  SCRIPT_FILENAME  {root}$fastcgi_script_name;
+            fastcgi_split_path_info ^(.+\.php)(/.*)$;
+            include        fastcgi_params;
+        }        
+
+        location ~* \.(bak|config|sql|fla|psd|ini|log|sh|inc|swp|dist|tpl|json)$ 
+        {
+            deny all;
+        }
+
+        location ~* \.(shell|sh2ell|shells|hell|she|C99|c99)$ 
+        {
+            deny all;
+        }
+
+        location ~ /\.ht 
+        {
+            deny  all;
+        }
+    }
+}

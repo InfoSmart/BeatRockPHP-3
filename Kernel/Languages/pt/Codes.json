@@ -1,0 +1,226 @@
+{
+	"unknow":
+	{
+		"title":	"Erro desconhecido",
+		"details":	"O código de erro ocorreu lá."
+	},
+
+	/* Errores principales */
+	"example":
+	{
+		"title":	"Exemplo de erro.",
+		"details":	"Este é um exemplo de BeatRock erros do sistema."
+	},
+
+	"setup.init":
+	{
+		"title":	"Setup - Falha na verificação inicial.",
+		"details":	"Não foi possível completar a verificação inicial do kernel.",
+		"solution":	"Verifique se o servidor atende aos requisitos para a execução de arquivos BeatRock e fundamental para o trabalho lá."
+	},
+
+	"setup.config":
+	{
+		"title":	"Setup - Falha no arquivo de configuração.",
+		"details":	"Ocorreu um problema ao tentar carregar o arquivo de configuração.",
+		"solution": "Verifique se o arquivo de configuração existe, não está protegido, danificado e os dados estão corretos."
+	},
+
+	"bitrock.load.module":
+	{
+		"title":	"BitRock - A incapacidade de carregar um módulo.",
+		"details":	"Não foi possível carregar o módulo especificado.",
+		"solution":	"Verifique se o módulo existe, não protegido ou danificado."
+	},
+
+	/* Errores de PHP */
+	"php.code":
+	{
+		"title":	"PHP - Problema de execução.",
+		"details":	"Aparentemente, o aplicativo foi executado sem recursos, o servidor encontrou um problema ou parte do código tem um erro de sintaxe."
+	},
+
+	"php.exception":
+	{
+		"title":	"PHP - Houve uma exceção.",
+		"details":	"Ela lançou uma exceção no código."
+	},
+
+	/* Errores de MySQL */
+	"mysql.incomplete":
+	{
+		"title":	"MySQL - Informações incompletas."
+	},
+
+	"mysql.connect":
+	{
+		"title": 	"MySQL - Falha na conexão.",
+		"details":	"Não foi possível conectar ao servidor MySQL.",
+		"solution":	"Certifique que os detalhes da conexão estão corretas e que o servidor MySQL estiver ligado."
+	},
+
+	"mysql.need.connection":
+	{
+		"title":	"MySQL - Você precisa de uma conexão ativa.",
+		"details":	"Você tentou executar uma função que requer uma conexão ativa com o servidor MySQL.",
+		"solution":	"BeatRock faz uma conexão para iniciar esse erro é considerada rara. É provável que a sua cópia do BeatRock for modificado ou danificado."
+	},
+
+	"mysql.query":
+	{
+		"title":	"MySQL - Erro durante a execução de uma consulta.",
+		"details":	"Não é possível executar uma consulta no servidor MySQL.",
+		"solution":	"Certifique que estejam escritas corretamente consulta, mesa, coluna e linha lá, e não apresenta caracteres especiais ou tentativas de injeção de SQL."
+	},
+
+	"mysql.query.need":
+	{
+		"title":	"MySQL - Erro durante a execução de uma consulta.",
+		"details":	"Falha ao executar uma consulta por causa da falta de um recurso.",
+		"solution":	"Este recurso requer um ativo de recursos do SQL e ele deve especificar o recurso ou fazer uma consulta antes."
+	},
+
+	"mysql.engine":
+	{
+		"title": 	"MySQL - Motor inválido.",
+		"details":	"Indicou um motor inválido.",
+		"solution": "Especifique como MyISAM ou InnoDB motor."
+	},
+
+	"mysql.recovery":
+	{
+		"title": 	"MySQL - Falha ao carregar ou restaurar o banco de dados",
+		"details":	"Ocorreu um erro ao tentar carregar ou restaurar o banco de dados.",
+		"solution":	"Verifique se o banco de dados existe e não está danificado."
+	},
+
+	"mysql.query.novalid":
+	{
+		"title":	"MySQL - Inválido consulta.",
+		"details":	"Não é possível executar uma ação especial para uma consulta, pois ela é inválida.",
+		"solution":	"Certificando você deseja executar a consulta, que é válida para a ação, essas ações normalmente só suportam consultas como 'SELECT'."
+	},
+
+	/* Errores de FTP */
+	"ftp.need":
+	{
+		"title":	"FTP - Conexão não está pronto.",
+		"details":	"Você tentou executar uma ação sem ter uma conexão FTP pronto.",
+		"solution":	"Definir uma conexão FTP com 'Init' a função"
+	},
+
+	"ftp.connect":
+	{
+		"title":	"FTP - Falha na conexão.",
+		"details":	"Não foi possível conectar ao servidor FTP.",
+		"solution":	"Certifique que os detalhes da conexão estão corretas e que o servidor FTP está ligado."
+	},
+
+	/* Errores de IO */
+	"io.fail":
+	{
+		"title":	"IO - Falha no sistema de entrada e saída de arquivos.",
+		"details":	"Houve um erro relacionado a escrever ou ler um arquivo dentro/fora.",
+		"solution":	"Verifique se o arquivo de destino tem as permissões necessárias para a operação, ou não danificado/protegidos."
+	},
+
+	/* Errores de GD */
+	"gd.verify":
+	{
+		"title":	"Gd - Falha tipo de imagem de verificação.",
+		"details":	"Não foi possível detectar o tipo de imagem você está trabalhando, certifique-se que é válido e que a imagem não está danificado."
+	},
+
+	"gd.noexist":
+	{
+		"title":	"Gd - Falha ao carregar a imagem.",
+		"details":	"Não é possível carregar a imagem corretamente, verifique se a imagem existe e não está danificado ou protegido."
+	},
+
+	"gd.filter":
+	{
+		"title":	"Gd - Inválido tipo de filtro.",
+		"details":	"O filtro especificado para a imagem é inválido, você deve selecionar uma das seguintes opções: negar, em tons de cinza, EDGEDETECT, relevo MEAN_REMOVAL"
+	},
+
+	/* Errores de CURL */
+	"curl.instance":
+	{
+		"title":	"cURL - Não estar preparado qualquer instância.",
+		"details":	"Você tentou executar uma função sem ter uma instância de conexão cURL pronto.",
+		"solution":	"Faça uma conexão antes que a função 'Onda :: Init'"
+	},
+
+	/* Errores de Plantilla */
+	"tpl.process":
+	{
+		"title":	"TPL - Falha ao carregar o modelo.",
+		"details":	"Não foi possível carregar o modelo especificado.",
+		"solution":	"Verifique se o arquivo de modelo existe e não está danificado ou protegido."
+	},
+
+	"tpl.loadfiles":
+	{
+		"title":	"TPL - Falha ao carregar os arquivos necessários.",
+		"details":	"Não é possível carregar um ou mais arquivos internos necessários para carregar o modelo.",
+		"solution": "Certifique que os arquivos como o cabeçalho eo rodapé existem e não estão danificados ou protegidos."
+	},
+
+	/* Errores de API Sociales */
+	"social.service":
+	{
+		"title":	"Social - Serviço inválido.",
+		"details":	"O serviço que você deseja usar não é válido.",
+		"solution":	"Verifique se o serviço que você deu é válida, como Facebook ou Twitter"
+	},
+
+	"social.instance":
+	{
+		"title":	"Social - Não estar preparado qualquer instância.",
+		"details": 	"Você tentou se conectar a um serviço social sem preparar um pedido.",
+		"solution":	"Registre a sua aplicação em desenvolvedor de página do serviço que você deseja usar e ajustar os dados para iniciar uma instância."
+	},
+
+	"social.instance.fail":
+	{
+		"title":	"Social - A falha na preparação de um exemplo.",
+		"details":	"Ocorreu um erro ao tentar preparar um pedido de conexão com a API social."
+	},
+
+	/* Errores de Memcache */
+	"memcache.connect":
+	{
+		"title":	"Memcache - Falha na conexão.",
+		"details":	"Não foi possível conectar ao servidor Memcache.",
+		"solution": "Certifique que os dados de conexão são válidos e que o servidor está ligado."
+	},
+
+	"memcache.need.connection":
+	{
+		"title":	"Memcache - Você precisa de uma conexão ativa.",
+		"details":	"Você tentou executar uma função que requer uma conexão ativa com o Memcache servidor.",
+		"solution":	"Porque BeatRock faz uma conexão para iniciar esse erro é considerada rara. É provável que a sua cópia do BeatRock for modificado ou danificado."
+	},
+
+	"memcache.save":
+	{
+		"title": 	"Memcache - Falha ao salvar.",
+		"details":	"Não foi possível salvar dados para o Memcache servidor."
+	},
+
+	/* Errores de Query */
+	"query.prepare":
+	{
+		"title":	"Query - A falha na preparação de uma consulta.",
+		"details":	"Você tentou executar um desdobramento da função para a consulta, mas a instância do mesmo não é válido ou não foi preparado.",
+		"solution":	"Verifique se você preparou uma consulta do tipo 'SELECT', 'update', 'INSERT'"
+	},
+
+	"query.exec":
+	{
+		"title":	"Query - Erro na execução da consulta.",
+		"details":	"Você tentou executar uma consulta, quando não tiver sido preparada.",
+		"solution":	"Verifique se você preparou uma consulta do tipo 'SELECT', 'update', 'INSERT'"
+	}
+	
+}

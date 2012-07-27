@@ -1,0 +1,232 @@
+/**
+ * Estilo de la Administración.
+ *
+ * InfoSmart. Todos los derechos reservados.
+ * Copyright 2012 - Iván Bravo Bravo.
+ * http://www.infosmart.mx/
+**/
+
+@import url(http://fonts.googleapis.com/css?family=Droid+Sans:400,700|Open+Sans:400,300,600,700);
+
+/* Predeterminado */
+
+.s
+{
+	color: green;
+	display: block;
+	font-size: 12px;
+	margin: 10px 0;
+}
+
+.red
+{
+	color: red;
+}
+
+.orange
+{
+	color: orange;
+}
+
+#notes-save
+{
+	display: none;
+}
+
+/* Cabecera */
+
+header
+{
+	background: #ffffff;
+	background: -moz-linear-gradient(top, #ffffff 0%, #f7f7f7 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#f7f7f7));
+	background: -webkit-linear-gradient(top, #ffffff 0%,#f7f7f7 100%);
+	background: -o-linear-gradient(top, #ffffff 0%,#f7f7f7 100%);
+	background: -ms-linear-gradient(top, #ffffff 0%,#f7f7f7 100%);
+	background: linear-gradient(top, #ffffff 0%,#f7f7f7 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f7f7f7',GradientType=0 );
+
+	border-bottom: 4px solid #444444;
+	padding-bottom: 15px;
+}
+
+header h1
+{
+	font-family: "Segoe UI Light", Segoe UI, Arial;
+	font-size: 35px;
+	font-weight: 300;
+	line-height: 40px;
+	margin-bottom: 5px;
+}
+
+header span
+{
+	color: gray;
+}
+
+/* Contenido */
+
+.content
+{
+	border-left: 2px solid #444444;
+	border-right: 2px solid #444444;
+	min-height: 900px;
+}
+
+.content h2
+{
+	font-size: 30px;
+	font-family: "Droid Sans", Open Sans, Segoe UI, Arial;
+	font-weight: bold;
+	line-height: 35px;
+}
+
+.content h3,
+.content summary
+{
+	font-size: 25px;
+	font-family: "Open Sans";
+	font-weight: 300;
+	line-height: 30px;
+	margin: 20px 0;
+	margin-bottom: 25px;
+}
+
+.content .c1
+{
+	border-right: 1px solid #444444;
+	float: left;
+	min-height: inherit;
+	margin-right: 15px;
+	width: 180px;
+}
+
+.content .c2
+{
+	float: left;
+	min-height: inherit;
+	width: 750px;	
+}
+
+.content section
+{
+	padding: 30px 0;
+	border-bottom: 2px solid #666;
+}
+
+.content section:first-child
+{
+	padding-top: 0;
+}
+
+.content section:last-child
+{
+	border-bottom: 0;
+}
+
+.content .link
+{
+	border: 1px solid #D8D8D8;
+	border-top: 0;
+	display: block;
+	padding: 10px;
+	color: #6D6D6D;
+
+	-webkit-transition: all .4s ease-in-out;
+}
+
+.content .link:first-child
+{
+	border-top: 1px solid #D8D8D8 !important;
+}
+
+.content .link *
+{
+	cursor: pointer;
+}
+
+.content .link:hover
+{
+	background: #F5F5F5;
+	box-shadow: 1px 1px 3px #D8D8D8 inset;
+	text-decoration: none;
+	color: black;
+}
+
+/* Contenido - Navegación */
+
+.content .c1 nav a
+{
+	border-bottom: 1px solid #9B9B9B;
+	color: #424242;
+	display: block;
+	padding: 10px;
+
+	-webkit-transition: all .4s ease-in-out;
+}
+
+.content .c1 nav a:hover
+{
+	background: #F5F5F5;
+	border-bottom: 1px solid #444444 !important;
+	box-shadow: 2px 2px 5px #E6E6E6 inset;
+	color: black;
+}
+
+.content .c1 nav a:last-child
+{
+	border-bottom: 0;
+}
+
+/* Contenido - Cajas */
+
+.content .box
+{
+	background: #F5F5F5;
+	border-radius: 5px;
+	padding: 5px;
+	border: 1px solid #D8D8D8;
+	border-bottom-width: 2px;
+	margin: 10px 0;
+}
+
+/* Contenido - Estadisticas */
+
+.content .stats p
+{
+	float: left;
+	width: 180px;
+	text-align: center;
+}
+
+.content .stats p b
+{
+	display: block;
+	font-size: 14px;
+	margin-bottom: 8px;
+}
+
+/* Formulario */
+
+.notes
+{
+	height: 100px;
+	width: 95%;
+}
+
+.form1 input:not([type='submit'])
+{
+	width: 350px;
+	height: 23px;
+	padding: 5px;
+}
+
+/* Pie de página */
+
+footer
+{
+	border-top: 2px solid #444444;
+	padding: 10px;
+	font-size: 12px;
+	color: #666;
+}

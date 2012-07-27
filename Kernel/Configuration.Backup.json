@@ -1,0 +1,74 @@
+{
+	/*######################################################
+	//	CONEXIÓN AL SERVIDOR [MYSQL]
+	//####################################################*/
+	"mysql": 
+	{
+		"host": 		"localhost",
+		"user": 		"root",
+		"pass": 		"infoxyomi146179",
+		"name": 		"beat",
+		"prefix": 		"",
+		"port":			"3306",
+		"optimize.error": 		true,
+		"repair.error": 		true
+	},
+
+	/*######################################################
+	//	UBICACIÓN DEL SITIO WEB
+	//####################################################*/
+	"site": 
+	{
+		"country": 			"America/Mexico_City",
+		"path": 			"localhost/beat",
+		"admin": 			"localhost/beat/imgod",
+		"resources": 		"localhost/resources/beatrock",
+		"resources.sys": 	"localhost/resources/systemv2"
+	},
+
+	/*######################################################
+	//	SEGURIDAD
+	//####################################################*/
+	"security": 
+	{
+		"enabled": 	false,
+		"level": 	4,
+		"hash": 	"3-L)zE-ez}h3)7({%Bz-CL2hjKD&8BCIAfbH_82_3hD{}C92^-BJF6J5F68-y&&xd})FhJ{f0(I{7lFj"
+	},
+
+	/*######################################################
+	//	ERRORES	& CONSOLA
+	//####################################################*/
+	"errors": 
+	{
+		"details": 	true,
+		"hidden": 	false,
+		"report": 	"E_ALL & ~E_NOTICE & ~E_WARNING & ~E_DEPRECATED",
+		"email.to": "webmaster@infosmart.mx"
+	},
+
+	"logs": 
+	{
+		"capture": 	true,
+		"save": 	"onerror"
+	},
+
+	/*######################################################
+	//	PARAMETROS EXTRA DE SERVIDOR
+	//####################################################*/
+	"server": 
+	{
+		"gzip": true,
+		"host": true,
+		"ssl": 	null
+	},
+
+	/*######################################################
+	//	MEMCACHE
+	//####################################################*/
+	"memcache": 
+	{
+		"host": "localhost",
+		"port": 11211
+	}
+}
