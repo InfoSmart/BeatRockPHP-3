@@ -160,7 +160,8 @@ class Lang
 
 			foreach($params[$section] as $param => $value)
 			{
-				$value = utf8_decode();
+				$value = utf8_decode($value);
+				$value = ShortCuts($value);
 
 				if($tpl)
 					$data = str_ireplace('%' . $param . '%', '<span data-lang-param="' . $param . '">' . $value . '</span>', $data);
