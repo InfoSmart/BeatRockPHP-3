@@ -5,7 +5,7 @@
  * recomendado para todas las aplicaciones de InfoSmart.
  *
  * InfoSmart. Todos los derechos reservados.
- * Copyright 2012 - Iv谩n Bravo Bravo.
+ * Copyright 2012 - Iv醤 Bravo Bravo.
  * http://www.infosmart.mx/ - http://www.jquery.com/
 **/
 
@@ -13,8 +13,8 @@ window.requestFileSystem 	= window.requestFileSystem || window.webkitRequestFile
 window.Notifications 		= window.webkitNotifications || window.Notifications;
 
 /**
- * M贸dulo: KERNEL
- * Funciones de transformaci贸n, comprobaci贸n y general.
+ * M骴ulo: KERNEL
+ * Funciones de transformaci髇, comprobaci髇 y general.
 */
 
 Kernel =
@@ -86,7 +86,7 @@ Kernel =
 		document.title = title;
 		window.history.replaceState(null, '', path);
 
-		console.log('KERNEL - Se ha cambiado la direcci贸n natural a "' + path + '" correctamente.');
+		console.log('KERNEL - Se ha cambiado la direcci髇 natural a "' + path + '" correctamente.');
 	},
 
 	SetTitle : function(title, animation, count)
@@ -168,11 +168,11 @@ Kernel =
 			
 			if(Options.page !== '')
 			{
-				console.log('KERNEL - Se ha abierto una nueva ventana con la direcci贸n "' + options.page + '"');
+				console.log('KERNEL - Se ha abierto una nueva ventana con la direcci髇 "' + options.page + '"');
 				return window.open(options.page, options.name, settings, '1');
 			}
 			else
-				console.warn('KERNEL - Se ha intentado abrir una ventana sin direcci贸n de destino.');
+				console.warn('KERNEL - Se ha intentado abrir una ventana sin direcci髇 de destino.');
 		}
 		catch(e)
 		{ console.error('KERNEL - Ha sucedido un error al intentar abrir una ventana nueva.'); }
@@ -261,8 +261,8 @@ Kernel =
 }
 
 /**
- * M贸dulo: Geo
- * Funciones de geolocalizaci贸n con HTML 5.
+ * M骴ulo: Geo
+ * Funciones de geolocalizaci髇 con HTML 5.
 */
 
 Geo =
@@ -282,7 +282,7 @@ Geo =
 		if(error == '')
 			error = undefined;		
 
-		console.log('KERNEL - Obteniendo ubicaci贸n geogr谩fica.');
+		console.log('KERNEL - Obteniendo ubicaci髇 geogr醘ica.');
 		navigator.geolocation.getCurrentPosition(Geo.Set, error);
 
 		if(updated == true)
@@ -294,7 +294,7 @@ Geo =
 		Coords = data.coords;
 
 		if(Geo.Latitude !== '')
-			console.log('KERNEL - Cambios en la ubicaci贸n geogr谩fica, actualizando...');
+			console.log('KERNEL - Cambios en la ubicaci髇 geogr醘ica, actualizando...');
 
 		Geo.Latitude	= Coords.latitude;
 		Geo.Longitude	= Coords.longitude;
@@ -307,8 +307,8 @@ Geo =
 }
 
 /**
- * M贸dulo: Data
- * Funciones para guardar y obtener informaci贸n "localStorage"
+ * M骴ulo: Data
+ * Funciones para guardar y obtener informaci髇 "localStorage"
 */
 
 Data =
@@ -320,7 +320,7 @@ Data =
 			window.localStorage.setItem(param, value);
 		}
 		catch (e)
-		{ console.error('KERNEL - Ha ocurrido un error al intentar guardar informaci贸n local.'); }
+		{ console.error('KERNEL - Ha ocurrido un error al intentar guardar informaci髇 local.'); }
 	},
 
 	Get: function(param)
@@ -330,7 +330,7 @@ Data =
 			return window.localStorage.getItem(param);
 		}
 		catch(e)
-		{ console.error('KERNEL - Ha ocurrido un error al intentar obtener informaci贸n local.'); }
+		{ console.error('KERNEL - Ha ocurrido un error al intentar obtener informaci髇 local.'); }
 	},
 
 	Delete: function(param)
@@ -340,12 +340,12 @@ Data =
 			window.localStorage.removeItem(param);
 		}
 		catch(e)
-		{ console.error('KERNEL - Ha ocurrido un error al intentar eliminar informaci贸n local.'); }
+		{ console.error('KERNEL - Ha ocurrido un error al intentar eliminar informaci髇 local.'); }
 	}
 }
 
 /**
- * M贸dulo: Cookie
+ * M骴ulo: Cookie
  * Funciones para guardar y obtener Cookies.
 */
 
@@ -367,7 +367,7 @@ Cookie =
 				Cookie += domain + '';
 
 			document.cookie = Cookie;
-			console.log('KERNEL - Se ha guardado la cookie ' + param + ' con 茅xito.');
+			console.log('KERNEL - Se ha guardado la cookie ' + param + ' con 閤ito.');
 		}
 		catch(e)
 		{ console.error('KERNEL - Ha ocurrido un error al intentar guardar una Cookie.'); }
@@ -404,8 +404,8 @@ Cookie =
 }
 
 /**
- * M贸dulo: Time
- * Funciones para la obtenci贸n y manipulaci贸n de fechas.
+ * M骴ulo: Time
+ * Funciones para la obtenci髇 y manipulaci髇 de fechas.
 */
 
 Time = 
@@ -448,7 +448,7 @@ Time =
 
 	Calculate: function(time, num)
 	{
-		var inte = ["segundo", "minuto", "hora", "d铆a", "semana", "mes", "a帽o"];
+		var inte = ["segundo", "minuto", "hora", "d韆", "semana", "mes", "a駉"];
 		var dur = [60, 60, 24, 7, 4.35, 12];
 		
 		time = parseInt(time);
@@ -497,8 +497,8 @@ Time =
 }
 
 /**
- * M贸dulo: Tpl
- * Funciones para la modificaci贸n de la plantilla actual.
+ * M骴ulo: Tpl
+ * Funciones para la modificaci髇 de la plantilla actual.
 */
 
 Tpl = 
@@ -570,8 +570,8 @@ Tpl =
 }
 
 /**
- * M贸dulo: Json
- * Funciones para la manipulaci贸n de objetos JSON.
+ * M骴ulo: Json
+ * Funciones para la manipulaci髇 de objetos JSON.
 */
 
 Json =
@@ -764,8 +764,8 @@ Json =
 }
 
 /**
- * M贸dulo: Utils
- * Utilidades y dem谩s.
+ * M骴ulo: Utils
+ * Utilidades y dem醩.
 */
 
 Utils = 
@@ -785,7 +785,7 @@ Utils =
 
 	HaveLetters: function(str)
 	{
-		letters = 'abcdefghyjklmn帽opqrstuvwxyz';
+		letters = 'abcdefghyjklmn駉pqrstuvwxyz';
 		str = str.toLowerCase();
 
 		for(i = 0; i < str.length; i++)
@@ -799,7 +799,7 @@ Utils =
 
 	HaveLower: function(str)
 	{
-		letters = 'abcdefghyjklmn帽opqrstuvwxyz';
+		letters = 'abcdefghyjklmn駉pqrstuvwxyz';
 
 		for(i = 0; i < str.length; i++)
 		{
@@ -812,7 +812,7 @@ Utils =
 
 	HaveUpper: function(str)
 	{
-		letters = 'ABCDEFGHIJKLMN脩OPQRSTUVWXYZ';
+		letters = 'ABCDEFGHIJKLMN袿PQRSTUVWXYZ';
 
 		for(i = 0; i < str.length; i++)
 		{
@@ -872,7 +872,7 @@ Utils =
 }
 
 /**
- * M贸dulo: Photos
+ * M骴ulo: Photos
  * Funciones especiales para el procesamiento de imagenes.
 */
 
@@ -882,7 +882,7 @@ Photos =
 	{
 		if(!Kernel.Allow('file'))
 		{
-			alert('Lo sentimos, pero su navegador web no permite la subida de archivos por este sistema. Actualize su navegador o cambiese a otro m谩s moderno.');
+			alert('Lo sentimos, pero su navegador web no permite la subida de archivos por este sistema. Actualize su navegador o cambiese a otro m醩 moderno.');
 			return false;
 		}
 
@@ -893,7 +893,7 @@ Photos =
 
 		if(Ph.type !== 'image/png' && Ph.type !== 'image/jpeg' && Ph.type !== 'image/gif')
 		{
-			alert('El formato de la imagen no es v谩lida.');
+			alert('El formato de la imagen no es v醠ida.');
 			return false;
 		}
 
@@ -903,7 +903,7 @@ Photos =
 	Read: function(photo, element)
 	{
 		if(!Kernel.Allow('file'))
-			return alert('Lo sentimos, pero su navegador web no permite la subida de archivos por este sistema. Actualize su navegador o cambiese a otro m谩s moderno.');
+			return alert('Lo sentimos, pero su navegador web no permite la subida de archivos por este sistema. Actualize su navegador o cambiese a otro m醩 moderno.');
 
 		if(photo == undefined)
 			return;
@@ -911,13 +911,13 @@ Photos =
 		Ph = photo.target.files[0];
 
 		if(Ph.type !== 'image/png' && Ph.type !== 'image/jpeg' && Ph.type !== 'image/gif')
-			return alert('El formato de la imagen no es v谩lida.');
+			return alert('El formato de la imagen no es v醠ida.');
 
 		File = new FileReader();
 
 		File.onerror = function()
 		{
-			alert('隆Uy! Ha ocurrido un error mientras procesabamos la imagen, vuelve a intentarlo.')
+			alert('y! Ha ocurrido un error mientras procesabamos la imagen, vuelve a intentarlo.')
 		}
 
 		File.onload = function(e)
@@ -931,7 +931,7 @@ Photos =
 	Return: function(photo, callback)
 	{
 		if(!Kernel.Allow('file'))
-			return alert('Lo sentimos, pero su navegador web no permite la subida de archivos por este sistema. Actualize su navegador o cambiese a otro m谩s moderno.');
+			return alert('Lo sentimos, pero su navegador web no permite la subida de archivos por este sistema. Actualize su navegador o cambiese a otro m醩 moderno.');
 
 		if(photo == undefined || callback == undefined)
 			return;
@@ -939,13 +939,13 @@ Photos =
 		Ph = photo.target.files[0];
 
 		if(Ph.type !== 'image/png' && Ph.type !== 'image/jpeg' && Ph.type !== 'image/gif')
-			return alert('El formato de la imagen no es v谩lida.');
+			return alert('El formato de la imagen no es v醠ida.');
 
 		File = new FileReader();
 
 		File.onerror = function()
 		{
-			alert('隆Uy! Ha ocurrido un error mientras procesabamos la imagen, vuelve a intentarlo.')
+			alert('y! Ha ocurrido un error mientras procesabamos la imagen, vuelve a intentarlo.')
 		}
 
 		File.onload = function(e)
@@ -959,7 +959,7 @@ Photos =
 	Get: function(photo, callback)
 	{
 		if(!Kernel.Allow('file'))
-			return alert('Lo sentimos, pero su navegador web no permite la subida de archivos por este sistema. Actualize su navegador o cambiese a otro m谩s moderno.');
+			return alert('Lo sentimos, pero su navegador web no permite la subida de archivos por este sistema. Actualize su navegador o cambiese a otro m醩 moderno.');
 
 		if(photo == undefined || callback == undefined)
 			return;
@@ -967,13 +967,13 @@ Photos =
 		Result = Ph = photo.target.files[0];
 
 		if(Ph.type !== 'image/png' && Ph.type !== 'image/jpg' && Ph.type !== 'image/gif')
-			return alert('El formato de la imagen no es v谩lida.');
+			return alert('El formato de la imagen no es v醠ida.');
 
 		File = new FileReader();
 
 		File.onerror = function()
 		{
-			alert('隆Uy! Ha ocurrido un error mientras procesabamos la imagen, vuelve a intentarlo.')
+			alert('y! Ha ocurrido un error mientras procesabamos la imagen, vuelve a intentarlo.')
 		}
 
 		File.onload = function(e)
@@ -987,7 +987,7 @@ Photos =
 }
 
 /**
- * M贸dulo: Files
+ * M骴ulo: Files
  * Funciones especiales para el procesamiento de archivos.
 */
 
@@ -996,7 +996,7 @@ Files =
 	Return: function(file, callback)
 	{
 		if(!Kernel.Allow('file'))
-			return alert('Lo sentimos, pero su navegador web no permite la subida de archivos por este sistema. Actualize su navegador o cambiese a otro m谩s moderno.');
+			return alert('Lo sentimos, pero su navegador web no permite la subida de archivos por este sistema. Actualize su navegador o cambiese a otro m醩 moderno.');
 
 		if(file == undefined || callback == undefined)
 			return;
@@ -1008,7 +1008,7 @@ Files =
 
 		File.onerror = function()
 		{
-			alert('隆Uy! Ha ocurrido un error mientras procesabamos la imagen, vuelve a intentarlo.')
+			alert('y! Ha ocurrido un error mientras procesabamos la imagen, vuelve a intentarlo.')
 		}
 
 		File.onload = function(e)
@@ -1022,7 +1022,7 @@ Files =
 	Get: function(file, callback)
 	{
 		if(!Kernel.Allow('file'))
-			return alert('Lo sentimos, pero su navegador web no permite la subida de archivos por este sistema. Actualize su navegador o cambiese a otro m谩s moderno.');
+			return alert('Lo sentimos, pero su navegador web no permite la subida de archivos por este sistema. Actualize su navegador o cambiese a otro m醩 moderno.');
 
 		if(file == undefined || callback == undefined)
 			return;
@@ -1034,7 +1034,7 @@ Files =
 
 		File.onerror = function()
 		{
-			alert('隆Uy! Ha ocurrido un error mientras procesabamos la imagen, vuelve a intentarlo.')
+			alert('y! Ha ocurrido un error mientras procesabamos la imagen, vuelve a intentarlo.')
 		}
 
 		File.onload = function(e)
@@ -1058,32 +1058,12 @@ Files =
 }
 
 /**
- * M贸dulo: Language
+ * M骴ulo: Language
  * Funciones especiales para el sistema de lenguajes.
 */
 
 Language = 
 {
-	Init: function(language, tag)
-	{
-		Lng = Lang[language];
-
-		if(Lng == undefined)
-			return console.error('El lenguaje que ha seleccionado no se encuentra disponible.');
-
-		if(tag == undefined || tag == '')
-			tag = 'label';
-
-		Html = $('#page').html();
-
-		function str_ireplace(a,b,c){var d,e="";var f=0;var g;var h=function(a){return a.replace(/([\\\^\$*+\[\]?{}.=!:(|)])/g,"\\$1")};a+="";f=a.length;if(Object.prototype.toString.call(b)!=="[object Array]"){b=[b];if(Object.prototype.toString.call(a)==="[object Array]"){while(f>b.length){b[b.length]=b[0]}}}if(Object.prototype.toString.call(a)!=="[object Array]"){a=[a]}while(a.length>b.length){b[b.length]=""}if(Object.prototype.toString.call(c)==="[object Array]"){for(e in c){if(c.hasOwnProperty(e)){c[e]=str_ireplace(a,b,c[e])}}return c}f=a.length;for(d=0;d<f;d++){g=new RegExp(h(a[d]),"gi");c=c.replace(g,b[d])}return c}
-
-		for(Param in Lng)
-			Html = str_ireplace('%' + Param + '%', '<'+ tag +' data-lang-param="' + Param + '">' + Lng[Param] + '</'+ tag +'>', Html);
-
-		$('#page').html(Html);
-	},
-
 	Change: function(language)
 	{
 		Lng = Lang[language];
@@ -1091,9 +1071,10 @@ Language =
 		if(Lng == undefined)
 			return console.error('El lenguaje que ha seleccionado no se encuentra disponible.');
 
-		$('label[data-lang-param]').each(function()
+		$('[data-lang-param]').each(function()
 		{
-			Param = $(this).data('lang-param');
+			Section = $(this).data('lang-section');
+			Param 	= $(this).data('lang-param');
 			$(this).html(Lng[Param]);
 		});
 	}
@@ -1140,7 +1121,7 @@ $(document).on('ready', function()
 
 	_Protocol = document.location.protocol + '//';
 
-	/** INICIALIZACI脫N CORRECTA **/
+	/** INICIALIZACI覰 CORRECTA **/
 
 	console.log('Se ha preparado el Kernel con el protocolo ' + _Protocol);
 });
