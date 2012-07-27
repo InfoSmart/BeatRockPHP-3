@@ -1066,16 +1066,28 @@ Language =
 {
 	Change: function(language)
 	{
+		if(Lang == undefined)
+			return console.error('El sistema de idiomas no esta disponible.');
+
 		Lng = Lang[language];
 
 		if(Lng == undefined)
-			return console.error('El lenguaje que ha seleccionado no se encuentra disponible.');
+			return console.error('El idioma que ha seleccionado no se encuentra disponible.');
 
 		$('[data-lang-param]').each(function()
 		{
 			Section = $(this).data('lang-section');
 			Param 	= $(this).data('lang-param');
-			$(this).html(Lng[Param]);
+
+			if(Section != undefined && Section != '')
+			{
+				if(Lng[Section] == undefined)
+					return;
+
+				$(this).html(Lng[Section][Param]);
+			}
+			else
+				$(this).html(Lng[Param]);
 		});
 	}
 }
