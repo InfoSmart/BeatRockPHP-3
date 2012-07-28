@@ -73,7 +73,7 @@ Tpl::addMeta('description', $site['site_description'], 'itemprop');
 	<meta name="description" content="%site_description%" />
 	<meta name="keywords" content="%site_keywords%" />
 	
-	<meta name="build" content="%SITE_NAME% - Versión: %site_version% - Última revisión: %site_revision%" />
+	<meta name="build" content="%SITE_NAME% - Versión: %site_version% - Revisión: %site_revision%" />
 	
 	<meta name="author" content="%PATH%/humans.txt" />
 	<meta name="publisher" content="%site_publisher%" />
