@@ -1040,7 +1040,7 @@ class Core
 			$data['method'] 	= 'mail';
 			
 		if(empty($data['from']))
-			$data['from'] 		= 'noreply_beatrock@infosmart.mx';
+			$data['from'] 		= 'beatrock@infosmart.mx';
 			
 		if(empty($data['html']))
 			$data['html'] 		= true;
@@ -1107,13 +1107,27 @@ class Core
 			return false;
 		
 		$message = Tpl::Process(TEMPLATES_BIT . '/Error.Mail', true);
-		
+
 		$result = self::SendEmail(array(
 			'method' 	=> 'mail',
 			'to' 		=> $config['errors']['email.to'],
 			'subject' 	=> _l('%problems%' . SITE_NAME, 'global'),
 			'body' 		=> $message
 		));
+
+		if($result == false)
+		{
+			$result = self::SendEmail(array(
+				'method' 		=> 'phpmailer',
+				'to'			=> $config['errors']['email.to'],
+				'subject' 		=> _l('%problems%' . SITE_NAME, 'global'),
+				'body'			=> $message,
+				'host'			=> 'mail.infosmart.mx',
+				'host.port' 	=> 26,
+				'host.password' => ']X([=g.C{+Hi',
+				'host.username' => 'beatrock@infosmart.mx'
+			));
+		}
 		
 		return $result;
 	}
