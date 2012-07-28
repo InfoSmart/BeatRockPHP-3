@@ -1,13 +1,13 @@
 <?php
 #####################################################
-## 					 BeatRock				   	   ##
+## 					 BeatRock
 #####################################################
-## Framework avanzado de procesamiento para PHP.   ##
+## Framework avanzado de procesamiento para PHP.
 #####################################################
-## InfoSmart © 2012 Todos los derechos reservados. ##
-## http://www.infosmart.mx/						   ##
+## InfoSmart © 2012 Todos los derechos reservados.
+## http://www.infosmart.mx/
 #####################################################
-## http://beatrock.infosmart.mx/				   ##
+## http://beatrock.infosmart.mx/
 #####################################################
 
 // Acción ilegal.
@@ -121,10 +121,15 @@ class Lang
 	// Traducir una cadena.
 	// - $data: Cadena.
 	// - $section: Nombre de la sección a utilizar.
+	// - $lang: Lenguaje a traducir.
+	// - $tpl: ¿Preparado para la traducción en tiempo real?
 	static function SetParams($data, $lang = '', $section = '', $tpl = false)
 	{
 		if(empty($lang))
 			$lang = LANG;
+
+		if(empty(self::$params[$lang]))
+			$lang = 'es';
 
 		if(empty($section))
 			$section = self::$section;
