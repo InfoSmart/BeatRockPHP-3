@@ -45,7 +45,7 @@ if($page['admin'])
 ## ¡EN MANTENIMIENTO!
 #############################################################
 
-if($site['site_status'] !== 'open')
+if($site['site_status'] !== 'open' AND $page['maintenance'] !== false)
 {
 	header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
 	header('Cache-Control: no-cache');
