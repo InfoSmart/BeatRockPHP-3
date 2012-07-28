@@ -288,7 +288,7 @@ class Core
 		if($html)
 			$str = htmlentities($str, ENT_QUOTES | ENT_SUBSTITUTE, $e, false);
 			
-		$str = mysql_real_escape_string($str);
+		$str = MySQL::escape_string($str);
 		$str = str_replace('&amp;', '&', $str);
 		$str = iconv($e, 'ISO-8859-15//TRANSLIT//IGNORE', $str);
 		
@@ -711,7 +711,7 @@ class Core
 
 		$poss = str_split($poss, 1);
 
-		for($i = 1; $i < $length; $i++)
+		for($i = 1; $i < $length; ++$i)
 		{
 			mt_srand((double)microtime() * 1000000);
 
@@ -1376,6 +1376,19 @@ class Core
  
 		$text = preg_replace(array_values($patron),array_keys($patron),$text);
 		return $text;
+	}
+
+	static function SplitArray($array, $append1 = '', $append2 = '<br />')
+	{
+		if(!is_array($array))
+			return false;
+
+		$result = '';
+
+		foreach($array as $value)
+			$result .= $append1 . $value . $append2;
+
+		return $result;
 	}
 	
 	// Obtención del uso de memoria en Bytes por el proceso de Apache. "httpd"
