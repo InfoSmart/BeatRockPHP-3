@@ -88,6 +88,16 @@ require('./Header.php');
 					
 					<span>Escriba el nombre del archivo de su imagen Favicon.</span>
 				</p>
+
+				<p>
+					<label for="register_all_visits">Registrar todas las visitas:</label>
+					<select name="register_all_visits" class="btn">
+						<option value="false">No</option>
+						<option value="true">Si</option>	
+					</select>
+					
+					<span>Seleccione si desea registrar todas las visitas y accesos a su sitio, desactivarlo aliviana el peso de su base de datos.</span>
+				</p>
 			</div>
 
 			<div class="c2">
