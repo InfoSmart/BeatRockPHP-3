@@ -1,27 +1,37 @@
 <?php
 #####################################################
-## 					 BeatRock				   	   ##
+## 					 BeatRock
 #####################################################
-## Framework avanzado de procesamiento para PHP.   ##
+## Framework avanzado de procesamiento para PHP.
 #####################################################
-## InfoSmart © 2012 Todos los derechos reservados. ##
-## http://www.infosmart.mx/						   ##
+## InfoSmart © 2012 Todos los derechos reservados.
+## http://www.infosmart.mx/
 #####################################################
-## http://beatrock.infosmart.mx/				   ##
+## http://beatrock.infosmart.mx/
 #####################################################
 
 // Acción ilegal.
 if(!defined('BEATROCK'))
-	exit;	
+	exit;
+
+## --------------------------------------------------
+##        Módulo MySQL
+## --------------------------------------------------
+## Este módulo contiene las funciones y herramientas
+## necesarias para interactuar con el servidor MySQL.
+## --------------------------------------------------
 
 class MySQL
 {
 	static $connection 		= null;
 	static $connected 		= false;
+
 	static $querys 			= 0;
 	static $last_query 		= '';
 	static $last_resource 	= null;
+
 	static $cache 			= array();
+	static $free_result 	= false;
 	
 	// Lanzar error.
 	// - $code: Código del error.
@@ -30,7 +40,7 @@ class MySQL
 	static function Error($code, $function, $message = '')
 	{		
 		if(empty($message))
-			$message = mysql_error();
+			$message = mysqli_error(self::$connection);
 
 		Lang::SetSection('mod.mysql');
 		
@@ -63,7 +73,7 @@ class MySQL
 		if(!self::Ready())
 			return;
 		
-		mysql_close();
+		mysqli_close(self::$connection);
 		Reg('%connection.out%');
 
 		self::$connection 	= null;
@@ -94,29 +104,42 @@ class MySQL
 			$port		= $mysql['port'];		
 		}
 
-		if(empty($host))
-			return;
-			
-		$sql 	= mysql_connect("$host:$port", $username, $password) or self::Error('mysql.connect', __FUNCTION__);
-		mysql_select_db($dbname, $sql) or self::Recover($dbname);
+		if(empty($host) OR empty($dbname))
+			return false;
 
-		$test 	= mysql_query("SELECT null FROM $mysql[prefix]site_config");
+		$sql = mysqli_connect($host, $username, $password, $dbname, $port) or self::Error('mysql.connect', __FUNCTION__);
+
+		self::$connection 	= $sql;
+		self::$connected 	= true;	
+
+		self::select_db($dbname);
+		$test 	= mysqli_query($sql, "SELECT null FROM $mysql[prefix]site_config");
 		
 		if(!$test)
 			self::Recover($dbname, 2);
 
-		Reg('%connection.correct%', 'mysql');
-			
-		self::$connected 	= true;
-		self::$connection 	= $sql;
+		Reg('%connection.correct%', 'mysql');			
 			
 		if($config['mysql']['repair'])
 			self::Repair();
+
+		return $sql;
+	}
+
+	// Cambiar de base de datos en ejecución.
+	// - $dbname: Nombre de la base de datos.
+	static function select_db($dbname)
+	{
+		if(!self::Ready())
+			return self::Error('mysql.need.connection', __FUNCTION__);
+
+		mysqli_select_db(self::$connection, $dbname) or self::Recover($dbname);
 	}
 	
 	// Ejecutar consulta en el servidor MySQL.
 	// - $q: Consulta a ejecutar.
-	static function query($q)
+	// - $free: ¿Liberar memoria al terminar?
+	static function query($q, $free = false)
 	{
 		if(!self::Ready())
 			return self::Error('mysql.need.connection', __FUNCTION__);
@@ -132,10 +155,20 @@ class MySQL
 		$q 					= str_ireplace('{DA}', DB_PREFIX, $q);		
 		self::$last_query 	= $q;
 		
-		$sql = mysql_query($q) or self::Error('mysql.query', __FUNCTION__);
-		
+		$sql = mysqli_query(self::$connection, $q) or self::Error('mysql.query', __FUNCTION__);		
 		++self::$querys;
-		self::$last_resource = $sql;
+
+		if($free OR self::$free_result)
+		{
+			self::free_result($sql);
+
+			self::$last_resource 	= null;
+			self::$free_result 		= false;
+		}
+		else
+			self::$last_resource = $sql;
+
+		gc_collect_cycles();
 		
 		Reg('%query.correct%', 'mysql');
 		return $sql;
@@ -159,8 +192,16 @@ class MySQL
 		if(!Contains($q, 'SELECT', true))
 			return self::Error('mysql.query.novalid', __FUNCTION__);
 		
-		$sql = self::query($q);
-		return mysql_num_rows($sql);
+		$sql 	= self::query($q);
+		$result = mysqli_num_rows($sql);
+
+		if(self::$free_result)
+		{
+			self::free_result();
+			self::$free_result = false;
+		}
+
+		return $result;
 	}
 	
 	// Obtener los valores de una consulta MySQL.
@@ -182,7 +223,13 @@ class MySQL
 			return self::Error('mysql.query.novalid', __FUNCTION__);
 		
 		$sql 	= self::query($q);
-		$result = self::num_rows($sql) > 0 ? mysql_fetch_assoc($sql) : false;
+		$result = self::num_rows($sql) > 0 ? mysqli_fetch_assoc(self::$connection, $sql) : false;
+
+		if(self::$free_result)
+		{
+			self::free_result();
+			self::$free_result = false;
+		}
 		
 		return $result;
 	}
@@ -206,7 +253,7 @@ class MySQL
 		preg_match("/SELECT ([^<]+) FROM/is", $q, $params);
 
 		if(!Contains($q, 'SELECT', true) OR empty($params[1]) OR $params[1] == '*' OR $params[1] == 'null')
-			return self::Error("mysql.query.novalid", __FUNCTION__);
+			return self::Error('mysql.query.novalid', __FUNCTION__);
 
 		$pp 	= explode(',', $params[1]);			
 		$row 	= self::query_assoc($q);	
@@ -222,6 +269,12 @@ class MySQL
 			}
 			else
 				$result = $row[$params[1]];
+		}
+
+		if(self::$free_result)
+		{
+			self::free_result();
+			self::$free_result = false;
 		}
 
 		return $result;
@@ -295,11 +348,47 @@ class MySQL
 		if($sql == false)
 			return false;
 
-		return array(
+		$result = array(
 			'resource' 	=> $sql,
-			'assoc' 	=> mysql_fetch_assoc($sql),
-			'rows' 		=> mysql_num_rows($sql)
+			'assoc' 	=> mysqli_fetch_assoc($sql),
+			'rows' 		=> mysqli_num_rows($sql)
 		);
+
+		if(self::$free_result)
+		{
+			self::free_result();
+			self::$free_result = false;
+		}
+
+		return $result;
+	}
+
+	// Obtener las filas que han sido afectadas en la última consulta.
+	static function affected_rows()
+	{
+		if(!self::Ready())
+			return self::Error('mysql.need.connection', __FUNCTION__);
+
+		return mysqli_affected_rows(self::$connection);
+	}
+
+	// Obtener la última ID insertada en la base de datos.
+	static function last_id()
+	{
+		if(!self::Ready())
+			return self::Error('mysql.need.connection', __FUNCTION__);
+
+		return mysqli_insert_id(self::$connection);
+	}
+
+	// Filtrar una cadena para su uso en las consultas.
+	// - $str: Cadena.
+	static function escape_string($str)
+	{
+		if(!self::Ready())
+			return self::Error('mysql.need.connection', __FUNCTION__);
+
+		return mysqli_escape_string(self::$connection, $str);
 	}
 	
 	// Obtener numero de valores de un recurso MySQL o la última consulta hecha.
@@ -312,7 +401,7 @@ class MySQL
 		if(empty($q))
 			$q = self::$last_resource;
 			
-		return mysql_num_rows($q);
+		return mysqli_num_rows($q);
 	}
 	
 	// Obtener los valores de un recurso MySQL o la última consulta hecha.
@@ -325,7 +414,91 @@ class MySQL
 		if(empty($q))
 			$q = self::$last_resource;
 			
-		return mysql_fetch_assoc($q);
+		$result = mysqli_fetch_assoc($q);
+
+		if(self::$free_result)
+		{
+			self::free_result();
+			self::$free_result = false;
+		}
+
+		return $result;
+	}
+
+	// Obtener los valores de un recurso MySQL o la última consulta hecha.
+	// - $q: Recurso de la consulta.
+	static function fetch_object($q = '')
+	{
+		if(empty($q) AND !self::ReadyQuery())
+			return self::Error('mysql.query.need', __FUNCTION__);
+		
+		if(empty($q))
+			$q = self::$last_resource;
+			
+		$result = mysqli_fetch_object($q);
+
+		if(self::$free_result)
+		{
+			self::free_result();
+			self::$free_result = false;
+		}
+
+		return $result;
+	}
+
+	// Obtener los valores de un recurso MySQL o la última consulta hecha.
+	// - $q: Recurso de la consulta.
+	static function fetch_array($q = '')
+	{
+		if(empty($q) AND !self::ReadyQuery())
+			return self::Error('mysql.query.need', __FUNCTION__);
+		
+		if(empty($q))
+			$q = self::$last_resource;
+			
+		$result = mysqli_fetch_array($q);
+
+		if(self::$free_result)
+		{
+			self::free_result();
+			self::$free_result = false;
+		}
+
+		return $result;
+	}
+
+	// Obtener los valores de un recurso MySQL o la última consulta hecha.
+	// - $q: Recurso de la consulta.
+	static function fetch_row($q = '')
+	{
+		if(empty($q) AND !self::ReadyQuery())
+			return self::Error('mysql.query.need', __FUNCTION__);
+		
+		if(empty($q))
+			$q = self::$last_resource;
+			
+		$result = mysqli_fetch_row($q);
+
+		if(self::$free_result)
+		{
+			self::free_result();
+			self::$free_result = false;
+		}
+
+		return $result;
+	}
+
+	// Liberar la memoria de la última consulta realizada.
+	// - $q: Recurso de la consulta.
+	static function free_result($q = '')
+	{
+		if(empty($q) AND !self::ReadyQuery())
+			return self::Error('mysql.query.need', __FUNCTION__);
+		
+		if(empty($q))
+			$q = self::$last_resource;
+
+		return mysqli_free_result($q);
 	}
 	
 	// Obtener un dato especifico de un recurso MySQL o la última consulta hecha.
@@ -355,7 +528,7 @@ class MySQL
 		{
 			$query = self::query('SHOW TABLES');
 			
-			while($tmp = mysql_fetch_array($query))
+			while($tmp = self::fetch_array($query))
 				self::query("ALTER TABLE $tmp[0] ENGINE = $engine");
 		}
 		else if(is_array($tables))
@@ -375,7 +548,7 @@ class MySQL
 		{
 			$query = self::query('SHOW TABLES');
 			
-			while($tmp = mysql_fetch_array($query))
+			while($tmp = self::fetch_array($query))
 				self::query("OPTIMIZE TABLE $tmp[0]");
 		}
 		else if(is_array($tables))
@@ -395,7 +568,7 @@ class MySQL
 		{
 			$query = self::query('SHOW TABLES');
 			
-			while($tmp = mysql_fetch_array($query))
+			while($tmp = self::fetch_array($query))
 				self::query("REPAIR TABLE $tmp[0]");
 		}
 		else if(is_array($tables))
@@ -413,16 +586,16 @@ class MySQL
 		$result = array();
 		$query 	= self::query('SHOW TABLES');
 		
-		while($row = mysql_fetch_row($query))
+		while($row = self::fetch_row($query))
 		{
 			$fix = str_replace('_', ' ', $row[0]);
 
 			$r 	= query("SHOW COLUMNS FROM $row[0]");
 			$rc = array();
 			
-			if(mysql_num_rows($r) > 0)
+			if(self::num_rows($r) > 0)
 			{
-				while($roww = mysql_fetch_assoc($r))
+				while($roww = self::fetch_assoc($r))
 					$rc[] = $roww['Field'];
 			}
 
@@ -457,8 +630,8 @@ class MySQL
 		
 		if($type == 1)
 		{
-			mysql_query("CREATE DATABASE IF NOT EXISTS $dbname");
-			mysql_select_db($dbname) or self::Error('mysql.recovery', __FUNCTION__, '%error.db%');
+			mysqli_query(self::$connection, "CREATE DATABASE IF NOT EXISTS $dbname");
+			mysqli_select_db(self::$connection, $dbname) or self::Error('mysql.recovery', __FUNCTION__, '%error.db%');
 			
 			Reg('%backup.createdb%');
 			self::Recover($dbname, 2);
@@ -472,7 +645,7 @@ class MySQL
 				if(empty($q))
 					continue;
 					
-				mysql_query(trim($q)) or self::Error('mysql.recovery', __FUNCTION__, '%error.backup.query% ' . $q);
+				mysqli_query(self::$connection, trim($q)) or self::Error('mysql.recovery', __FUNCTION__, '%error.backup.query% ' . $q);
 			}
 			
 			Reg('%backup.correct%');
@@ -488,7 +661,7 @@ class MySQL
 		{
 			$query = self::query('SHOW TABLES');
 			
-			while($row = mysql_fetch_row($query))
+			while($row = mysqli_fetch_row($query))
 				$tables[] = $row[0];
 		}
 		else
@@ -497,15 +670,15 @@ class MySQL
 		foreach($tables as $table)
 		{
 			$result = self::query("SELECT * FROM $table");
-			$num_fields = mysql_num_fields($result);
+			$num_fields = mysqli_num_fields($result);
     
 			$return .= "DROP TABLE IF EXISTS $table;";
-			$row2 = mysql_fetch_row(self::query("SHOW CREATE TABLE $table"));
+			$row2 = mysqli_fetch_row(self::query("SHOW CREATE TABLE $table"));
 			$return.= "\n\n". $row2[1] . ";\n\n";
     
 			for ($i = 0; $i < $num_fields; $i++) 
 			{
-				while($row = mysql_fetch_row($result))
+				while($row = mysqli_fetch_row($result))
 				{
 					$return.= "INSERT INTO $table VALUES(";
 				
