@@ -141,6 +141,9 @@ class BitRock
 			$status = 'Memcache';
 			$color 	= '#29088A';			
 		}
+
+		if(in_array('Lang', self::$modules))
+			$message = _l($message);
 		
 		$html = '<label title="' . date('h:i:s') . '"><b style="color: '.$color.'">['.$status.']</b> - '.$message.'</label><br />';
 		$text = '['.$status.'] (' . date('h:i:s') . ') - '.$message.'\r\n';
@@ -200,6 +203,8 @@ class BitRock
 		
 		if(file_exists(MODS . $mod))
 			require MODS . $mod;
+		else if(file_exists(SITE_MODS . $mod))
+			require SITE_MODS . $mod;
 		else if(file_exists(MODS . 'External' . DS . $mod))
 			require MODS . 'External' . DS . $mod;
 		else
@@ -385,7 +390,7 @@ class BitRock
 		
 		global $page;
 		
-		if(!empty($page['id']) AND empty(Tpl::$html) AND !Socket::$server)
+		if(!empty($page['id']) AND empty(Tpl::$html))
 		{
 			Tpl::Load();
 			Tpl::SaveCache();
@@ -394,10 +399,10 @@ class BitRock
 		if(self::$inerror == false AND !empty(Tpl::$html))
 			echo Tpl::$html;
 
-		if(is_array('Ftp', self::$modules))
+		if(in_array('Ftp', self::$modules))
 			Ftp::Crash();
 
-		if(is_array('Socket', self::$modules))
+		if(in_array('Socket', self::$modules))
 			Socket::Crash();
 		
 		if(MySQL::Ready())
@@ -425,7 +430,6 @@ class BitRock
 		
 		// Descomente la siguiente linea para ver los últimos logs...
 		//self::PrintLog(true);
-		self::Statistics();
 	}
 	
 	// Función - Guardar un Backup de toda la aplicación.
@@ -456,6 +460,8 @@ class BitRock
 	// Función - Imprimir estadisticas.
 	static function Statistics()
 	{
+		global $constants;
+
 		$finish 	= (microtime(true) - START);
 		$finish 	= substr($finish, 0, 5);
 
@@ -463,17 +469,23 @@ class BitRock
 		$modules 	= count(self::$modules);
 
 		$variables  = $GLOBALS;
-		$variables 	= count($variables, COUNT_RECURSIVE);
+		$variables 	= count($variables);
 
 		$functions 	= get_defined_functions();
 		$functions 	= count($functions['user']);
+
+		$constant 	= count($constants);
+		$files 		= get_included_files();
 		
 		$return = 'BeatRock tardo ' .$finish. ' segundos en ejecutarse con un uso de ' .$memory. ' MB de memoria.<br />';
 		$return .= 'Se han cargado ' .$modules. ' módulos durante la sesión actual.<br />';
-		$return .= 'Se han establecido ' .$variables. ' variables y ' .$functions.' funciones durante la ejecución actual.<br />';
+		$return .= 'Se han establecido ' .$variables. ' variables, '.$constant.' constantes y ' .$functions.' funciones durante la ejecución actual.<br />';
 
 		if(in_array('MySQL', self::$modules))
-			$return .= 'Se realizaron ' . MySQL::$querys . ' consultas durante la ejecución actual.<br />';
+			$return .= 'Se realizaron ' . MySQL::$querys . ' consultas MySQL durante la ejecución actual.<br />';
+
+		$return .= '<br />Los siguientes archivos se han cargado:<br />';		
+		$return .= Core::SplitArray($files);
 		
 		return $return;
 	}
