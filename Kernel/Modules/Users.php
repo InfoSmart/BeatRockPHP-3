@@ -440,9 +440,5 @@ class Users
 		$q = query("SELECT * FROM {DA}users WHERE $row = '$id' LIMIT 1");
 		return (num_rows() > 0) ? fetch_assoc() : false;
 	}
-	
-	/*####################################################
-	##	FUNCIONES PERSONALIZADAS						##
-	####################################################*/
 }
 ?>
