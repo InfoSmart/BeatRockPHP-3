@@ -1,13 +1,13 @@
 <?php
 #####################################################
-## 					 BeatRock				   	   ##
+## 					 BeatRock
 #####################################################
-## Framework avanzado de procesamiento para PHP.   ##
+## Framework avanzado de procesamiento para PHP.
 #####################################################
-## InfoSmart © 2012 Todos los derechos reservados. ##
-## http://www.infosmart.mx/						   ##
+## InfoSmart © 2012 Todos los derechos reservados.
+## http://www.infosmart.mx/	
 #####################################################
-## http://beatrock.infosmart.mx/				   ##
+## http://beatrock.infosmart.mx/
 #####################################################
 
 // Acción ilegal.
@@ -43,7 +43,7 @@ $Info['revision'] = '002';
 ## Alpha -> BETA -> PP -> RC -> Producción
 ## ---------------------------------------------------------
 
-$Info['fase'] = 'Alpha';
+$Info['fase'] = 'BETA';
 $Info['fase_ver'] = '2';
 
 ## ---------------------------------------------------------
