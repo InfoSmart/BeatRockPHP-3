@@ -23,10 +23,11 @@ $details = BitRock::$details;
 <!DOCTYPE html>
 <html lang="es">
 <head>
+	<meta charset="iso-8859-15" />
+	
 	<title>%have.problem%</title>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-	
-	<meta charset="iso-8859-15" />	
+
 	<meta name="robots" content="noodp, nofollow" />
 
 	<link href="//resources.infosmart.mx/systemv2/css/style.css" rel="stylesheet" />
