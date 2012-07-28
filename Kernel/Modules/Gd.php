@@ -104,8 +104,9 @@ class Gd
 		
 		if(empty($to))
 		{
-			$temp 	= true;
-			$to 	= BIT . 'Temp' . DS . Core::Random(10) . '.png';
+			$temp 			= true;
+			$to 			= BIT . 'Temp' . DS . Core::Random(10) . '.png';
+			Io::$temp[] 	= $to;
 		}
 		
 		$img = imagegrabscreen();
@@ -137,8 +138,9 @@ class Gd
 		
 		if(empty($to))
 		{
-			$temp 	= true;
-			$to 	= BIT . 'Temp' . DS . Core::Random(10) . '.png';
+			$temp 			= true;
+			$to 			= BIT . 'Temp' . DS . Core::Random(10) . '.png';
+			Io::$temp[] 	= $to;
 		}
 		
 		$w = new COM($id);
@@ -182,8 +184,9 @@ class Gd
 			
 		if(empty($to))
 		{
-			$temp 	= true;
-			$to 	= BIT . 'Temp' . DS . Core::Random(10) . '.png';
+			$temp 			= true;
+			$to 			= BIT . 'Temp' . DS . Core::Random(10) . '.png';
+			Io::$temp[] 	= $to;
 		}
 		
 		$img = self::ImgType($file);
@@ -250,8 +253,9 @@ class Gd
 
 		if(empty($to))
 		{
-			$temp 	= true;
-			$to 	= BIT . 'Temp' . DS . Core::Random(10) . '.png';
+			$temp 			= true;
+			$to 			= BIT . 'Temp' . DS . Core::Random(10) . '.png';
+			Io::$temp[] 	= $to;
 		}
 
 		$img 	= self::ImgType($file);
@@ -294,8 +298,9 @@ class Gd
 
 		if(empty($to))
 		{
-			$temp 	= true;
-			$to 	= BIT . 'Temp' . DS . Core::Random(10) . '.png';
+			$temp 			= true;
+			$to 			= BIT . 'Temp' . DS . Core::Random(10) . '.png';
+			Io::$temp[] 	= $to;
 		}
 
 		switch($filter)
