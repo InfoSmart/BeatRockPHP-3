@@ -257,6 +257,40 @@ Kernel =
 			return 'MacOS';
 
 		return 'Desconocido';
+	},
+
+	AddParam: function(param, value)
+	{
+		param = escape(param); 
+		value = escape(value);
+
+        kvp = document.location.search.substr(1).split('&');
+
+        if (kvp == '')
+        	Kernel.SetPath('', Path + '/?' + param + '=' + value);
+        else 
+        {
+            i = kvp.length; 
+            var x; 
+
+            while (i--) 
+            {
+                x = kvp[i].split('=');
+
+                if (x[0] == param) 
+                {
+                    x[1] = value;
+                    kvp[i] = x.join('=');
+
+                    break;
+                }
+            }
+
+            if (i < 0) 
+            	kvp[kvp.length] = [param, value].join('=');
+
+            Kernel.SetPath('', Path + '/?' + kvp.join('&'));
+        }
 	}
 }
 
