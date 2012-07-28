@@ -35,7 +35,8 @@ INSERT INTO {DB_ALIAS}site_config (var, result) VALUES
 ('session_alias', ''),
 ('cookie_alias', ''),
 ('cookie_duration', '300'),
-('cookie_domain', '');
+('cookie_domain', ''),
+('register_all_visits', 'false');
 
 CREATE TABLE {DB_ALIAS}site_cache 
 (
