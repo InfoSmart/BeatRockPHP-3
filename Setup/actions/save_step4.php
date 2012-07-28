@@ -15,8 +15,8 @@ require('../../Init.php');
 
 foreach($P as $param => $value)
 {
-	$sep = explode('_', $param);
-	$type = $sep[0];
+	$sep 	= explode('_', $param);
+	$type 	= $sep[0];
 
 	if($param == 'register')
 		continue;
@@ -28,10 +28,10 @@ foreach($P as $param => $value)
 
 		$param = str_ireplace('stopwatch_', '', $param);
 
-		Insert('site_timers', Array(
-			'action' => $param,
-			'time' => $value,
-			'nexttime' => (time() + $value)
+		Insert('site_timers', array(
+			'action' 	=> $param,
+			'time' 		=> $value,
+			'nexttime' 	=> (time() + $value)
 		));
 	}
 	else
@@ -39,7 +39,7 @@ foreach($P as $param => $value)
 		if(is_array($value))
 			$value = _f(json_encode($value), false);
 
-		$value = html_entity_decode($value);
+		$value = _c($value);
 		Site::Update($param, $value);
 	}
 }
