@@ -94,10 +94,10 @@ Mem::Init();
 // Realizando conexión al servidor MySQL.
 MySQL::Connect();
 	
-// Agregando una nueva visita a la base de datos.
-Site::AddVisit();
 // Obteniendo la configuración del sitio web.
 $site = Site::GetConfig();
+// Agregando una nueva visita a la base de datos.
+Site::AddVisit();
 
 // Obteniendo datos "POST" perdidos en una sesión anterior.
 Client::GetPost();
@@ -444,6 +444,11 @@ define('DOMAIN', Core::GetHost(PATH));
 // Constantes definidas.
 $constants = get_defined_constants(true);
 $constants = $constants['user'];
+
+// Evitar problemas
+$site['site_slogan'] 		= Core::FixText(html_entity_decode($site['site_description']));
+$site['site_description'] 	= Core::FixText(html_entity_decode($site['site_description']));
+$site['site_keywords'] 		= Core::FixText(html_entity_decode($site['site_description']));
 
 // Definir variables de plantilla para todas las constantes.
 Tpl::Set($constants);
