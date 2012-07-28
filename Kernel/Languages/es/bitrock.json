@@ -28,7 +28,8 @@
 		"problems":				"Problemas en ",
 		"the":					"de",
 
-		"unknow":				"Desconocido"
+		"unknow":				"Desconocido",
+		"helloworld":			"Hola mundo"
 	},
 
 	"page.error":

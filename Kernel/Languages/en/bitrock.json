@@ -28,7 +28,8 @@
 		"problems":				"Problems ",
 		"the":					"the",
 
-		"unknow":				"Unknow"
+		"unknow":				"Unknow",
+		"helloworld":			"Hello world"
 	},
 
 	"page.error":

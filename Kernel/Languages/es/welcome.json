@@ -13,6 +13,8 @@
 		"have.felt":		"¿No le hayas sentido? Es porque no has visto el código en",
 
 		"view.examples":	"También puedes ver algunos ejemplos del poder de <b>BeatRock</b> en la página de",
-		"examples":			"ejemplos"
+		"examples":			"ejemplos",
+
+		"language.live":	"Parte del sistema de traducción en tiempo real."
 	}
 }
