@@ -1430,6 +1430,9 @@ class Core
 	{
         if (substr(PHP_OS, 0, 3) == 'WIN') 
         {
+        	if(!extension_loaded('com_dotnet') AND version_compare(PHP_VERSION, '5.4.5', '>='))
+        		return 0;
+        	
 			$wmi = new COM('WinMgmts:\\\\.');
 			$cpus = $wmi->InstancesOf('Win32_Processor');
 			$load = 0;
