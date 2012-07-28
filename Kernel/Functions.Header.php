@@ -42,18 +42,10 @@ if($site['site_rss'] == "true")
 ## AGREGANDO ESTILOS SEGÚN PÁGINA
 #####################################################
 
-if($page['admin'])
-{
-	Tpl::myStyle('style.admin', true);
-	Tpl::myScript('functions.admin', true);	
-}
-else
-{
-	Tpl::myStyle('style.page');
-	//Tpl::myStyle('style.forms');
+Tpl::myStyle('style.page');
+//Tpl::myStyle('style.forms');
 	
-	Tpl::myScript('functions.page');
-}
+Tpl::myScript('functions.page');
 
 #####################################################
 ## OTROS
