@@ -52,12 +52,11 @@ Tpl::addMeta('description', $site['site_description'], 'itemprop');
 <!DOCTYPE html>
 <html lang="%site_language%" <?=Tpl::$mhtml?>>
 <head <?=Tpl::$mhead?>>
+	<meta charset="%site_charset%" />
 	<title><?=$site['name']?></title>
 	<meta name="title" content="<?=$site['name']?>" />
 	
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-	
-	<meta charset="%site_charset%" />
 	<meta name="lang" content="%site_language%" />
 	
 	<?php if(!empty($site['site_favicon'])) { ?>
