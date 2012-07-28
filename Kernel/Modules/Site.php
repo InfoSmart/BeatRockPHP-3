@@ -1,25 +1,35 @@
 <?php
 #####################################################
-## 					 BeatRock				   	   ##
+## 					 BeatRock
 #####################################################
-## Framework avanzado de procesamiento para PHP.   ##
+## Framework avanzado de procesamiento para PHP.
 #####################################################
-## InfoSmart © 2012 Todos los derechos reservados. ##
-## http://www.infosmart.mx/						   ##
+## InfoSmart © 2012 Todos los derechos reservados.
+## http://www.infosmart.mx/
 #####################################################
-## http://beatrock.infosmart.mx/				   ##
+## http://beatrock.infosmart.mx/
 #####################################################
 
 // Acción ilegal.
 if(!defined('BEATROCK'))
-	exit;	
+	exit;
+
+## --------------------------------------------------
+##        Módulo Site
+## --------------------------------------------------
+## Este módulo contiene las funciones y herramientas
+## necesarias para interactuar con la base de datos.
+## Incluya sus funciones dentro de un nuevo módulo
+## en la carpeta 'Site'.
+## --------------------------------------------------
 
 class Site
 {
 	// Obtener la configuración del sitio.
 	static function GetConfig()
 	{
-		$sql = query('SELECT var,result FROM {DA}site_config');
+		$sql 	= query('SELECT var,result FROM {DA}site_config');
+		$site 	= array();
 		
 		while($row = fetch_assoc())
 		{
@@ -38,6 +48,7 @@ class Site
 			$site[$p] = $v;
 		}
 
+		free_result();
 		return $site;
 	}
 	
@@ -60,6 +71,8 @@ class Site
 	// Agregar una nueva visita.
 	static function AddVisit()
 	{
+		global $site;
+
 		$host 		= Client::Get('host');
 		$browser 	= Client::Get('browser');
 		$type 		= 'desktop';
@@ -70,19 +83,22 @@ class Site
 		if(Core::IsBOT())
 			$type = 'bot';
 
-		Insert('site_visits_total', array(
-			'ip' 		=> IP,
-			'host' 		=> $host,
-			'agent' 	=> _f(AGENT),
-			'browser' 	=> $browser,
-			'path' 		=> _f(PATH_NOW),
-			'referer' 	=> _f(FROM),
-			'phpid' 	=> session_id(),
-			'type' 		=> $type,
-			'date' 		=> time()
-		));
+		if($site['register_all_visits'] == 'true')
+		{
+			Insert('site_visits_total', array(
+				'ip' 		=> IP,
+				'host' 		=> $host,
+				'agent' 	=> _f(AGENT),
+				'browser' 	=> $browser,
+				'path' 		=> _f(PATH_NOW),
+				'referer' 	=> _f(FROM),
+				'phpid' 	=> session_id(),
+				'type' 		=> $type,
+				'date' 		=> time()
+			));
+		}
 
-		if(Core::theSession('visit') == 'true')
+		if(_SESSION('visit') == 'true')
 			return;
 		
 		$n = Rows("SELECT null FROM {DA}site_visits WHERE ip = '".IP."' OR host = '$host' OR phpid = '".session_id()."' LIMIT 1");
@@ -101,16 +117,16 @@ class Site
 			'date' 		=> time()
 		));
 		
-		Core::theSession('visit', 'true');
+		_SESSION('visit', 'true');
 		query("UPDATE {DA}site_config SET result = result + 1 WHERE var = 'site_visits' LIMIT 1");
 	}
 	
 	// Checar cronometros.
 	static function CheckTimers()
 	{
-		$q = query("SELECT id,action,time,nexttime FROM {DA}site_timers");
+		$q = query("SELECT * FROM {DA}site_timers");
 		
-		while($row = fetch_assoc())
+		while($row = fetch_assoc($q))
 		{
 			if($row['time'] == '0' OR $row['nexttime'] >= time())
 				continue;
@@ -163,12 +179,13 @@ class Site
 					BIT . 'Logs', 
 					BIT . 'Backups', 
 					BIT . 'Temp', 
-					BIT . 'Cache'
+					BIT . 'Cache',
+					BIT . 'Temp'
 				));
 			break;
 		}
 		
-		BitRock::log('%timer.correct%' . $a);
+		Reg('%timer.correct%' . $a);
 	}
 	
 	// Obtener datos.
@@ -218,10 +235,6 @@ class Site
 	{
 		$q = query("SELECT id,page,time FROM {DA}site_cache WHERE page = '$page' LIMIT 1");
 		return (num_rows() > 0) ? fetch_assoc($q) : false;
-	}	
-	
-	/*####################################################
-	##	FUNCIONES PERSONALIZADAS						##
-	####################################################*/
+	}
 }
 ?>
