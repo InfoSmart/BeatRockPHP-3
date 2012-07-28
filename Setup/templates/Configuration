@@ -10,7 +10,7 @@
 		"name": 		"{mysql_name}",
 		"prefix": 		"{mysql_prefix}",
 		"port":			"3306",
-		"optimize.error": 		{mysql_optimize_error},
+		"repair":		"false"
 		"repair.error": 		{mysql_repair_error}
 	},
 
@@ -43,7 +43,6 @@
 	{
 		"details": 	{errors_details},
 		"hidden": 	{errors_hidden},
-		"report": 	"{errors_report}",
 		"email.to": "{errors_email_to}"
 	},
 
