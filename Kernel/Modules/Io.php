@@ -109,7 +109,7 @@ class Io
 		if(is_array($dir))
 		{
 			foreach($dir as $d)
-				self::EmptyDir($d);
+				self::EmptyDir($d, $del);
 				
 			return true;
 		}

@@ -152,9 +152,6 @@ class Setup
 		else		
 			ob_start();
 		
-		if(is_integer($config['errors']['report']))
-			error_reporting($config['errors']['report']);
-		
 		if(!empty($site['country']))
 			date_default_timezone_set($site['country']);
 		

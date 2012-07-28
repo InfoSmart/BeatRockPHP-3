@@ -1,13 +1,13 @@
 <?php
 #####################################################
-## 					 BeatRock				   	   ##
+## 					 BeatRock
 #####################################################
-## Framework avanzado de procesamiento para PHP.   ##
+## Framework avanzado de procesamiento para PHP.
 #####################################################
-## InfoSmart © 2012 Todos los derechos reservados. ##
-## http://www.infosmart.mx/						   ##
+## InfoSmart © 2012 Todos los derechos reservados.
+## http://www.infosmart.mx/
 #####################################################
-## http://beatrock.infosmart.mx/				   ##
+## http://beatrock.infosmart.mx/
 #####################################################
 
 // Acción ilegal.
@@ -161,7 +161,7 @@ class Users
 			$data = array_merge($params, $data);
 		
 		Insert('users', $data);
-		$id = mysql_insert_id();
+		$id = last_id();
 		
 		if($auto)
 			self::Login($id);
