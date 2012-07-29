@@ -20,7 +20,11 @@ $(document).on('ready', function()
 
 		// Agregar o cambiar ?lang= a la url.
 		Kernel.AddParam('lang', Value);
-		// Cambiar el idioma de la página.
+		
+		/* 
+			Cambiar el idioma de la página.
+			El módulo "Language" se encuentra en /resources/system/js/functions.kernel.js
+		*/
 		Language.Change(Value);
 	});
 });

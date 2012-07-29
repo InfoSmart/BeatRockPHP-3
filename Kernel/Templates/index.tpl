@@ -41,6 +41,10 @@
 	</div>
 
 	<div class="c2">
+		<!--
+			Sistema de traducción en tiempo real, para ver más detalles
+			vaya a /resources/beatrock/js/functions.page.js
+		-->
 		<p>
 			<a data-lng="es">Español</a>
 			<a data-lng="en">English</a>
