@@ -33,37 +33,37 @@ $Info['code'] = 'Mentalist';
 ## Versión del Kernel.
 ## ---------------------------------------------------------
 
-$Info['mayor'] = '2';
-$Info['minor'] = '4';
-$Info['micro'] = '4';
-$Info['revision'] = '003';
+$Info['mayor'] 		= '2';
+$Info['minor'] 		= '4';
+$Info['micro'] 		= '4';
+$Info['revision'] 	= '004';
 
 ## ---------------------------------------------------------
 ## Fase del desarrollo.
 ## Alpha -> BETA -> PP -> RC -> Producción
 ## ---------------------------------------------------------
 
-$Info['fase'] = 'RC';
-$Info['fase_ver'] = '3';
+$Info['fase'] 		= 'RC';
+$Info['fase_ver'] 	= '3';
 
 ## ---------------------------------------------------------
 ## Fecha de creación.
 ## ---------------------------------------------------------
 
-$Info['date'] = '28.07.2012';
-$Info['date_hour'] = '09:00 AM';
+$Info['date'] 		= '29.07.2012';
+$Info['date_hour'] 	= '01:15 PM';
 
 ## ---------------------------------------------------------
 ## Nombres.
 ## ---------------------------------------------------------
 
-$Info['version'] = "$Info[mayor].$Info[minor].$Info[micro]";
-$Info['version.name'] = "$Info[name] v$Info[version]";
-$Info['version.code'] = "$Info[name] \"$Info[code]\" v$Info[version]";
-$Info['version.revision'] = "$Info[version] Revisión:  $Info[revision]";
-$Info['version.date'] = "$Info[version] - $Info[date] $Info[date_hour]";
-$Info['version.fase'] = "$Info[fase] $Info[fase_ver]";
-$Info['version.full'] = $Info['version.code'] . " $Info[fase]$Info[fase_ver] Revisión: $Info[revision] - $Info[date] $Info[date_hour]";
+$Info['version'] 			= "$Info[mayor].$Info[minor].$Info[micro]";
+$Info['version.name'] 		= "$Info[name] v$Info[version]";
+$Info['version.code'] 		= "$Info[name] \"$Info[code]\" v$Info[version]";
+$Info['version.revision'] 	= "$Info[version] Revisión:  $Info[revision]";
+$Info['version.date'] 		= "$Info[version] - $Info[date] $Info[date_hour]";
+$Info['version.fase'] 		= "$Info[fase] $Info[fase_ver]";
+$Info['version.full'] 		= $Info['version.code'] . " $Info[fase]$Info[fase_ver] Revisión: $Info[revision] - $Info[date] $Info[date_hour]";
 
 // Sea bueno y no modifique o elimine esta línea.
 header('X-Powered-By: BeatRock v'.$Info['version'].': http://beatrock.infosmart.mx/');
