@@ -14,7 +14,7 @@ if(!defined("BEATROCK"))
 	exit;
 	
 // Recursos de la instalación.
-define('RESOURCES_INS', '//localhost/resources');
+define('RESOURCES_INS', '//resources.infosmart.mx');
 ?>
 <!DOCTYPE html>
 <html lang="es">
