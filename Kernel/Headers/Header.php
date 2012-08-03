@@ -10,14 +10,14 @@
 ## http://beatrock.infosmart.mx/				   ##
 #####################################################
 
-if(!defined("BEATROCK"))
+if(!defined('BEATROCK'))
 	exit;
 
 #####################################################
 ## META ETIQUETAS RECOMENDADAS	
 #####################################################
 
-if(empty($page['image']) AND defined(LOGO))
+if(empty($page['image']) AND defined('LOGO'))
 	$page['image'] = LOGO;
 
 Tpl::addMeta('og:title', 		$site['name'], 'property');
@@ -37,10 +37,10 @@ if(!empty($site['site_locale']))
 
 if(!empty($site['site_og']))
 {
-	$og = json_decode($site['site_og'], true);
+	$og = json_decode(utf8_encode($site['site_og']), true);
 
 	foreach($og as $param => $value)
-		Tpl::addMeta($param, html_entity_decode($value), 'property');
+		Tpl::addMeta($param, Core::FixText(html_entity_decode($value)), 'property');
 }
 
 $hlang = Lang::PrepareLive();
