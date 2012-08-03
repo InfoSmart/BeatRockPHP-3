@@ -38,8 +38,9 @@ foreach($P as $param => $value)
 	{
 		if(is_array($value))
 			$value = _f(json_encode($value), false);
-
-		$value = _c($value);
+		else
+			$value = _c($value);
+		
 		Site::Update($param, $value);
 	}
 }
