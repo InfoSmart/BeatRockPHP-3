@@ -39,7 +39,7 @@ foreach($P as $param => $value)
 		if(is_array($value))
 			$value = _f(json_encode($value), false);
 		else
-			$value = _c($value);
+			$value = _c(Core::FixText($value));
 		
 		Site::Update($param, $value);
 	}
@@ -47,9 +47,9 @@ foreach($P as $param => $value)
 
 if($P['register'] == 'true')
 {
-	$exitUrl = urlencode(PATH . '/Setup/finish.php?license_url=[license_url]&license_name=[license_name]');
+	$exitUrl 	= urlencode(PATH . '/Setup/finish.php?license_url=[license_url]&license_name=[license_name]');
 	$styleSheet = urlencode('//resources.infosmart.mx/system/setup/style.commons.css');
-	$logoUrl = urlencode('//resources.infosmart.mx/infosmart/images/logo.png');
+	$logoUrl 	= urlencode('//resources.infosmart.mx/infosmart/images/logo.png');
 
 	Core::Redirect("http://creativecommons.org/license/?partner=InfoSmart&exit_url=$exitUrl&stylesheet=$styleSheet&partner_icon_url=$logoUrl");
 }
