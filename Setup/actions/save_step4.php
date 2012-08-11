@@ -13,7 +13,7 @@
 $page['gzip'] = false;
 require('../../Init.php');
 
-foreach($P as $param => $value)
+foreach($_POST as $param => $value)
 {
 	$sep 	= explode('_', $param);
 	$type 	= $sep[0];
@@ -39,7 +39,7 @@ foreach($P as $param => $value)
 		if(is_array($value))
 			$value = _f(json_encode($value), false);
 		else
-			$value = _c(Core::FixText($value));
+			$value = _f($value, false);
 		
 		Site::Update($param, $value);
 	}

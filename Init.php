@@ -445,11 +445,6 @@ define('DOMAIN', Core::GetHost(PATH));
 $constants = get_defined_constants(true);
 $constants = $constants['user'];
 
-// Evitar problemas
-$site['site_slogan'] 		= html_entity_decode($site['site_slogan']);
-$site['site_description'] 	= html_entity_decode($site['site_description']);
-$site['site_keywords'] 		= html_entity_decode($site['site_keywords']);
-
 // Definir variables de plantilla para todas las constantes.
 Tpl::Set($constants);
 // Definir variables de configuración de sitio.
