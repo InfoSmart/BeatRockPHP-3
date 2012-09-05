@@ -17,11 +17,11 @@ if(!defined('BEATROCK'))
 class Connection
 {
 	// Socket de la conexión.
-	$socket = null;
+	public $socket = null;
 	// Última actividad.
-	$last 	= 0;
+	public $last 	= 0;
 	// ID de la conexión.
-	$id 	= 0;
+	public $id 	= 0;
 	
 	// Función - Preparar una nueva conexión.
 	function __construct($socket, $id)
