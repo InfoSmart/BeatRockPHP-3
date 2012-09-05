@@ -1,18 +1,4 @@
-<?php
-#####################################################
-## 					 BeatRock				   	   ##
-#####################################################
-## Framework avanzado de procesamiento para PHP.   ##
-#####################################################
-## InfoSmart © 2012 Todos los derechos reservados. ##
-## http://www.infosmart.mx/						   ##
-#####################################################
-## http://beatrock.infosmart.mx/				   ##
-#####################################################
-
-if(!defined('BEATROCK'))
-	exit;
-	
+<?
 if(defined('DEBUG') AND DEBUG == true)
 {
 	echo '<div class="wrapper" style="font-size: 11px; margin-top: 20px; line-height: 15px;"><hr /><br />';
