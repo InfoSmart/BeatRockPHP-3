@@ -46,7 +46,7 @@ require('./Header.php');
 
 <div class="content">	
 	<form action="./actions/save_step4.php" method="POST">
-		<section open>
+		<section>
 			<h2>General</h2>
 
 			<div class="c1">			
@@ -150,6 +150,61 @@ require('./Header.php');
 					<?=RESOURCES?>/images/<input type="text" name="site_logo" id="site_logo" value="<?=$site['site_logo']?>" placeholder="logo.png" autocomplete="off" class="short" />
 					
 					<span>Escriba el nombre del archivo de su imagen Logo.</span>
+				</p>
+			</div>
+		</section>
+
+		<section>
+			<h2>Seguridad</h2>
+
+			<div class="c1">
+				<p>
+					<label>Tiempo entre conexiones para considerar alerta DDOS</label>
+
+					<select name="ddos_time" class="btn" required>
+						<option value="0">Desactivado</option>
+						<option value="1">1 segundo</option>
+						<option value="2">2 segundos</option>
+						<option value="3">3 segundos</option>
+						<option value="4">4 segundos</option>
+						<option value="5" selected>5 segundos</option>
+						<option value="6">6 segundos</option>
+						<option value="7">7 segundos</option>
+						<option value="8">8 segundos</option>
+					</select>
+
+					<span>Si la carga entre conexiones/páginas del sitio tarda menos que los segundos especificados se le considerada una <b>"Alerta de DDOS"</b>.</span>
+				</p>
+
+				<p>
+					<label for="ddos_redirect">Redirección al ataque.</label>
+
+					<input type="url" name="ddos_redirect" id="ddos_redirect" value="<?=$site['ddos_redirect']?>" />
+					<span>La conexión atacante será redireccionada a esta dirección web.</span>
+				</p>
+
+				<p>
+					Tenga en cuenta que el sistema AntiDDOS de BeatRock no es del todo funcional, puede "alivianar" la carga realizada por un ataque pero recomendamos activar este sistema con servicios mejores como <a href="https://www.cloudflare.com/" target="_blank">CloudFlare</a>.
+				</p>
+			</div>
+
+			<div class="c2">
+				<p>
+					<label for="ddos_warnings">Numero de Alertas DDOS máximas.</label>
+
+					<input type="number" name="ddos_warnings" id="ddos_warnings" value="<?=$site['ddos_warnings']?>" min="1" max="20" required />
+					<span>Cuando una conexión sobrepase el número de Alertas especificadas se le considerada un <b>Ataque DDOS</b> y su dirección IP será bloqueada.</span>
+				</p>
+
+				<p>
+					<label>Protección AntiDDOS desde htaccess</label>
+
+					<select name="ddos_htaccess" class="btn" required>
+						<option value="false">Desactivado</option>
+						<option value="true">Activado</option>
+					</select>
+
+					<span>Si usas Apache se puede configurar esta opción para que BeatRock pueda usar la directiva <b>"deny from IP"</b> en el archivo .htaccess para el sistema AntiDDOS.</span>
 				</p>
 			</div>
 		</section>
