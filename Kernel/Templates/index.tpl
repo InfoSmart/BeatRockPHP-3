@@ -83,12 +83,11 @@ header
 /* Contenido */
 h1
 {
-	color: #0489B1;
+	color: black;
 	font-family: "Open Sans", "Segoe UI Light", Tahoma, Arial;
 	font-size: 35px;
 	font-weight: 300;
 	line-height: 45px;
-	text-shadow: 0 0 3px rgba(32, 126, 207, .2);
 }
 
 .content h2
