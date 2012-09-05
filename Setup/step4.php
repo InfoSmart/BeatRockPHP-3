@@ -135,7 +135,14 @@ require('./Header.php');
 						<option value="true">Si</option>
 					</select>
 					
-					<span>Seleccione si su aplicación tendrá un RSS de noticias que será ubicado en <b><?=PATH?>/rss</b>.</span>
+					<span>Seleccione si su aplicación tendrá un RSS de noticias.</span>
+				</p>
+
+				<p>
+					<label>Dirección RSS:</label>
+					
+					<input type="text" name="site_rss_path" id="site_rss_path" value="<?=$site['site_rss_path']?>" placeholder="{RSS}" />					
+					<span>Escriba la dirección de su página RSS.<br /><b>{RSS}</b> = <b><?=PATH?>/rss</b>.</span>
 				</p>
 
 				<p>
@@ -159,7 +166,7 @@ require('./Header.php');
 						<option value="true">Activado</option>						
 					</select>
 
-					<span>La compresión HTML comprime el código HTML de la aplicación quitando espacios innecesarios y comentarios haciendola menos pesada y más rápida, sin embargo puede ocacionar problemas con JavaScript dentro del HTML.</span>
+					<span>Comprime el código HTML de la aplicación quitando espacios innecesarios y comentarios haciendola menos pesada y más rápida de ejecutar, sin embargo puede ocacionar problemas con JavaScript incrustado dentro del HTML.</span>
 				</p>
 
 				<p>
@@ -341,89 +348,6 @@ require('./Header.php');
 					</p>
 				</div>
 
-				<div class="oo" data-to="music.radio_station">
-					<p>
-						<label for="music:creator">Creador de la radio:</label>
-						<input type="text" name="site_og[music:creator]" disabled />
-					</p>
-				</div>
-
-				<div class="oo" data-to="video.movie">
-					<p>
-						<label for="video:actor">Actor principal:</label>
-						<input type="text" name="site_og[video:actor]" disabled />
-					</p>
-
-					<p>
-						<label for="video:director">Director:</label>
-						<input type="text" name="site_og[video:director]" disabled />
-					</p>
-
-					<p>
-						<label for="video:writer">Escritor:</label>
-						<input type="text" name="site_og[video:writer]" disabled />
-					</p>
-
-					<p>
-						<label for="video:duration">Duración:</label>
-						<input type="text" name="site_og[video:duration]" disabled />
-					</p>
-
-					<p>
-						<label for="video:release_date">Fecha de lanzamiento:</label>
-						<input type="text" name="site_og[video:release_date]" disabled />
-					</p>
-
-					<p>
-						<label for="video:tag">Palabras clave:</label>
-						<input type="text" name="site_og[video:tag]" disabled />
-					</p>
-				</div>
-
-				<div class="oo" data-to="video.tv_show">
-					<p>
-						<label for="video:actor">Actor principal:</label>
-						<input type="text" name="site_og[video:actor]" disabled />
-					</p>
-
-					<p>
-						<label for="video:director">Director:</label>
-						<input type="text" name="site_og[video:director]" disabled />
-					</p>
-
-					<p>
-						<label for="video:writer">Escritor:</label>
-						<input type="text" name="site_og[video:writer]" disabled />
-					</p>
-
-					<p>
-						<label for="video:release_date">Fecha de lanzamiento:</label>
-						<input type="text" name="site_og[video:release_date]" disabled />
-					</p>
-
-					<p>
-						<label for="video:tag">Palabras clave:</label>
-						<input type="text" name="site_og[video:tag]" disabled />
-					</p>
-				</div>
-
-				<div class="oo" data-to="book">
-					<p>
-						<label for="book:author">Autor:</label>
-						<input type="text" name="site_og[book:author]" disabled />
-					</p>
-
-					<p>
-						<label for="book:release_date">Fecha de lanzamiento:</label>
-						<input type="text" name="site_og[book:release_date]" disabled />
-					</p>
-
-					<p>
-						<label for="book:tag">Palabras clave:</label>
-						<input type="text" name="site_og[book:tag]" disabled />
-					</p>
-				</div>
-
 				<div class="oo" data-to="profile">
 					<p>
 						<label for="profile:first_name">Nombre:</label>
@@ -457,11 +381,7 @@ require('./Header.php');
 					<select name="site_type" id="site_type" class="btn">
 						<option value="website">Sitio web normal</option>
 						<option value="music.album">Aplicación musical para un albúm</option>
-						<option value="music.radio_station">Aplicación para estación de radio</option>
-						<option value="video.movie">Aplicación para una pelicula</option>
-						<option value="video.tv_show">Aplicación para un Show de TV</option>
 						<option value="video.other">Aplicación visual normal</option>
-						<option value="book">Aplicación para un libro</option>
 						<option value="profile">Blog personal / Perfil</option>
 					</select>
 
@@ -620,12 +540,19 @@ require('./Header.php');
 		<section>
 			<h2>Otros</h2>
 
-			<div class="c1">			
+			<div class="c1">
+				<p>
+					<input type="checkbox" name="site_backups_servers" value="true" /> Usar los servidores de recuperación para el envío de backups.
+					<span>Los Backups de archivos y base de datos serán enviados a los servidores de recuperación al momento que se crean.</span>
+				</p>
+			</div>
+
+			<div class="c2">
 				<p>
 					<input type="checkbox" name="register" value="true" /> Seleccionar una licencia para mi aplicación.
 					<span>Serás enviado a la página de Creative Commons para escojer una licencia que se adapte a tu aplicación, cuando termines serás redireccionado a la página de finalización y los datos de tu licencia se guardaran en el directorio raiz de BeatRock.</span>
 				</p>
-			</div>			
+			</div>
 		</section>
 		
 		<p>
