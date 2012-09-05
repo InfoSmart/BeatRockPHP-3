@@ -60,6 +60,9 @@ class Setup
 
 		self::Verify($config);		
 		self::Apply($config);
+
+		if($config['security']['antiddos'] == true)
+			self::Protect();
 	}
 	
 	// Función - ¿Soportamos GZIP?
@@ -170,7 +173,7 @@ class Setup
 		BitRock::Log('%config.apply%');
 	}
 
-	// Función privada - Restaurar el archivo de configuración.
+	// Función - Restaurar el archivo de configuración.
 	static function RestoreBackup()
 	{
 		BitRock::Log('%config.try.backup%', 'warning');
@@ -185,6 +188,20 @@ class Setup
 			
 		BitRock::Log('%config.try.user%');
 		return Io::Write(KERNEL . 'Configuration.json', $data);
+	}
+
+	// Función - Proteger el sitio.
+	static function Protect()
+	{
+		$blackip = Core::LoadJSON(ROOT . 'black_ip.json');
+
+		if(is_numeric(array_search(IP, $blackip)))
+		{
+			header('HTTP/1.0 503 Service Temporarily Unavailable');
+			header('Connection: close');
+
+			exit;
+		}
 	}
 }
 ?>
