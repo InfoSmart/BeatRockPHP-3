@@ -261,9 +261,13 @@ class Core
 	// Filtrar una cadena para evitar Inyección SQL.
 	// - $str: Cadena a filtrar.
 	// - $html (Bool): ¿Filtrar HTML con HTML ENTITIES? (Evitar Inyección XSS)
-	// - $e (Charset): Codificación de letras de la cadena a filtrar.
-	static function FilterText($str, $html = true, $e = 'ISO-8859-15')
+	// - $from (Charset): Codificación original de la cadena a filtar.
+	// - $to (Charset): Codificación deseada de la cadena a filtrar.
+	static function FilterText($str, $html = true, $from = '', $to = '')
 	{
+		if(empty($to))
+			$to = strtoupper(ini_get('default_charset'));
+
 		if(is_array($str))
 		{
 			if(count($str) > 50)
@@ -281,7 +285,7 @@ class Core
 			return $str;
 			
 		if(self::isUtf8($str))
-			$e = 'UTF-8';
+			$from = 'UTF-8';
 		
 		$str = stripslashes(trim($str));
 		
@@ -290,7 +294,9 @@ class Core
 			
 		$str = MySQL::escape_string($str);
 		$str = str_replace('&amp;', '&', $str);
-		$str = iconv($e, 'ISO-8859-15//TRANSLIT//IGNORE', $str);
+
+		if(!empty($from) AND $from !== $to)
+			$str = iconv($from, $to . '//TRANSLIT//IGNORE', $str);
 		
 		return nl2br($str);
 	}
@@ -298,8 +304,13 @@ class Core
 	// Filtrar una cadena para evitar Inyección XSS.
 	// - $str: Cadena a filtrar.
 	// - $e (Charset): Codificación de letras de la cadena a filtrar.
-	static function CleanText($str, $e = 'ISO-8859-15')
+	// - $from (Charset): Codificación original de la cadena a filtar.
+	// - $to (Charset): Codificación deseada de la cadena a filtrar.
+	static function CleanText($str, $from = '', $to = '')
 	{
+		if(empty($to))
+			$to = strtoupper(ini_get('default_charset'));
+
 		if(is_array($str))
 		{
 			if(count($str) > 50)
@@ -317,12 +328,14 @@ class Core
 			return $str;
 			
 		if(self::isUtf8($str))
-			$e = 'UTF-8';
+			$from = 'UTF-8';
 			
 		$str = stripslashes(trim($str));
 		$str = htmlentities($str, ENT_COMPAT | ENT_SUBSTITUTE, $e, false);			
 		$str = str_replace('&amp;', '&', $str);
-		$str = iconv($e, 'ISO-8859-15//TRANSLIT//IGNORE', $str);
+		
+		if(!empty($from) AND $from !== $to)
+			$str = iconv($from, $to . '//TRANSLIT//IGNORE', $str);
 		
 		return nl2br($str);
 	}
