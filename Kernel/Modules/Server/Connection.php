@@ -45,12 +45,11 @@ class Connection
 	{
 		if(!$this->Ready())
 			return;
-		
+
 		socket_shutdown($this->socket);
 		socket_close($this->socket);
 		
 		Server::Write('CONEXIÓN #' . $this->id . ' CERRADA.');
-
 		$this->socket = null;
 	}
 
@@ -60,8 +59,7 @@ class Connection
 		if(!$this->Ready())
 			return;
 		
-		socket_close($this->socket);		
-		Server::Write('CONEXIÓN #' . $this->id . ' LIBERADA.');
+		socket_close($this->socket);
 	}
 	
 	// Función - Enviar datos.
