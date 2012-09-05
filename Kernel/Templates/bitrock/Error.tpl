@@ -48,36 +48,38 @@ $details = BitRock::$details;
 	header 
 	{		
 		background: #ffffff;
-		background: -moz-linear-gradient(top, #ffffff 0%, #f7f7f7 100%);
-		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#f7f7f7));
-		background: -webkit-linear-gradient(top, #ffffff 0%,#f7f7f7 100%);
-		background: -o-linear-gradient(top, #ffffff 0%,#f7f7f7 100%);
-		background: -ms-linear-gradient(top, #ffffff 0%,#f7f7f7 100%);
-		background: linear-gradient(top, #ffffff 0%,#f7f7f7 100%);
-		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f7f7f7',GradientType=0 );
+	background: -moz-linear-gradient(top, #ffffff 0%, #ece9e9 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#ece9e9));
+	background: -webkit-linear-gradient(top, #ffffff 0%,#ece9e9 100%);
+	background: -o-linear-gradient(top, #ffffff 0%,#ece9e9 100%);
+	background: -ms-linear-gradient(top, #ffffff 0%,#ece9e9 100%);
+	background: linear-gradient(to bottom, #ffffff 0%,#ece9e9 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ece9e9',GradientType=0 );
 
 		border-bottom: 2px solid #444444;
-		padding-bottom: 10px;
+		padding: 10px;
 	}
 	
 	header h1 
 	{
 		color: black;
 		float: left;
-		font-family: "Segoe UI Light", Open Sans, Ubuntu, Segoe UI, Arial;
-		font-size: 40px;
-		font-weight: normal;
+		font-family: "Open Sans", Ubuntu, Segoe UI, Arial;
+		font-size: 50px;
+		font-weight: 300;
 		line-height: 45px;
 	}
 
 	.fast-error aside
 	{
+		font-family: Arial;
 		float: left;
 		width: 450px;
 	}
 
 	.fast-error h3
 	{
+		font-family: "Open Sans", Ubuntu, Segoe UI, Arial;
 		font-size: 20px;
 		font-weight: normal;
 	}
