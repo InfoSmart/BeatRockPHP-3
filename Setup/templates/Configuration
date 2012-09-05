@@ -33,7 +33,8 @@
 	{
 		"enabled": 	{security_enabled},
 		"level": 	{security_level},
-		"hash": 	"{security_hash}"
+		"hash": 	"{security_hash}",
+		"antiddos": {security_antiddos}
 	},
 
 	/*######################################################
