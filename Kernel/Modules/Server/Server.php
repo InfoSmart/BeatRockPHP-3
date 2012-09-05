@@ -22,12 +22,48 @@ class Server
 	static $rsock 			= array();
 	// Array de los recursos de escucha de las conexiones entrantes.
 	static $asock 			= array();
-	// Conexiones entrantes online.
+
+	// Numero de conexiones entrantes online.
 	static $count 			= 0;
+	// Numero de conexiones recibidas.
+	static $conn_count 		= 0;
+
 	// Último chequeo de Ping.
 	static $ping_time 		= 0;
 	// Tiempo máximo de inactividad de la conexión entrante.
 	static $conn_timeout 	= 5;
+
+	// Numero de conexiones entrantes máximas.
+	static $max_connections = 100;
+	// Numero de conexiones online máximas.
+	static $max_online 		= 5;
+
+	static $actions = array();
+
+	static function GetCount()
+	{
+		return self::$count;
+	}
+
+	static function GetConnCount()
+	{
+		return self::$conn_count;
+	}
+
+	static function SetConnTimeout($timeout = 5)
+	{
+		self::$conn_timeout = $timeout;
+	}
+
+	static function SetMaxConnections($max = 100)
+	{
+		self::$max_connections = $max;
+	}
+
+	static function SetMaxOnline($max = 5)
+	{
+		self::$max_online = $max;
+	}
 
 	// Función - Lanzar error.
 	// - $code: Código de error.
@@ -68,9 +104,15 @@ class Server
 		self::$socket 			= null;
 		self::$rsock 			= array();
 		self::$asoc 			= array();
+
 		self::$count 			= 0;
+		self::$connections 		= 0;
+
 		self::$ping_time 		= 0;
 		self::$conn_timeout 	= 5;
+
+		self::$max_connections 	= 0;
+		self::$max_online		= 0;
 	}
 	
 	// Función - Imprimir un log.
@@ -80,7 +122,8 @@ class Server
 		// Convertir el mensaje a ISO-8859-1
 		$message = iconv('ISO-8859-1', "ASCII//TRANSLIT//IGNORE", $message);
 		// Imprimir el mensaje.
-		echo "[" . date('Y-m-d H:i:s') . "] - $message\n\r";
+		echo "[" . date('Y-m-d H:i:s') . "] - $message", PHP_EOL;
+		@ob_flush();
 	}
 	
 	// Función - Preparar un servidor interno.
@@ -90,9 +133,10 @@ class Server
 	// - $ctimeout (Int): Tiempo de inactividad limite para las conexiones entrantes.
 	function __construct($local = '127.0.0.1', $port = 1212, $timeout = 0, $ctimeout = 5)
 	{
-		self::Kill();		
 		set_time_limit($timeout);
+		ob_implicit_flush(1);
 		
+		self::Kill();	
 		self::Write('Preparando servidor...');
 		
 		// Crear el Socket para el servidor.
@@ -103,12 +147,12 @@ class Server
 		self::Write('Conexión creada.');
 		
 		// Crear el Socket encargado de escuchar las nuevas conexiones.
-		$asock = socket_listen($s) or self::Error('02s', __FUNCTION__);
+		socket_listen($socket) or self::Error('02s', __FUNCTION__);
 		
 		// Estableciendo el Socket del servidor.
 		self::$socket 	= $socket;
 		// Estableciendo en el array el socket de escucha.
-		self::$asock 	= array($asock);
+		self::$asock 	= array($socket);
 
 		// Estamos en un servidor, esto evitará que se cargue el sistema de plantillas.
 		Socket::$server = true;
@@ -144,16 +188,21 @@ class Server
 	{
 		if(!self::Ready())
 			self::Error('03s', __FUNCTION__);
+
+		// Antes de todo chechar las estadisticas y el Ping.
+		self::Check_Statistics();
+
+		$w = $r = NULL;
 		
 		$asock = self::$asock;
 		// Seleccionando socket por socket.
-		socket_select($asock, $write = NULL, $except = NULL, NULL);
+		$updates = socket_select($asock, $w, $r, 0);
+
+		if($updates == false)
+			return;
 		
 		foreach($asock as $conn)
-		{
-			// Antes de todo chechar las estadisticas y el Ping.
-			self::Check_Statistics();
-			
+		{			
 			// Si el Socket a revisar es el Socket que escucha nuevas conexiones...
 			if($conn == self::$socket)
 			{
@@ -166,17 +215,23 @@ class Server
 				// Si!
 				else
 				{
+					if(self::$count > self::$max_online)
+					{
+						self::Write('SERVIDOR LLENO');
+						continue;
+					}
+
 					// Inicializando instancia "Connection" para la nueva conexión.
-					$newconn = new Connection($incoming, self::$count);
-					
+					$newconn = new Connection($incoming, self::$conn_count);
+
 					// Guardando esta nueva instancia en $rsock
-					self::$rsock[self::$count] = $newconn;
+					self::$rsock[self::$conn_count] = $newconn;
 					// Guarando el Socket de esta conexión en $asock
 					array_push(self::$asock, $incoming);
 						
 					// Uno más en nuestro servidor ;)			
-					self::Write('NUEVA CONEXIÓN ENTRANTE #' . self::$count);
-					++self::$count;
+					self::Write('NUEVA CONEXIÓN ENTRANTE #' . self::$conn_count);
+					++self::$conn_count;
 				}
 			}
 			// Si el Socket a revisar es un Socket de usuario.
@@ -199,7 +254,7 @@ class Server
 				// FIXME - Un ajuste de ID.
 				$i 			= $i - 1;
 				// Obtener lista de acciones.
-				$actions 	= Socket::$actions;
+				$actions 	= self::$actions;
 				// Obtener el recurso "Connection" de este Socket.
 				$connection = self::$rsock[$i];
 				
@@ -238,11 +293,14 @@ class Server
 			return;
 
 		// Checar Ping y obtener usuarios online.
-		$count = self::Check_Ping();
+		$conn_count = self::Check_Ping();
 			
-		self::Write("Actualmente hay $count conexiones activas con un uso de " . round(memory_get_usage() / 1024,1) . " KB de Memoria.");
+		self::Write("Actualmente hay $conn_count conexiones activas con un uso de " . round(memory_get_usage() / 1024,1) . " KB de Memoria.");
+
 		// Estableciendo la última vez que se hizo chequeo de Ping.
-		self::$ping_time = time();
+		self::$ping_time 	= time();
+		// Estableciendo usuarios online.
+		self::$conn_count 	= $conn_count;
 	}
 	
 	// Función - Ping de conexiones.
@@ -266,7 +324,7 @@ class Server
 			}
 			
 			// La conexión ha pasado el tiempo de inactividad, quitarla de la lista.
-			if($conn->last <= (time() - (self::$conn_timeout * 60)))
+			if($conn->last <= (time() - (self::$conn_timeout)))
 			{
 				unset(self::$rsock[$conn->id]);
 				$conn->Kill();				
