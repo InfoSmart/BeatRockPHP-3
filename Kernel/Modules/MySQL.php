@@ -223,7 +223,7 @@ class MySQL
 			return self::Error('mysql.query.novalid', __FUNCTION__);
 		
 		$sql 	= self::query($q);
-		$result = self::num_rows($sql) > 0 ? mysqli_fetch_assoc(self::$connection, $sql) : false;
+		$result = self::num_rows($sql) > 0 ? mysqli_fetch_assoc($sql) : false;
 
 		if(self::$free_result)
 		{
