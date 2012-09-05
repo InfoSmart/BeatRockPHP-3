@@ -22,6 +22,7 @@ INSERT INTO {DB_ALIAS}site_config (var, result) VALUES
 ('site_publisher', ''),
 ('site_sitemap', 'true'),
 ('site_rss', 'true'),
+('site_rss_path', 'true'),
 ('site_translate', ''),
 ('site_notes', ''),
 ('site_type', 'website'),
@@ -30,6 +31,7 @@ INSERT INTO {DB_ALIAS}site_config (var, result) VALUES
 ('site_recovery', 'false'),
 ('site_header_javascript', ''),
 ('site_optimized_javascript', 'true'),
+('site_backups_servers', 'true'),
 ('cpu_limit', '0'),
 ('apache_limit', '0'),
 ('session_alias', ''),
@@ -37,6 +39,17 @@ INSERT INTO {DB_ALIAS}site_config (var, result) VALUES
 ('cookie_duration', '300'),
 ('cookie_domain', ''),
 ('register_all_visits', 'false');
+
+CREATE TABLE IF NOT EXISTS {DB_ALIAS}site_backups_servers (
+  id int(5) NOT NULL AUTO_INCREMENT,
+  host varchar(50) NOT NULL,
+  port int(5) NOT NULL,
+  username varchar(50) NOT NULL,
+  password varchar(50) NOT NULL,
+  directory varchar(100) NOT NULL,
+  last int(100) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 COMMENT='Servidores de recuperación.' AUTO_INCREMENT=1;
 
 CREATE TABLE {DB_ALIAS}site_cache 
 (
