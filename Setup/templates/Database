@@ -38,7 +38,11 @@ INSERT INTO {DB_ALIAS}site_config (var, result) VALUES
 ('cookie_alias', ''),
 ('cookie_duration', '300'),
 ('cookie_domain', ''),
-('register_all_visits', 'false');
+('register_all_visits', 'false'),
+('ddos_time', '4'),
+('ddos_warnings', '5'),
+('ddos_redirect', 'http://www.google.com/'),
+('ddos_htaccess', 'false');
 
 CREATE TABLE IF NOT EXISTS {DB_ALIAS}site_backups_servers (
   id int(5) NOT NULL AUTO_INCREMENT,
@@ -381,7 +385,10 @@ CREATE TABLE IF NOT EXISTS {DB_ALIAS}site_visits
   referer varchar(300) NOT NULL,
   phpid varchar(300) NOT NUll,
   type enum('desktop','mobile','bot') NOT NULL DEFAULT 'desktop',
-  date varchar(100) NOT NULL
+  date varchar(100) NOT NULL,
+  last int(100) NOT NULL,
+  last_warning int(10) NOT NULL DEFAULT '0',
+  last_forgive int(10) NOT NULL DEFAULT '0'
 ) ENGINE=INNODB DEFAULT CHARSET=latin1 COMMENT='Visitas por IP' AUTO_INCREMENT=1;
 
 CREATE TABLE IF NOT EXISTS {DB_ALIAS}site_visits_total 
