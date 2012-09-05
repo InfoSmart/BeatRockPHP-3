@@ -122,6 +122,86 @@ class Site
 		_SESSION('visit', 'true');
 		query("UPDATE {DA}site_config SET result = result + 1 WHERE var = 'site_visits' LIMIT 1");
 	}
+
+	// Función - Actualizar información de la visita actual.
+	static function UpdateMyVisit($params)
+	{
+		Update('site_visits', $params, array(
+			"ip = '".IP."'"
+		));
+	}
+
+	// Función - Proteger el sitio.
+	static function Protect()
+	{
+		global $site;
+
+		if($site['ddos_time'] !== '0')
+		{
+			$row = Assoc("SELECT * FROM {DA}site_visits WHERE ip = '".IP."' LIMIT 1");
+
+			if($row['last'] >= (time() - $site['ddos_time']))
+			{
+				$row['last_warnings'] = ($row['last_warnings'] + 1);
+
+				self::UpdateMyVisit(array(
+					'last_warnings'	=> $row['last_warnings'],
+					'last_forgive'	=> '0'
+				));
+			}
+			else
+			{
+				if($row['last_warnings'] > 0)
+				{
+					$forgive 				= round($site['ddos_warnings'] / 3);
+					$row['last_forgive'] 	= ($row['last_forgive'] + 1);
+
+					self::UpdateMyVisit(array(
+						'last_forgive'	=> $row['last_forgive']
+					));
+
+					if($row['last_forgive'] >= $forgive)
+					{
+						self::UpdateMyVisit(array(
+							'last_warnings'	=> '0',
+							'last_forgive'	=> '0'
+						));
+					}
+				}
+			}
+
+			if($row['last_warnings'] >= $site['ddos_warnings'])
+			{
+				$blackip = Core::LoadJSON(ROOT . 'black_ip.json');
+
+				if(!is_numeric(array_search(IP, $blackip)))
+				{
+					$blackip[] 		= IP;
+					$new_blackip 	= json_encode($blackip);
+
+					file_put_contents(ROOT . 'black_ip.json', $new_blackip);
+				}
+
+				if($site['ddos_htaccess'] == 'true')
+				{
+					$htaccess = file_get_contents(ROOT . '.htaccess');
+
+					if(!Contains($htaccess, 'deny from ' . IP))
+						file_put_contents(ROOT . '.htaccess', "deny from " . IP . "\n", FILE_APPEND | LOCK_EX);
+				}
+
+				if(!empty($site['ddos_redirect']))
+					Core::Redirect($site['ddos_redirect']);
+				
+				header('HTTP/1.0 503 Service Temporarily Unavailable');
+				header('Connection: close');
+			}
+
+			self::UpdateMyVisit(array(
+				'last'	=> time()
+			));
+		}
+	}
 	
 	// Checar cronometros.
 	static function CheckTimers()
