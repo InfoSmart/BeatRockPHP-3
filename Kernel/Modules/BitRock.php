@@ -79,10 +79,10 @@ class BitRock
 		if(file_exists(KERNEL . 'Configuration.json'))
 		{		
 			if(!function_exists('curl_init'))
-				self::SetStatus('La librería cURL esta desactivada en PHP, esta es necesaria para BeatRock, por favor activela para continuar.', '', Array('function' => 'curl_init'));
+				self::SetStatus('La librería cURL esta desactivada en PHP, esta es necesaria para BeatRock, por favor activela para continuar.', '', array('function' => 'curl_init'));
 			
 			if(!function_exists('json_decode'))
-				self::SetStatus('La librería JSON esta desactivada en PHP, esta es necesaria para BeatRock, por favor activela para continuar.', '', Array('function' => 'json_decode'));
+				self::SetStatus('La librería JSON esta desactivada en PHP, esta es necesaria para BeatRock, por favor activela para continuar.', '', array('function' => 'json_decode'));
 		}
 		
 		if(!empty(self::$status['response']))
@@ -399,9 +399,6 @@ class BitRock
 		if(self::$inerror == false AND !empty(Tpl::$html))
 			echo Tpl::$html;
 
-		if(in_array('Ftp', self::$modules))
-			Ftp::Crash();
-
 		if(in_array('Socket', self::$modules))
 			Socket::Crash();
 		
@@ -436,9 +433,12 @@ class BitRock
 	// - $db (Bool) - ¿Incluir un backup de la base de datos?
 	static function Backup($db = false)
 	{
-		$name = BIT . 'Backups' . DS . 'Backup-' . date('d_m_Y') . '-' . time() . '.zip';
+		global $site;
+
+		$path = BIT . 'Backups' . DS;
+		$name = 'Backup-' . date('d_m_Y') . '-' . time() . '.zip';
 		
-		$a = new PclZip($name);
+		$a = new PclZip($path . $name);
 		$e = $a->create(ROOT);
 		
 		if($e == 0)
@@ -449,12 +449,38 @@ class BitRock
 			$b = MySQL::Backup();
 			$b = BIT . 'Backups' . DS . $b;
 			
-			Zip::Add($name, $b);
+			Zip::Add($path . $name, $b);
 			unlink($b);
 		}
+
+		if($site['site_backups_servers'] == 'true')
+			BitRock::Send_FTPBackup($path . $name, $name);
 		
 		self::Log('Se ha creado un Backup total correctamente.');
 		return $name;
+	}
+
+	static function Send_FTPBackup($file, $filename)
+	{
+		$servers = Site::Get('backups_servers');
+
+		while($row = fetch_assoc())
+		{
+			$folder = 'Backup-' . date('d_m_Y');
+			$ftp 	= new Ftp($row['host'], $row['username'], $row['password'], $row['port']);
+
+			if(!empty($row['directory']))
+			{
+				//self::$ignore = true;
+				$ftp->ToDir($row['directory']);
+			}
+
+			$ftp->NewDir($folder);
+			$ftp->ToDir($folder);
+			$ftp->Upload($file, $filename);
+		}
+
+		BitRock::$ignore = false;
 	}
 	
 	// Función - Imprimir estadisticas.
