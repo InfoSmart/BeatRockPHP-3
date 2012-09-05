@@ -207,6 +207,8 @@ class BitRock
 			require SITE_MODS . $mod;
 		else if(file_exists(MODS . 'External' . DS . $mod))
 			require MODS . 'External' . DS . $mod;
+		else if(file_exists(MODS . 'Server' . DS . $mod))
+			require MODS . 'Server' . DS . $mod;
 		else
 		{
 			self::SetStatus('No se ha podido cargar el módulo "'.$name.'".', $name);
