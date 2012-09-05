@@ -240,7 +240,7 @@ function CheckRelease()
 	if(!is_array($check))
 		$status = "&times; Error de verificación de versión.";
 	else if($check['code'] == "ERROR")
-		$status = 'Hay una actualización disponible (' . $check['ver'] . ')<br /><center><a href="' . $check['download'] . '">Descargar</a> - <a href="' . $check['url'] . '" target="_blank">Más información</a></center>';
+		$status = 'Hay una actualización disponible (' . $check['ver'] . ')<br /><center><a href="' . $check['download'] . '" class="ibtn">Descargar</a> <a href="' . $check['url'] . '" target="_blank" class="ibtn">Más información</a></center>';
 	else
 		$status = "&radic; BeatRock está actualizado.";
 		
@@ -268,18 +268,18 @@ if(!defined("NO_FOOTER"))
 	{
 		if($value == false)
 		{
-			if($page['id'] !== "index")
+			if($page['id'] !== 'index')
 			{
 				header("Location: ./index");
 				exit;
 			}
 			else
-				$status[$param] = '?';
+				$status[$param] = '<label style="color: red">&#xe039;</label>';
 
 			$continue = false;
 		}
 		else
-			$status[$param] = '>';
+			$status[$param] = '<label style="color: green">&#xe03b;</label>';
 	}
 }
 	
