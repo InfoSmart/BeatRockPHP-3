@@ -60,8 +60,6 @@ define('LANGUAGES', 	KERNEL . 'Languages' . DS);
 
 // Ajustando configuración de PHP recomendada.
 ini_set('zlib.output_compression', 	'Off');
-ini_set('short_open_tag', 			'On');
-ini_set('expose_php', 				'Off');
 
 // Activando el colector de referencia circular.
 gc_enable();
@@ -74,9 +72,9 @@ session_start();
 #############################################################
 
 // Información del Kernel.
-require KERNEL . 'Info.php';
+include KERNEL . 'Info.php';
 
-// Iniciando BitRock...
+// Iniciando BitRock (Ayudante)...
 require MODS . 'BitRock.php';
 new BitRock();
 
@@ -85,9 +83,9 @@ new BitRock();
 #############################################################
 
 // Preparando y obteniendo el sistema de lenguaje.
-$lang 	= Lang::Init();
+Lang::Init();
 // Preparando y obteniendo variables del archivo de Configuración.
-$config = Setup::Init();
+Setup::Init();
 
 // Realizando conexión al servidor MemCache.
 Mem::Init();
@@ -95,14 +93,13 @@ Mem::Init();
 MySQL::Connect();
 	
 // Obteniendo la configuración del sitio web.
-$site = Site::GetConfig();
+Site::GetConfig();
 // Agregando una nueva visita a la base de datos.
 Site::AddVisit();
 
 // Obteniendo datos "POST" perdidos en una sesión anterior.
 Client::GetPost();
-
-// Verificación de carga media.
+// Verificación de carga.
 BitRock::CheckLoad();
 
 #############################################################
@@ -264,25 +261,25 @@ function last_id()
 // - $str: Cadena a filtrar.
 // - $html (Bool): ¿Filtrar HTML con HTML ENTITIES? (Evitar Inyección XSS)
 // - $e (Charset): Codificación de letras de la cadena a filtrar.
-function FilterText($str, $html = true, $e = 'ISO-8859-15')
+function FilterText($str, $html = true, $from = '', $to = '')
 {
-	return Core::FilterText($str, $html, $e);
+	return Core::FilterText($str, $html, $from, $to);
 }
-function _f($str, $html = true, $e = 'ISO-8859-15')
+function _f($str, $html = true, $from = '', $to = '')
 {
-	return Core::FilterText($str, $html, $e);
+	return Core::FilterText($str, $html, $from, $to);
 }
 
 // Filtrar una cadena para evitar Inyección XSS.
 // - $str: Cadena a filtrar.
 // - $e (Charset): Codificación de letras de la cadena a filtrar.
-function CleanText($str, $e = 'ISO-8859-15')
+function CleanText($str, $from = '', $to = '')
 {
 	return Core::CleanText($str, $e);
 }
-function _c($str, $e = 'ISO-8859-15')
+function _c($str, $from = '', $to = '')
 {
-	return Core::CleanText($str, $e);
+	return Core::CleanText($str, $from, $to);
 }
 
 // Búsqueda de un término en una cadena.
@@ -440,6 +437,8 @@ define('OS', Client::Get('os'));
 define('HOST', Client::Get('host'));
 // Definición - Dominio actual.
 define('DOMAIN', Core::GetHost(PATH));
+// Definición - Dirección del RSS
+define('RSS', $site['site_rss_path']);
 
 // Constantes definidas.
 $constants = get_defined_constants(true);
@@ -481,7 +480,7 @@ if($config['security']['enabled'] OR $Kernel['secure'] == true AND $Kernel['secu
 }
 
 #############################################################
-## VERIFICACIÓN DE CONEXIÓN ACTIVA
+## VERIFICACIÓN DE CONEXIÓN DE USUARIO ACTIVA
 #############################################################
 
 $my = null;
@@ -494,6 +493,6 @@ Users::CheckCookie();
 ## HEMOS TERMINADO
 #############################################################
 
-require KERNEL . 'Functions.php';
+include KERNEL . 'Functions.php';
 Reg('BeatRock se ha cargado correctamente.');
 ?>
