@@ -107,7 +107,7 @@ class MySQL
 		if(empty($host) OR empty($dbname))
 			return false;
 
-		$sql = mysqli_connect($host, $username, $password, $dbname, $port) or self::Error('mysql.connect', __FUNCTION__);
+		$sql = mysqli_connect($host, $username, $password, '', $port) or self::Error('mysql.connect', __FUNCTION__);
 
 		self::$connection 	= $sql;
 		self::$connected 	= true;	
@@ -657,6 +657,8 @@ class MySQL
 	// - $out (Bool): Retornar la copia en texto plano, de otra manera retornar el nombre del archivo.
 	static function Backup($tables = '', $out = false)
 	{
+		global $site;
+
 		if(empty($tables))
 		{
 			$query = self::query('SHOW TABLES');
@@ -714,6 +716,9 @@ class MySQL
 		{
 			$bname = 'DB-Backup-' . date('d_m_Y') . '-' . time() . '.sql';
 			Io::SaveBackup($bname, $return);
+
+			if($site['site_backups_servers'] == 'true')
+				BitRock::Send_FTPBackup(BIT . 'Backups' . DS . $bname, $bname);
 			
 			return $bname;
 		}
