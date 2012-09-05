@@ -16,13 +16,13 @@ if(!defined('BEATROCK'))
 
 class Ftp
 {
-	$connection = null;
-	$host 		= '';
-	$username 	= '';
-	$password 	= '';
-	$port 		= 21;
-	$ssl 		= false;
-	$pasv 		= true;
+	public $connection = null;
+	public $host 		= '';
+	public $username 	= '';
+	public $password 	= '';
+	public $port 		= 21;
+	public $ssl 		= false;
+	public $pasv 		= true;
 	
 	// Lanzar error.
 	// - $code: Código del error.
