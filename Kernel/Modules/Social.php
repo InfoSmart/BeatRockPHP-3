@@ -20,7 +20,6 @@ class Social
 	static $reg_data 	= array();
 	static $PATH_NOW 	= '';
 
-	static $fb = null;
 	static $tw = null;
 	static $st = null;
 
@@ -43,6 +42,34 @@ class Social
 		BitRock::LaunchError($code);
 		
 		return false;
+	}
+
+	// Obtener el recurso de Facebook.
+	static function GetFb()
+	{
+		Fb::Init();
+		return Fb::$api;
+	}
+
+	// Obtener el recurso de Twitter.
+	static function GetTwitter()
+	{
+		self::InitAPI('twitter');
+		return self::$tw;
+	}
+
+	// Obtener el recurso de Steam.
+	static function GetSteam()
+	{
+		self::InitAPI('steam');
+		return self::$tw;
+	}
+
+	// Obtener el recurso de Steam.
+	static function GetPlus()
+	{
+		self::InitAPI('google');
+		return self::$pl;
 	}
 	
 	// Preparar los datos.
@@ -69,53 +96,10 @@ class Social
 			return self::Error('social.service', __FUNCTION__);
 
 		if($service == 'facebook')
-		{
-			if(self::$fb !== null)
-				return true;
-
-			require MODS . 'External' . DS . 'facebook' . DS . 'facebook.php';
-			$data = self::$data['facebook'];
-			
-			if(empty($data['appId']) OR empty($data['secret']))
-				return self::Error('social.instance', __FUNCTION__, '%error.facebook.data%');
-			
-			$fb = new Facebook(array(
-				'appId'		=> $data['appId'],
-				'secret'	=> $data['secret']
-			));
-			
-			if(!$fb)
-				return false;
-
-			self::$fb = $fb;
-			return true;
-		}
+			Fb::Init();
 
 		if($service == 'twitter')
-		{
-			if(self::$tw !== null)
-				return true;
-
-			require MODS . 'External' . DS . 'twitter' . DS . 'twitteroauth.php';
-			global $R;
-			
-			$data = self::$data['twitter'];
-			$auth = Core::theSession('twitter_api');
-			
-			if(empty($data['key']) OR empty($data['secret']))
-				return self::Error('social.instance', __FUNCTION__, '%error.twitter.data%');
-			
-			if($R['oauth_token'] == $auth['oauth_token'])
-			{
-				$tw 	= new TwitterOAuth($data['key'], $data['secret'], $auth['oauth_token'], $auth['oauth_token_secret']);
-				$auth 	= $tw->getAccessToken($R['oauth_verifier']);
-			}
-			
-			$tw = new TwitterOAuth($data['key'], $data['secret'], $auth['oauth_token'], $auth['oauth_token_secret']);
-
-			self::$tw = $tw;
-			return true;
-		}
+			Twitter::Init();
 
 		if($service == 'google')
 		{
@@ -164,65 +148,15 @@ class Social
 	{
 		if(!in_array($service, self::$SERVICES))
 			return self::Error('social.service', __FUNCTION__);
-
-		self::InitAPI($service);
 		
 		if($service == 'facebook')
 		{
-			$fb = self::$fb;
-
-			if($fb == null)
-				return self::Error('social.instance.fail', __FUNCTION__, '%error.facebook%');
-
-			$user 	= $fb->getUser();
-			$me 	= null;
-			
-			if($user)
-			{
-				try
-				{ $me = $fb->api('/me', 'GET'); }
-				catch(FacebookApiException $e) 
-				{ self::Error('social.instance.fail', __FUNCTION__, $e); }
-			}
-			else
-			{
-				$params = array();
-
-				if(!empty($scope))
-					$params = array('scope' => $scope);
-
-				Core::Redirect($fb->getLoginUrl($params));
-			}
+			Fb::SetScope($scope);
+			$me = Fb::Get_Me();
 		}
 		
 		if($service == 'twitter')
-		{
-			$tw = self::$tw;
-
-			if($tw == null)
-				return self::Error('social.instance.fail', __FUNCTION__, '%error.twitter%');
-			
-			try
-			{ $me = $tw->get('account/verify_credentials'); }
-			catch(Exception $e)
-			{ self::Error('social.instance.fail', __FUNCTION__, $e); }
-			
-			if($me->error == 'Could not authenticate you.')
-			{
-				$req = $tw->getRequestToken(PATH_NOW);
-				
-				Core::theSession('twitter_api', array(
-					'oauth_token' 			=> $req['oauth_token'],
-					'oauth_token_secret'	=> $req['oauth_token_secret']
-				));
-				
-				if(empty($req['oauth_token']))
-					Core::Redirect(PATH_NOW);
-				
-				if($tw->http_code == 200 OR $tw->http_code == 401)
-					Core::Redirect($tw->getAuthorizeURL($req['oauth_token']));
-			}
-		}
+			$me = Twitter::Get_Me();
 		
 		if($service == 'google')
 		{
@@ -233,20 +167,20 @@ class Social
 				return self::Error('social.instance.fail', __FUNCTION__, '%error.google%');
 
 			global $R;
-			$auth = Core::theSession('google_api');
+			$auth = _SESSION('google_token');
 			
-			if(!empty($R['code']))
+			if(isset($R['code']))
 			{
 				$go->authenticate();
 				
-				Core::theSession('google_api', array(
+				_SESSION('google_token', array(
 					'access_token' => $go->getAccessToken()
 				));
 
 				Core::Redirect(self::$PATH_NOW);
 			}
 			
-			if(!empty($auth['access_token']))
+			if(isset($auth['access_token']))
 				$go->setAccessToken($auth['access_token']);
 				
 			if($go->getAccessToken())
@@ -255,7 +189,7 @@ class Social
 				{ $me = $pl->people->get('me'); }
 				catch(Exception $e) { self::Error('social.instance.fail', __FUNCTION__, $e); }
 				
-				Core::theSession('google_api', array(
+				_SESSION('google_token', array(
 					'access_token' => $go->getAccessToken()
 				));
 			}
@@ -265,13 +199,13 @@ class Social
 
 		if($service == 'steam')
 		{
-			$sessionId 	= Core::theSession('steam_userId');
+			$sessionId 	= _SESSION('steam_userId');
 			$userId 	= (!empty($sessionId)) ? $sessionId : SteamSignIn::validate();
 
 			if(!is_numeric($userId))
 				Core::Redirect(SteamSignIn::genUrl(false, false));
 			else
-				Core::theSession('steam_userId', $userId);
+				_SESSION('steam_userId', $userId);
 
 			$st = new SteamAPI($userId);
 			$me = $st->me;
@@ -316,69 +250,25 @@ class Social
 	// Preparar instancia para Facebook.
 	// - $sec (init, js, all): Sección a implementar.
 	// - $params (Array): Parametros de configuración inicial.
-	static function PrepareFacebook($section = 'all', $params = Array())
-	{
-		$html 	= '';
-		$fb 	= self::$data['facebook'];
-			
-		if($section == 'init' OR $section == 'all')
-		{
-			if(empty($params['status']))
-				$params['status'] 	= 'true';
-				
-			if(empty($params['cookie']))
-				$params['cookie'] 	= 'true';
-				
-			if(empty($params['xfbml']))
-				$params['xfbml'] 	= 'true';
-				
-			if(empty($params['oauth']))
-				$params['oauth'] 	= 'true';
-				
-				
-			$html .= "<script>
-			window.fbAsyncInit = function() 
-			{
-				FB.init({
-					appId: '$fb[appId]',
-					status: $params[status], 
-					cookie: $params[cookie],
-					xfbml: $params[xfbml],
-					oauth: $params[oauth]
-				});
-			};</script>";
-		}
-		
-		if($section == 'js' OR $section == 'all')
-		{
-			$html .= "<div id='fb-root'></div><script>(function(d){
-				var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
-				js = d.createElement('script'); js.id = id; js.async = true;
-				js.src = '//connect.facebook.net/es_MX/all.js#xfbml=1&appId=$fb[appId]';
-				d.getElementsByTagName('head')[0].appendChild(js);
-			}(document));</script>";
-		}
-		
-		return $html;
+	static function PrepareFacebook($section = 'all', $params = array())
+	{		
+		return Fb::Prepare($section, $params);
 	}
 
-	// Publicar una acción Open Graph en Facebook.
-	// - $object: Objeto.
-	// - $action: Acción.
-	// - $url: Dirección web de la acción.
-	static function PublishAction($object, $action, $url)
+	static function PrepareTwitter()
 	{
-		self::InitAPI('facebook');
-		$fb = self::$fb;
+		return Twitter::Prepare();
+	}
 
-		if($fb == null)
-			return self::Error('social.instance.fail', __FUNCTION__, '%error.facebook%');
+	static function PreparePlus($lang = 'es')
+	{
+		$html = '<script type="text/javascript" src="https://apis.google.com/js/plusone.js">';
 
-		$res = $fb->api('/me/$object:$action', 'POST', array(
-			'beverage' => $url
-		));
+		if(!empty($lang))
+			$html .= "{lang: \"$lang\"}";
 
-		return $res['id'];
+		$html .= '</script>';
+		return $html;
 	}
 	
 	// Iniciar sesión o registrar con el servicio.
@@ -417,7 +307,7 @@ class Social
 			'info' => _f(json_encode($info), false)
 		), $data['id']);
 			
-		Core::theSession('service_info', $data['info']);
+		_SESSION('service_info', $data['info']);
 		Users::Login($user['id'], $cookie);
 		
 		return true;
@@ -427,8 +317,8 @@ class Social
 	static function Logout()
 	{
 		Core::delSession('steam_userId');
-		Core::delSession('twitter_api');
-		Core::delSession('google_api');
+		Core::delSession('twitter_token');
+		Core::delSession('google_token');
 	}
 	
 	// Agregar un nuevo usuario.
@@ -543,130 +433,7 @@ class Social
 	// - $params: Parametros de configuración.
 	static function FacebookPlugin($plugin = 'like_button', $href = PATH_NOW, $params = array())
 	{
-		if(!Core::isValid($href, 'url') AND $plugin !== 'activity')
-			return false;
-
-		if(empty($params['width']) OR !is_numeric($params['width']))
-			$params['width'] = 450;
-
-		if(empty($params['height']) OR !is_numeric($params['height']))
-			$params['height'] = 300;
-
-		if($plugin == 'like_button')
-		{
-			if(empty($params['action']))
-				$params['action'] = 'like';
-
-			$html = new Html('div');
-			$html->Set('class', 'fb-like');
-			$html->Set('data-href', $href);
-
-			$html->Set('data-width', $params['width']);
-			$html->Set('data-action', $params['action']);
-
-			if($params['send'] == 'true')
-				$html->Set('data-send', 'true');
-
-			if($params['faces'] == 'true')
-				$html->Set('data-show-faces', 'true');
-		}
-
-		if($plugin == 'send_button')
-		{
-			$html = new Html('div');
-			$html->Set('class', 'fb-send');
-			$html->Set('data-href', $href);
-		}
-
-		if($plugin == 'subscribe_button')
-		{
-			$html = new Html('div');
-			$html->Set('class', 'fb-subscribe');
-			$html->Set('data-href', $href);
-
-			$html->Set('data-width', $params['width']);
-
-			if($params['faces'] == 'true')
-				$html->Set('data-show-faces', 'true');
-		}
-
-		if($plugin == 'comments')
-		{
-			if(empty($params['posts']) OR !is_numeric($params['posts']))
-				$params['posts'] = 3;
-
-			$html = new Html('div');
-			$html->Set('class', 'fb-comments');
-			$html->Set('data-href', $href);
-
-			$html->Set('data-num-posts', $params['posts']);
-			$html->Set('data-width', $params['width']);
-		}
-
-		if($plugin == 'activity')
-		{
-			$html = new Html('div');
-			$html->Set('class', 'fb-activity');
-			$html->Set('data-site', $href);
-
-			$html->Set('data-width', $params['width']);
-			$html->Set('data-height', $params['height']);
-
-			if($params['header'] == 'true')
-				$html->Set('data-header', 'true');
-
-			if($params['recommendations'] == 'true')
-				$html->Set('data-recommendations', 'true');
-
-			if(!empty($params['border']))
-				$html->Set('data-border-color', $params['border']);
-
-			if(!empty($params['linktarget']))
-				$html->Set('data-linktarget', $params['linktarget']);
-		}
-
-		if($plugin == 'like_box')
-		{
-			$html = new Html('div');
-			$html->Set('class', 'fb-like-box');
-			$html->Set('data-href', $href);
-
-			$html->Set('data-width', $params['width']);
-			$html->Set('data-height', $params['height']);
-
-			if($params['faces'] == 'true')
-				$html->Set('data-show-faces', 'true');
-
-			if(!empty($params['border']))
-				$html->Set('data-border-color', $params['border']);
-
-			if($params['stream'] == 'true')
-				$html->Set('data-stream', $params['stream']);
-
-			if($params['header'] == 'true')
-				$html->Set('data-header', $params['header']);
-		}
-
-		if($plugin == 'facepile')
-		{
-			if(empty($params['rows']) OR !is_numeric($params['rows']))
-				$params['rows'] = 1;
-
-			$html = new Html('div');
-			$html->Set('class', 'fb-facepile');
-			$html->Set('data-href', $href);
-
-			$html->Set('data-width', $params['width']);
-			$html->Set('data-max-rows', $params['rows']);
-		}
-
-		if(!empty($params['color']))
-			$html->Set('data-colorscheme', $params['color']);
-
-		if(!empty($params['font']))
-			$html->Set('data-font', $params['font']);
-
-		return $html->Build();
+		return Fb::Plugin($plugin, $href, $params);
 	}
 
 	// Preparar un botón de Twitter.
@@ -675,70 +442,22 @@ class Social
 	// - $params: Parametros de configuración.
 	static function TwitterButton($type = 'share', $href = PATH_NOW, $params = array())
 	{
-		if(empty($params['lang']))
-			$params['lang'] = LANG;
+		return Twitter::Plugin($type, $href, $params);
+	}
 
-		if(empty($params['count']))
-			$params['count'] = 'true';
-
-		if($type == 'share')
-		{
-			$html = new Html('a');
-			$html->Set('href', 'https://twitter.com/share');
-			$html->Set('class', 'twitter-share-button');
-			$html->Set('data-url', $href);
-			$html->Set('text', 'Twittear');
-
-			if(!empty($params['content']))
-				$html->Set('data-text', $params['content']);
-
-			if(!empty($params['via']))
-				$html->Set('data-via', $params['via']);
-
-			if(!empty($params['related']))
-				$html->Set('data-related', $params['related']);
-
-			if(!empty($params['hashtags']))
-				$html->Set('data-hashtags', $params['hashtags']);
-		}
-
-		if($type == 'follow')
-		{
-			$html = new Html('a');
-			$html->Set('href', 'https://twitter.com/' . $href);
-			$html->Set('class', 'twitter-follow-button');
-			$html->Set('text', 'Seguir a @' . $href);
-		}
-
-		if($type == 'tweet')
-		{
-			$html = new Html('a');
-			$html->Set('href', 'https://twitter.com/intent/tweet?button_hashtag=' . $href . '&text=' . $params['content']);
-			$html->Set('class', 'twitter-hashtag-button');
-			$html->Set('text', 'Tweet #' . $href);
-
-			if(!empty($params['related']))
-				$html->Set('data-related', $params['related']);
-
-			if(!empty($params['href']))
-				$html->Set('data-url', $params['href']);
-		}
-
-		if($type == 'tweet_user')
-		{
-			$html = new Html('a');
-			$html->Set('href', 'https://twitter.com/intent/tweet?screen_name=' . $href . '&text=' . $params['content']);
-			$html->Set('class', 'twitter-mention-button');
-
-			if(!empty($params['related']))
-				$html->Set('data-related', $params['related']);
-		}
-
+	// Preparar un botón de Google+
+	// - $href: Dirección/Usuario/Hashtag para el botón.
+	// - $params: Parametros de configuración.
+	static function PlusButton($type = 'share', $href = PATH_NOW, $params = array())
+	{
+		$html = new Html('div');
+		$html->Set('class', 'g-plusone');
+		
 		if(!empty($params['size']))
 			$html->Set('data-size', $params['size']);
 
-		$html->Set('data-count', $params['count']);
-		$html->Set('data-lang', $params['lang']);
+		if(!empty($params['count']))
+			$html->Set('data-annotation', $params['count']);
 
 		return $html->Build();
 	}
