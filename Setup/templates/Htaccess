@@ -50,10 +50,6 @@ Allow from all
   Options +FollowSymlinks
   RewriteEngine on
 
-  ## Reglas de seguridad.
-  RewriteRule ^/Kernel/Site/(.*) ./index.php
-  RewriteRule ^/Kernel/Templates/(.*) ./index.php
-
   RewriteRule ^sitemap.xml ./sitemap.php
   
   # ESCRIBA AQUÍ SUS REGLAS.
