@@ -22,7 +22,7 @@ INSERT INTO {DB_ALIAS}site_config (var, result) VALUES
 ('site_publisher', ''),
 ('site_sitemap', 'true'),
 ('site_rss', 'true'),
-('site_rss_path', 'true'),
+('site_rss_path', '{RSS}'),
 ('site_translate', ''),
 ('site_notes', ''),
 ('site_type', 'website'),
