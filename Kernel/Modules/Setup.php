@@ -55,12 +55,11 @@ class Setup
 				@chmod(BIT . 'Temp', 0777);
 		}
 		
+		global $config;
 		$config = Core::LoadJSON(KERNEL . 'Configuration.json');
 
 		self::Verify($config);		
 		self::Apply($config);
-		
-		return $config;
 	}
 	
 	// Función - ¿Soportamos GZIP?
