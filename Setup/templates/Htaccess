@@ -110,15 +110,22 @@ FileETag None
   Satisfy All
 </FilesMatch>
 
+{config_cache}
+{config_gzip}
+
 # ---------------------------------------------------
 # Protección.
 # ---------------------------------------------------
-
-deny from 67.213.218.72
 
 <FilesMatch "^(shell|sh2ell|shells|hell|she|C99|c99)\.php$">
   deny from all
 </FilesMatch>
 
-{config_cache}
-{config_gzip}
+# ---------------------------------------------------
+# Protección - ANTIDDOS
+# ---------------------------------------------------
+
+## ¡ATENCIÓN! Las líneas de más abajo serán agregadas por BeatRock
+## si tiene activado el sistema de AntiDDOS por htaccess
+
+deny from 67.213.218.72
