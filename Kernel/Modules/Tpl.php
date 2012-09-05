@@ -189,13 +189,13 @@ class Tpl
 		require($tpl . '.tpl');
 		$html = ob_get_contents();
 		
-		if($extra)
+		if($extra == true)
 		{
-			$lang = self::SetLang($html, $page['lang']);
+			$lang = self::SetLang($html, $page['lang'], $page['lang.sections']);
 			$html = $lang[0];
 			
-			$html = self::SetParams($html);			
-			$html = self::Compress($html);
+			$html = self::SetParams($html, $page['parid']);			
+			//$html = self::Compress($html);
 		}
 		
 		ob_clean();
