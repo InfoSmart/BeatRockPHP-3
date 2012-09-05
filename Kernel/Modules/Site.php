@@ -28,6 +28,8 @@ class Site
 	// Obtener la configuración del sitio.
 	static function GetConfig()
 	{
+		global $site;
+
 		$sql 	= query('SELECT var,result FROM {DA}site_config');
 		$site 	= array();
 		
@@ -192,10 +194,7 @@ class Site
 	// - $a (countrys, maps, news): Tipo de datos a obtener.
 	// - $limit (Int): Limite de valores a obtener.
 	static function Get($a = 'countrys', $limit = 0)
-	{
-		if($a !== 'countrys' AND $a !== 'maps' AND $a !== 'news')
-			return false;	
-			
+	{		
 		$q = 'SELECT * FROM {DA}site_'.$a.' ORDER BY ';
 		$q .= ($a == 'countrys') ? 'name ASC' : 'id DESC';
 			
