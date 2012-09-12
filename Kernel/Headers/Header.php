@@ -49,11 +49,11 @@ echo Tpl::$stuff;
 	Path_Now 		= "%PATH_NOW%",
 	Resources 		= "%RESOURCES%",
 	Resources_Sys 	= "%RESOURCES_SYS%",
-	Page 			= "<?=$page['id']?>",
-	Page_Name 		= "<?=$site['name']?>",
+	Page 			= <?=(is_array($page['id'])) ? json_encode($page['id']) : '"' .$page['id']. '"'?>,
+	Page_Name 		= "$$page.name$$",
 	Site_Name 		= "%SITE_NAME%",
 	My_Id 			= "<?=MY_ID?>",
-	My_Lang 		= "<?=LANG?>";
+	My_Lang 		= "#LANG#";
 	Lang 			= <?=$hlang?>;
 <?=Tpl::$vars?>
 	</script>
