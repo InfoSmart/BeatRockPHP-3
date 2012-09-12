@@ -16,97 +16,53 @@ if(!defined('BEATROCK'))
 
 class Admin
 {
-	public static function Examine()
+	static function GetTodayVisits()
 	{
-		$last = Core::TheCache('examine_time');
-		$cache = Core::TheCache('examine_res');
+		$today 		= date('d F Y');
+		$time_start = strtotime($today . ' 00:00:01');
+		$time_end 	= strtotime($today . ' 23:59:59');
 
-		if($last < Core::Time(10, 3, true) OR empty($last) OR empty($cache))
-		{
-			Core::TheCache('examine_res', MySQL::Examine());
-			Core::TheCache('examine_time', time());
-		}
-
-		return Core::TheCache('examine_res');
+		$q = query("SELECT * FROM {DA}site_visits WHERE date > $time_start AND date < $time_end ORDER BY date DESC");
+		return $q;
 	}
 
-	public static function GetMenu()
+	static function GetYesterdayVisits()
 	{
-		global $examine;
-		$result = Array();
+		$yesterday_time = mktime(0, 0, 0, date('m'), (date('d') - 1), date('Y'));
+		$yesterday 		= date('d F Y', $yesterday_time);
+		$time_start 	= strtotime($yesterday . ' 00:00:01');
+		$time_end 		= strtotime($yesterday . ' 23:59:59');
 
-		foreach($examine['tables'] as $table)
-		{
-			$name = $table['name'];
-			$sep = explode('_', $name);
-
-			if($name == 'users' OR $name == 'wordsfilter')
-				continue;
-			if($sep[0] == 'site' OR $sep[0] == 'users')
-				continue;
-
-			if(!Contains('_', $name, true))
-			{
-				$filter = str_replace('_', ' ', $sep[0]);
-				$filter = str_replace('-', ' ', $filter);
-
-				$result[] = Array($sep[0], Core::Translate($filter));
-			}
-			else
-				$result[] = Array($name, $table['translated']);
-		}
-
-		return $result;
+		$q = query("SELECT * FROM {DA}site_visits WHERE date > $time_start AND date < $time_end ORDER BY date DESC");
+		return $q;
 	}
 
-	public static function GetCount($table, $where = '')
+	static function GetWeekVisits()
 	{
-		$q = 'SELECT null FROM ' . $table;
+		$week_time_start 	= mktime(0, 0, 0, date('m'), (date('d') - (date('N') - 1)), date('Y'));
+		$week_start 		= date('d F Y', $week_time_start);
+		$week_time_end 		= mktime(0, 0, 0, date('m'), (date('d') + (6 - (date('N') - 1))), date('Y'));
+		$week_end 			= date('d F Y', $week_time_end);
 
-		if(!empty($where))
-			$q .= ' ' . $where;
+		$time_start 		= strtotime($week_start . ' 00:00:01');
+		$time_end 			= strtotime($week_end . ' 23:59:59');
 
-		return Rows($q);
+		$q = query("SELECT * FROM {DA}site_visits WHERE date > $time_start AND date < $time_end ORDER BY date DESC");
+		return $q;
 	}
 
-	public static function GetVisits($table, $limit = 10)
+	static function GetMonthVisits()
 	{
-		return query("SELECT * FROM {DA}$table ORDER BY date DESC LIMIT $limit");
-	}
+		$month_time_start 	= mktime(0, 0, 0, date('m'), 0, date('Y'));
+		$month_start 		= date('d F Y', $month_time_start);
+		$month_time_end 		= mktime(0, 0, 0, date('m'), 31, date('Y'));
+		$month_end 			= date('d F Y', $month_time_end);
 
-	public static function FixName($name, $id = '')
-	{
-		global $cc;
-		$name = str_replace('_', ' ', $name);
+		$time_start 		= strtotime($month_start . ' 00:00:01');
+		$time_end 			= strtotime($month_end . ' 23:59:59');
 
-		if($name !== 'id')
-			$name = Core::Translate($name);
-
-		return $name;
-	}
-
-	public static function TableExist($tb)
-	{
-		global $examine;
-		$more = Array();
-
-		foreach($examine['tables'] as $table)
-		{
-			$t = $table['name'];
-
-			if($tb == $t)
-				return Array($table);
-
-			$n = explode('_', $t);
-
-			if($tb == $n[0])
-				$more[] = $table;
-		}
-
-		if(!empty($more))
-			return $more;
-
-		return false;
+		$q = query("SELECT * FROM {DA}site_visits WHERE date > $time_start AND date < $time_end ORDER BY date DESC");
+		return $q;
 	}
 }
 ?>

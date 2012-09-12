@@ -131,13 +131,7 @@ class Social
 		}
 
 		if($service == 'steam')
-		{
-			if(self::$st !== null)
-				return true;
-
-			require MODS . 'External' . DS . 'steam' . DS . 'SteamLogin.class.php';
-			require MODS . 'External' . DS . 'steam' . DS . 'SteamAPI.class.php';
-		}
+			Steam::Init();
 	}
 	
 	// Preparar la obtención de datos de un usuario con un servicio.

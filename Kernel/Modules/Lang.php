@@ -83,18 +83,30 @@ class Lang
 			{
 				foreach($section as $sec)
 				{
-					if(empty($params[$lang][$sec]))
+					$lvalue = $params[$lang][$sec];
+
+					if(empty($lvalue))
 						continue;
 
-					$result[$lang][$sec] = ShortCuts($params[$lang][$sec]);
+					if(CHARSET !== 'UTF-8')
+						$lvalue = Core::UTF8Decode($lvalue);
+
+					$lvalue = ShortCuts($lvalue);
+					$result[$lang][$sec] = $lvalue;
 				}
 			}
 			else
 			{
-				if(empty($params[$lang][$section]))
+				$lvalue = $params[$lang][$section];
+
+				if(empty($lvalue))
 					return;
 
-				$result[$lang] = ShortCuts($params[$lang][$section]);
+				if(CHARSET !== 'UTF-8')
+					$lvalue = Core::UTF8Decode($lvalue);
+
+				$lvalue = ShortCuts($lvalue);
+				$result[$lang] = $lvalue;
 			}
 		}
 

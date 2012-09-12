@@ -291,12 +291,12 @@ class BitRock
 			{
 				$report_code = Core::Random(10);
 				
-				MySQL::query_insert('site_errors', array(
+				$result = MySQL::query_insert('site_errors', array(
 					'report_code' 	=> $report_code,
 					'code' 			=> $code,
 					'title' 		=> $info['title'],
 					'response' 		=> _f($res['response']),
-					'file' 			=> _f($res['file']),
+					'file' 			=> _f($res['file'], false),
 					'function' 		=> $res['function'],
 					'line' 			=> $res['line'],
 					'out_file' 		=> _f($res['out_file']),
@@ -312,11 +312,19 @@ class BitRock
 			'info' 			=> $info,
 			'res' 			=> $res
 		);
-		
+
 		$mail_result = Core::SendError();
 		self::Log('Ha ocurrido un error: '.$code.' - '.$info['title'].' - '.$info['details'], 'error');
 		
 		ob_flush();
+
+		if($page['ajax'] == true OR $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' AND $page['ajax'] !== false)
+		{
+			$data = array('system_error' => self::$details);
+			$data = json_encode(_c($data));
+			
+			exit($data);
+		}
 
 		header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
 		header('Cache-Control: no-cache');

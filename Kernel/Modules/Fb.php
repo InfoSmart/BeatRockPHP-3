@@ -215,7 +215,7 @@ class Fb
 	}
 
 	// Preparar e implementar la API.
-	private static function Init()
+	static function Init()
 	{
 		if(self::$api !== null)
 			return true;

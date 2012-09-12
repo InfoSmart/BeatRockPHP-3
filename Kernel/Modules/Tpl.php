@@ -225,9 +225,9 @@ class Tpl
 
 			foreach($params[1] as $param)
 			{
-				if(Contains($param, '_'))
+				if(Contains($param, '.'))
 				{
-					$e 			= explode('_', $param);
+					$e 			= explode('.', $param);
 					$iparam 	= $e[0];
 					$sparam 	= $e[1];
 

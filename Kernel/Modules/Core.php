@@ -266,7 +266,7 @@ class Core
 	static function FilterText($str, $html = true, $from = '', $to = '')
 	{
 		if(empty($to))
-			$to = strtoupper(ini_get('default_charset'));
+			$to = CHARSET;
 
 		if(is_array($str))
 		{
@@ -290,7 +290,7 @@ class Core
 		$str = stripslashes(trim($str));
 		
 		if($html)
-			$str = htmlentities($str, ENT_QUOTES | ENT_SUBSTITUTE, $e, false);
+			$str = htmlentities($str, ENT_QUOTES | ENT_SUBSTITUTE, $to, false);
 			
 		$str = MySQL::escape_string($str);
 		$str = str_replace('&amp;', '&', $str);
@@ -309,7 +309,7 @@ class Core
 	static function CleanText($str, $from = '', $to = '')
 	{
 		if(empty($to))
-			$to = strtoupper(ini_get('default_charset'));
+			$to = CHARSET;
 
 		if(is_array($str))
 		{
@@ -330,8 +330,8 @@ class Core
 		if(self::isUtf8($str))
 			$from = 'UTF-8';
 			
-		$str = stripslashes(trim($str));
-		$str = htmlentities($str, ENT_COMPAT | ENT_SUBSTITUTE, $e, false);			
+		$str = trim($str);
+		$str = htmlentities($str, ENT_COMPAT | ENT_SUBSTITUTE, $to, false);			
 		$str = str_replace('&amp;', '&', $str);
 		
 		if(!empty($from) AND $from !== $to)
@@ -363,6 +363,32 @@ class Core
 		$str = ($html) ? htmlentities($str, ENT_COMPAT | ENT_SUBSTITUTE, 'UTF-8', false) : iconv('UTF-8', 'ISO-8859-15//TRANSLIT//IGNORE', $str);
 			
 		return nl2br($str);
+	}
+
+	static function UTF8Encode($str)
+	{
+		if(!is_array($str))
+			return utf8_encode($str);
+
+		$final = array();
+
+		foreach($str as $param => $value)
+			$final[$param] = self::UTF8Encode($value);
+
+		return $final;
+	}
+
+	static function UTF8Decode($str)
+	{
+		if(!is_array($str))
+			return utf8_decode($str);
+
+		$final = array();
+
+		foreach($str as $param => $value)
+			$final[$param] = self::UTF8Decode($value);
+
+		return $final;
 	}
 	
 	// Limpiar cadena para uso especial.
@@ -1310,31 +1336,29 @@ class Core
 	{
 		if(function_exists('mime_content_type'))
 			return mime_content_type($file);
-		else
-		{
-			$fileext = substr(strrchr($file, '.'), 1);
+		
+		$fileext = substr(strrchr($file, '.'), 1);
 
-			if(empty($fileext))
+		if(empty($fileext))
+			return false;
+
+		$regex = "/^([\w\+\-\.\/]+)\s+(\w+\s)*($fileext\s)/i"; 
+		$lines = file('http://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types');
+
+		foreach($lines as $line) 
+		{
+			if (substr($line, 0, 1) == '#')
 				continue;
 
-			$regex = "/^([\w\+\-\.\/]+)\s+(\w+\s)*($fileext\s)/i"; 
-			$lines = file('http://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types');
+			$line = rtrim($line) . ' ';
 
-			foreach($lines as $line) 
-			{
-				if (substr($line, 0, 1) == '#')
-					continue;
+			if (!preg_match($regex, $line, $matches))
+				continue;
 
-				$line = rtrim($line) . ' ';
-
-				if (!preg_match($regex, $line, $matches))
-					continue;
-
-				return $matches[1];
-			}
-
-			return false;
+			return $matches[1];
 		}
+		
+		return false;
 	}
 
 	// Carga un archivo JSON y devuelve el array.
