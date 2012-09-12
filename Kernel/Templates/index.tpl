@@ -36,7 +36,7 @@
 			<!--
 				Nueva forma de usar constantes.
 			-->
-			#ROOT#
+			#ROOT#<br />
 		</p>
 	</div>
 
