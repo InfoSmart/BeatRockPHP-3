@@ -178,6 +178,19 @@ Kernel =
 		{ console.error('KERNEL - Ha sucedido un error al intentar abrir una ventana nueva.'); }
 	},
 
+	ShowBox: function(area, time)
+	{
+		$('.box-' + area).fadeIn('slow');
+
+		if(time > 1000)
+		{
+			setTimeout(function()
+			{
+				$('.box-' + area).fadeOut('slow');
+			}, time);
+		}
+	},
+
 	GetBrowser: function(agent)
 	{
 		if(agent == '' || agent == undefined)
@@ -1118,10 +1131,10 @@ Language =
 				if(Lng[Section] == undefined)
 					return;
 
-				$(this).html(Lng[Section][Param]);
+				$(this).html(html_entity_decode(Lng[Section][Param]));
 			}
 			else
-				$(this).html(Lng[Param]);
+				$(this).html(html_entity_decode(Lng[Param]));
 		});
 	}
 }
@@ -1142,10 +1155,11 @@ $(document).on('ready', function()
 
 	Tpl.AddScript(Resources_Sys + '/js/functions.base.js');
 
-	Tpl.AddScript(Resources_Sys + '/js/external/php.min.js');
+	Tpl.AddScript(Resources_Sys + '/js/external/php.min.js'); // Necesario para el sistema de Langs
 	Tpl.AddScript(Resources_Sys + '/js/external/html5slider.js');
 	Tpl.AddScript(Resources_Sys + '/js/external/html5shiv.js');
 
+	// GOOGLE TRANSLATE
 	//Tpl.AddScript('//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit');
 
 	/** INICIANDO INSTANCIAS LOCALES **/

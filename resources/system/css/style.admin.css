@@ -37,47 +37,34 @@
 
 header
 {
-	background: #ffffff;
-	background: -moz-linear-gradient(top, #ffffff 0%, #f7f7f7 100%);
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#f7f7f7));
-	background: -webkit-linear-gradient(top, #ffffff 0%,#f7f7f7 100%);
-	background: -o-linear-gradient(top, #ffffff 0%,#f7f7f7 100%);
-	background: -ms-linear-gradient(top, #ffffff 0%,#f7f7f7 100%);
-	background: linear-gradient(top, #ffffff 0%,#f7f7f7 100%);
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f7f7f7',GradientType=0 );
-
+	background: #FAFAFA;
 	border-bottom: 4px solid #444444;
-	padding-bottom: 15px;
+	padding: 15px 0;
 }
 
 header h1
 {
-	font-family: "Segoe UI Light", Segoe UI, Arial;
-	font-size: 35px;
-	font-weight: 300;
-	line-height: 40px;
-	margin-bottom: 5px;
-}
-
-header span
-{
-	color: gray;
+	font-family: "Open Sans", Segoe UI, Arial;
+	font-size: 50px;
+	font-weight: 600;
+	line-height: 55px;
+	margin-top: 0;
+	margin-bottom: 0;
 }
 
 /* Contenido */
 
 .content
 {
-	border-left: 2px solid #444444;
-	border-right: 2px solid #444444;
-	min-height: 900px;
+	padding: 10px 0;
 }
 
 .content h2
 {
+	color: #444;
 	font-size: 30px;
-	font-family: "Droid Sans", Open Sans, Segoe UI, Arial;
-	font-weight: bold;
+	font-family: "Open Sans", Segoe UI, Arial;
+	font-weight: 600;
 	line-height: 35px;
 }
 
@@ -94,9 +81,7 @@ header span
 
 .content .c1
 {
-	border-right: 1px solid #444444;
 	float: left;
-	min-height: inherit;
 	margin-right: 15px;
 	width: 180px;
 }
@@ -104,8 +89,19 @@ header span
 .content .c2
 {
 	float: left;
-	min-height: inherit;
 	width: 750px;	
+}
+
+.content .c3
+{
+	float: left;
+	width: 340px;
+}
+
+.content .c4
+{
+	float: right;
+	width: 400;
 }
 
 .content section
@@ -157,20 +153,17 @@ header span
 
 .content .c1 nav a
 {
-	border-bottom: 1px solid #9B9B9B;
-	color: #424242;
+	color: #777;
 	display: block;
-	padding: 10px;
-
-	-webkit-transition: all .4s ease-in-out;
+	padding: 10px 0;
+	padding-left: 10px;
+	font-size: 13px;
 }
 
 .content .c1 nav a:hover
 {
-	background: #F5F5F5;
-	border-bottom: 1px solid #444444 !important;
-	box-shadow: 2px 2px 5px #E6E6E6 inset;
-	color: black;
+	color: #444;
+	background: #F2F2F2;
 }
 
 .content .c1 nav a:last-child
@@ -178,35 +171,36 @@ header span
 	border-bottom: 0;
 }
 
-/* Contenido - Cajas */
+/* Contenido - Contador grande */
 
-.content .box
+.content .count_big .left
 {
-	background: #F5F5F5;
-	border-radius: 5px;
-	padding: 5px;
-	border: 1px solid #D8D8D8;
-	border-bottom-width: 2px;
-	margin: 10px 0;
-}
-
-/* Contenido - Estadisticas */
-
-.content .stats p
-{
-	float: left;
-	width: 180px;
+	font-family: "Open Sans", Segoe UI, Arial;
+	font-size: 30px;
+	font-weight: 300;
 	text-align: center;
+	padding-top: 60px;
+	width: 340px;
 }
 
-.content .stats p b
+.content .count_big .right
 {
-	display: block;
-	font-size: 14px;
-	margin-bottom: 8px;
+	color: black;
+	font-family: "Open Sans", Segoe UI, Arial;
+	font-size: 120px;
+	text-align: center;
+	width: 400px;
 }
 
 /* Formulario */
+
+form.col p
+{
+	display: inline-block;
+	height: 80px;
+	margin: 0 10px;
+	width: 350px;
+}
 
 .notes
 {
@@ -214,7 +208,7 @@ header span
 	width: 95%;
 }
 
-.form1 input:not([type='submit'])
+input:not([type='submit'])
 {
 	width: 350px;
 	height: 23px;
@@ -226,7 +220,170 @@ header span
 footer
 {
 	border-top: 2px solid #444444;
-	padding: 10px;
+	padding: 15px 0;
 	font-size: 12px;
 	color: #666;
+}
+
+/* Tablas */
+
+.intable
+{
+	border-collapse: collapse;
+	border: 1px solid #D8D8D8;
+	font-family: "Segoe UI", Open Sans, Ubuntu, Arial;
+	width: 100%;
+}
+
+.intable thead tr
+{
+	background: #F5F5F5;
+	border-bottom: 1px solid #D8D8D8;
+}
+
+.intable thead tr th
+{
+	font-size: 14px;
+	font-weight: normal;
+	padding: 10px;
+}
+
+.intable thead th
+{
+	text-align: left;
+	padding: 3px 15px;
+}
+
+.intable tbody tr
+{
+	border-bottom: 1px solid #EBEBEB;
+	border-collapse: collapse;
+	border-top: 1px solid white;
+	box-shadow: 0 1px 0 rgba(255, 255, 255, .8) inset;
+}
+
+.intable tbody tr:last-child
+{
+	border-bottom-color: #D8D8D8;
+}
+
+.intable tbody tr:hover
+{
+	color: black;
+	cursor: default !important;
+}
+
+.intable tbody tr:nth-child(even):hover,
+.intable tbody tr:nth-child(odd):hover
+{
+	background: rgba(206, 227, 246, .3);
+}
+
+.intable tbody tr:nth-child(odd)
+{
+	background: white;
+}
+
+.intable tbody tr:nth-child(even)
+{
+	background: #F4F4F4;
+}
+
+.intable tbody tr th
+{
+	font-weight: normal;
+	padding: 8px 15px;
+}
+
+/* Cajas informativas */
+
+.page .box-error,
+.page .box-correct,
+.page .box-info 
+{
+	border-radius: 1px;	
+	cursor: default;	
+	display: none;
+	font-size: 13px;
+	font-family: Arial !important;
+	list-style: none;
+	margin: 20px 0;
+	padding: 8px 10px;
+	vertical-align: baseline;
+	width: 95%;
+	
+	-webkit-transition: all .5s ease-in-out;
+	-moz-transition: all .5s ease-in-out;
+	-o-trasition: all .5s ease-in-out;
+	transition: all .5s ease-in-out;
+}
+
+.page .box-error.ic:before,
+.page .box-correct.ic:before,
+.page .box-info.ic:before
+{
+	font-family: "Icon";
+	font-size: 19px;
+	float: left;
+	margin-right: 10px;
+}
+
+.page .box-error ul,
+.page .box-correct ul,
+.page .box-info ul
+{
+	margin-top: 10px;
+}
+
+.page .box-error li,
+.page .box-correct li,
+.page .box-info li
+{
+	font-size: 11px;
+}
+
+.page .box-error li:before,
+.page .box-correct li:before,
+.page .box-info li:before
+{
+	content: "» ";
+} 
+
+.page .box-error a,
+.page .box-correct a,
+.page .box-info a 
+{
+	color: black !important;
+	text-decoration: underline;
+}
+
+.page .box-correct 
+{
+	background: #E0F8E0;
+	border: 1px solid #04B404;
+	color: #0B3B0B;
+}
+
+.page .box-correct.ic:before
+{
+	content: "> ";
+}
+
+.page .box-info 
+{
+	background: #F2F2F2;
+	border: 1px solid #848484;
+	color: #424242;
+}
+
+.page .box-error
+{
+	background: #F5A9A9;
+	border: 1px solid #B40404;
+	color: #610B0B;
+}
+
+.page .box-error.ic:before
+{
+	content: "? ";
 }
