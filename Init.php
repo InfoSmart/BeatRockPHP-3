@@ -1,29 +1,29 @@
-<?php
+<?
 ##############################################################
 ## 						  BeatRock
 ##############################################################
 ## Framework avanzado de procesamiento para PHP.
 ##############################################################
-## InfoSmart © 2012 Todos los derechos reservados.
-## Iván Bravo Bravo - @Kolesias123 - webmaster@infosmart.mx
+## InfoSmart Â© 2012 Todos los derechos reservados.
+## IvÃ¡n Bravo Bravo - @Kolesias123 - webmaster@infosmart.mx
 ## http://www.infosmart.mx/
 ##############################################################
 ## BeatRock se encuentra bajo la licencia de
-## Creative Commons "Atribución-Licenciamiento Recíproco"
+## Creative Commons "AtribuciÃ³n-Licenciamiento RecÃ­proco"
 ## http://creativecommons.org/licenses/by-sa/2.5/mx/
 ##############################################################
 ## http://beatrock.infosmart.mx/
 ##############################################################
 
 ## -----------------------------------------------------------
-##          Inicialzación (Initialization - Init)
+##          InicialzaciÃ³n (Initialization - Init)
 ## -----------------------------------------------------------
-## Archivo de preparación del Kernel, encargado de iniciar
-## y administrar los procesos y módulos del sistema.
+## Archivo de preparaciÃ³n del Kernel, encargado de iniciar
+## y administrar los procesos y mÃ³dulos del sistema.
 ## -----------------------------------------------------------
 
 #############################################################
-## PREPARACIÓN DE CONSTANTES Y OPCIONES INTERNAS	
+## PREPARACIÃ“N DE CONSTANTES Y OPCIONES INTERNAS	
 #############################################################
 
 // Reporte de errores recomendado para empezar.
@@ -34,98 +34,83 @@ define('BEATROCK', 	true);
 define('START', 	microtime(true));
 //define('DEBUG', 	true);
 
-// Información esencial del usuario.
-define('IP', 	$_SERVER['REMOTE_ADDR']);
-define('AGENT', $_SERVER['HTTP_USER_AGENT']);
-define('FROM',  $_SERVER['HTTP_REFERER']);
-define('LANG', 	substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2));
+// InformaciÃ³n esencial del usuario.
+define('IP', 	 	$_SERVER['REMOTE_ADDR']);
+define('AGENT',  	@$_SERVER['HTTP_USER_AGENT']);
+define('FROM',   	@$_SERVER['HTTP_REFERER']);
+define('LANG', 	 	substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2));
+define('CHARSET',	strtoupper(ini_get('default_charset')));
 
-// Dirección actual y uso del protocolo seguro.
+// DirecciÃ³n actual y uso del protocolo seguro.
 define('URL', $_SERVER['SERVER_NAME'] . $_SERVER["REQUEST_URI"]);
 define('SSL', @$_SERVER['HTTPS']);
 
-// Parametros de ubicación interna.
+// Parametros de directorio.
 define('DS', 	DIRECTORY_SEPARATOR);
 define('ROOT', 	dirname(__FILE__) . DS);
 
-// Subparametros de ubicación interna.
-define('KERNEL', 		ROOT . 'Kernel' . DS);
-define('TEMPLATES', 	KERNEL . 'Templates' . DS);
-define('TEMPLATES_BIT', TEMPLATES . 'bitrock' . DS);
-define('HEADERS', 		KERNEL . 'Headers' . DS);
-define('BIT', 			KERNEL . 'BitRock' . DS);
-define('MODS', 			KERNEL . 'Modules' . DS);
-define('SITE_MODS', 	MODS . 'Site' . DS);
-define('LANGUAGES', 	KERNEL . 'Languages' . DS);
+// Parametros de ubicaciÃ³n.
+define('KERNEL', 			ROOT . 'Kernel' . DS);
+define('KERNEL_TPL', 		KERNEL . 'Views' . DS);
+define('KERNEL_TPL_BIT', 	KERNEL_TPL . 'bitrock' . DS);
+define('KERNEL_CTRLS', 		KERNEL . 'Controllers' . DS);
 
-// Ajustando configuración de PHP recomendada.
+define('HEADERS', 			KERNEL . 'Headers' . DS);
+define('BIT', 				KERNEL . 'BitRock' . DS);
+
+define('APP', 				ROOT . 'App' . DS);
+define('APP_TPL', 			APP . 'Views' . DS);
+define('APP_TPL_HEADERS',	APP_TPL . 'headers' . DS);
+define('APP_CTRLS', 		APP . 'Controllers' . DS);
+
+define('LANGUAGES', 		APP . 'Languages' . DS);
+
+// Ajustando configuraciÃ³n de PHP recomendada.
 ini_set('zlib.output_compression', 	'Off');
 
 // Activando el colector de referencia circular.
 gc_enable();
 
-// Empezar sesión.
+// Empezar sesiÃ³n.
 session_start();
 
 #############################################################
 ## INICIANDO BitRock: Administrador de procesos iniciales.
 #############################################################
 
-// Información del Kernel.
+// InformaciÃ³n del Kernel.
 include KERNEL . 'Info.php';
 
 // Iniciando BitRock (Ayudante)...
-require MODS . 'BitRock.php';
-new BitRock();
+require KERNEL_CTRLS . 'Bit.php';
+new Bit;
 
 #############################################################
 ## INICIANDO INSTANCIAS DEL SISTEMA
 #############################################################
 
 // Preparando y obteniendo el sistema de lenguaje.
-Lang::Init();
-// Preparando y obteniendo variables del archivo de Configuración.
-Setup::Init();
+new Lang;
+// Preparando y obteniendo variables del archivo de ConfiguraciÃ³n.
+new Setup;
 
-// Realizando conexión al servidor MemCache.
-Mem::Init();
-// Realizando conexión al servidor MySQL.
-MySQL::Connect();
+// Realizando conexiÃ³n al servidor MemCache.
+new Mem;
+// Realizando conexiÃ³n al servidor SQL.
+SQL::Init();
 	
-// Obteniendo la configuración del sitio web.
-Site::GetConfig();
+// Obteniendo la configuraciÃ³n del sitio web.
+new Site;
 // Agregando una nueva visita a la base de datos.
-Site::AddVisit();
+Site::Visit();
+// Ejecutar tareas de protecciÃ³n al sitio.
+Site::Protect();
 
-// Obteniendo datos "POST" perdidos en una sesión anterior.
+// Obteniendo datos "POST" perdidos en una sesiÃ³n anterior.
 Client::GetPost();
-// Verificación de carga.
-BitRock::CheckLoad();
+// VerificaciÃ³n de carga.
+Bit::CheckLoad();
 
-#############################################################
-## RECUPERACIÓN AVANZADA
-#############################################################
-
-// Definiendo la recuperación avanzada.
-$back = Core::TheCache('backup_time');
-
-// Si la configuración avanzada esta activada, guardar en variables de sesión
-// la información perteneciente al archivo de configuración y una copia
-// de seguridad de la base de datos.
-if($config['server']['backup'] AND (empty($back) OR time() > $back))
-{
-	Core::TheCache('backup_config', Io::Read(KERNEL . 'Configuration.php'));
-	Core::TheCache('backup_db', MySQL::Backup('', true));
-	Core::TheCache('backup_time', Core::Time(30, 2));
-}
-// De otra forma, borrar todo.
-else if(!$config['server']['backup'])
-{
-	Core::DelCache('backup_config');
-	Core::DelCache('backup_db');
-	Core::DelCache('backup_time');
-}
-	
 #############################################################
 ## FUNCIONES DE ACCESO DIRECTO
 #############################################################
@@ -133,7 +118,7 @@ else if(!$config['server']['backup'])
 // Remplazar "accesos directos" en una cadena.
 // - $str: 	Cadena de texto a ajustar.
 // - $other (array): Otros parametros a reemplazar.
-function ShortCuts($str, $other = '')
+function Short($str, $other = '')
 {
 	$params = get_defined_constants(true);
 	$params = $params['user'];
@@ -150,11 +135,16 @@ function ShortCuts($str, $other = '')
 	return $str;
 }
 
-// Ejecutar consulta en el servidor MySQL.
-// - $q: Consulta a ejecutar.
-function query($q)
+function Query($table)
 {
-	return MySQL::query($q);
+	return new Query($table);
+}
+
+// Ejecutar consulta en el servidor SQL.
+// - $q: Consulta a ejecutar.
+function q($q, $cache = false, $free = false)
+{
+	return SQL::query($q, $cache, $free);
 }
 
 // Insertar datos en la base de datos.
@@ -162,11 +152,11 @@ function query($q)
 // - $data (Array): Datos a insertar.
 function query_insert($table, $data)
 {
-	return MySQL::query_insert($table, $data);
+	return SQL::query_insert($table, $data);
 }
 function Insert($table, $data)
 {
-	return MySQL::query_insert($table, $data);
+	return SQL::query_insert($table, $data);
 }
 
 // Actualizar datos en la base de datos.
@@ -176,123 +166,123 @@ function Insert($table, $data)
 // - $limt (Int): Limite de columnas a actualizar.
 function query_update($table, $updates, $where = '', $limit = 1)
 {
-	return MySQL::query_update($table, $updates, $where, $limit);
+	return SQL::query_update($table, $updates, $where, $limit);
 }
 function Update($table, $updates, $where = '', $limit = 1)
 {
-	return MySQL::query_update($table, $updates, $where, $limit);
+	return SQL::query_update($table, $updates, $where, $limit);
 }
 
-// Obtener numero de valores de una consulta MySQL.
+// Obtener numero de valores de una consulta SQL.
 // - $q: Consulta a ejecutar.
 function query_rows($q)
 {
-	return MySQL::query_rows($q);
+	return SQL::query_rows($q);
 }
 function Rows($q)
 {
-	return MySQL::query_rows($q);
+	return SQL::query_rows($q);
 }
 
-// Obtener los valores de una consulta MySQL.
+// Obtener los valores de una consulta SQL.
 // - $q: Consulta a ejecutar.
 function query_assoc($q)
 {
-	return MySQL::query_assoc($q);
+	return SQL::query_assoc($q);
 }
 function Assoc($q)
 {
-	return MySQL::query_assoc($q);
+	return SQL::query_assoc($q);
 }
 
-// Obtener un dato especifico de una consulta MySQL.
+// Obtener un dato especifico de una consulta SQL.
 // - $q: Consulta a ejecutar.
 function query_get($q, $row)
 {
-	return MySQL::query_get($q);
+	return SQL::query_get($q);
 }
 function Get($q)
 {
-	return MySQL::query_get($q);
+	return SQL::query_get($q);
 }
 
-// Obtener numero de valores de un recurso MySQL o la última consulta hecha.
+// Obtener numero de valores de un recurso MySQL o la Ãºltima consulta hecha.
 // - $q: Recurso de una consulta.
 function num_rows($q = '')
 {
-	return MySQL::num_rows($q);
+	return SQL::num_rows($q);
 }
 
-// Obtener los valores de un recurso MySQL o la última consulta hecha.
+// Obtener los valores de un recurso MySQL o la Ãºltima consulta hecha.
 // - $q: Recurso de la consulta.
 function fetch_assoc($q = '')
 {
-	return MySQL::fetch_assoc($q);
+	return SQL::fetch_assoc($q);
 }
 
-// Obtener los valores de un recurso MySQL o la última consulta hecha.
+// Obtener los valores de un recurso MySQL o la Ãºltima consulta hecha.
 // - $q: Recurso de la consulta.
 function fetch_object($q = '')
 {
-	return MySQL::fetch_object($q);
+	return SQL::fetch_object($q);
 }
 
-// Obtener los valores de un recurso MySQL o la última consulta hecha.
+// Obtener los valores de un recurso MySQL o la Ãºltima consulta hecha.
 // - $q: Recurso de la consulta.
 function fetch_array($q = '')
 {
-	return MySQL::fetch_array($q);
+	return SQL::fetch_array($q);
 }
 
-// Liberar la memoria de la última consulta realizada.
+// Liberar la memoria de la Ãºltima consulta realizada.
 // - $q: Recurso de la consulta.
 function free_result($q = '')
 {
-	return MySQL::free_result($q);
+	return SQL::free_result($q);
 }
 
-// Obtener la última ID insertada en la base de datos.
+// Obtener la Ãºltima ID insertada en la base de datos.
 function last_id()
 {
-	return MySQL::last_id();
+	return SQL::last_id();
 }
 
-// Filtrar una cadena para evitar Inyección SQL.
+// Filtrar una cadena para evitar InyecciÃ³n SQL.
 // - $str: Cadena a filtrar.
-// - $html (Bool): ¿Filtrar HTML con HTML ENTITIES? (Evitar Inyección XSS)
-// - $e (Charset): Codificación de letras de la cadena a filtrar.
-function FilterText($str, $html = true, $from = '', $to = '')
+// - $html (Bool): Â¿Filtrar HTML con HTML ENTITIES? (Evitar InyecciÃ³n XSS)
+// - $e (Charset): CodificaciÃ³n de letras de la cadena a filtrar.
+function Filter($str, $html = true, $from = '', $to = '')
 {
-	return Core::FilterText($str, $html, $from, $to);
+	return Core::Filter($str, $html, $from, $to);
 }
 function _f($str, $html = true, $from = '', $to = '')
 {
-	return Core::FilterText($str, $html, $from, $to);
+	return Core::Filter($str, $html, $from, $to);
 }
 
-// Filtrar una cadena para evitar Inyección XSS.
+// Filtrar una cadena para evitar InyecciÃ³n XSS.
 // - $str: Cadena a filtrar.
-// - $e (Charset): Codificación de letras de la cadena a filtrar.
-function CleanText($str, $from = '', $to = '')
+// - $e (Charset): CodificaciÃ³n de letras de la cadena a filtrar.
+function Clean($str, $from = '', $to = '')
 {
-	return Core::CleanText($str, $e);
+	return Core::Clean($str, $e);
 }
 function _c($str, $from = '', $to = '')
 {
-	return Core::CleanText($str, $from, $to);
+	return Core::Clean($str, $from, $to);
 }
 
-// Búsqueda de un término en una cadena.
+// BÃºsqueda de un tÃ©rmino en una cadena.
 // - $str: Cadena donde buscar.
-// - $words (Cadena/Array): Término(s) a buscar.
-// - $lower (Bool): ¿Convertir todo a minusculas?
+// - $words (Cadena/Array): TÃ©rmino(s) a buscar.
+// - $lower (Bool): Â¿Convertir todo a minusculas?
 function Contains($str, $words, $lower = false)
 {
 	return Core::Contains($str, $words, $lower);
 }
 
 // Obtener la fecha actual en caracteres.
-// - $hour (Bool): ¿Incluir hora?
+// - $hour (Bool): Â¿Incluir hora?
 // - $type (1, 2, 3): Modo de respuesta.
 function NormalDate($hour = true, $type = 1)
 {
@@ -300,11 +290,11 @@ function NormalDate($hour = true, $type = 1)
 		$type = 1;
 		
 	if($type == 1)
-		$date = date('d') . '-' . GetMonth(date('m')) . '-' . date('Y');
+		$date = date('d') . '-' . Date::GetMonth(date('m')) . '-' . date('Y');
 	if($type == 2)
-		$date = date('d') . '/' . GetMonth(date('m')) . '/' . date('Y');
+		$date = date('d') . '/' . Date::GetMonth(date('m')) . '/' . date('Y');
 	if($type == 3)
-		$date = date('d') . ' de ' . GetMonth(date('m')) . ' de ' . date('Y');
+		$date = date('d') . ' de ' . Date::GetMonth(date('m')) . ' de ' . date('Y');
 	
 	if($hour)
 		$date .= ' ' . date('H:i:s');
@@ -312,12 +302,12 @@ function NormalDate($hour = true, $type = 1)
 	return $date;
 }
 
-// Obtener el mes en caracteres de un mes numerico.
-// - $num (Int): Mes numerico.
-// - $c (Bool): ¿Obtener solo las tres primeras letras?
-function GetMonth($num, $c = false)
+// Calcular tiempo restante/faltante.
+// - $date: Tiempo Unix o cadena de tiempo.
+// - $num: Devolver solo el numero y tipo.
+function CalcTime($date, $num = false)
 {
-	return Core::GetMonth($num, $c);
+	return Date::CalculateTime($date, $num);
 }
 
 // Imprimir de manera visual una matriz (array);
@@ -334,20 +324,29 @@ function _r($a)
 
 // Traducir una cadena.
 // - $data: Cadena.
-// - $section: Nombre de la sección a utilizar.
+// - $section: Nombre de la secciÃ³n a utilizar.
 // - $lang: Lenguaje a traducir.
-// - $tpl: ¿Preparado para la traducción en tiempo real?
+// - $tpl: Â¿Preparado para la traducciÃ³n en tiempo real?
 function _l($data, $section = '', $lang = '', $tpl = false)
 {
 	return Lang::SetParams($data, $lang, $section, $tpl);
 }
 
-// Calcular tiempo restante/faltante.
-// - $date: Tiempo Unix o cadena de tiempo.
-// - $num: Devolver solo el numero y tipo.
-function CalcTime($date, $num = false)
+// Establecer variable de plantilla.
+// - $param (String, Array): Variable.
+// - $vlaue: Valor.
+function _t($param, $value = '')
 {
-	return Core::CalculateTime($date, $num);
+	return Tpl::Set($param, $value);
+}
+
+// Procesar una plantilla (TPL) y obtener su contenido en HTML.
+// - $tpl: UbicaciÃ³n de la plantilla.
+// - $extra (Bool): Â¿Aplicar las variables y comprimir HTML?
+// - $ext: ExtensiÃ³n de la plantilla.
+function _tp($tpl, $extra = false, $ext = '')
+{
+	return Tpl::Process($tpl, $extra, $ext);
 }
 
 // Guardar log.
@@ -355,7 +354,7 @@ function CalcTime($date, $num = false)
 // - $type (info, warning, error, mysql): Tipo del log.
 function Reg($message, $type = 'info')
 {
-	BitRock::Log($message, $type);
+	Bit::Log($message, $type);
 }
 
 // Borrar todas las cookies.
@@ -368,92 +367,109 @@ function cookie_destroy()
 	}
 }
 
-// Definir una sesión.
+// Definir una sesiÃ³n.
 // - $param: Parametro/Nombre.
 // - $value: Valor, si se deja vacio se retornara el valor actual.
 function _SESSION($param, $value = '')
 {
-	return Core::theSession($param, $value);
+	return Core::SESSION($param, $value);
 }
 
-// Eliminar una sesión.
+// Eliminar una sesiÃ³n.
 // - $param: Parametro/Nombre.
 function _DELSESSION($param)
 {
-	return Core::delSession($param);
+	return Core::DELSESSION($param);
 }
 
 // Definir una cookie.
 // - $param: Parametro/Nombre.
 // - $value: Valor, si se deja vacio se retornara el valor actual.
-// - $duration: Duración en segundos.
-// - $path: Ubicación donde podrá ser válida.
-// - $domain: Dominio donde podrá ser válida.
-// - $secure (Bool): ¿Solo válida para HTTPS?
-// - $imgod (Bool): Si se activa, el navegador web no podrá acceder a la cookie. (Como por ejemplo en JavaScript)
+// - $duration: DuraciÃ³n en segundos.
+// - $path: UbicaciÃ³n donde podrÃ¡ ser vÃ¡lida.
+// - $domain: Dominio donde podrÃ¡ ser vÃ¡lida.
+// - $secure (Bool): Â¿Solo vÃ¡lida para HTTPS?
+// - $imgod (Bool): Si se activa, el navegador web no podrÃ¡ acceder a la cookie. (Como por ejemplo en JavaScript)
 function _COOKIE($param, $value = '', $duration = '', $path = '', $domain = '', $secure = false, $imgod = false)
 {
-	return Core::theCookie($param, $value, $duration, $path, $domain, $secure, $imgod);
+	return Core::COOKIE($param, $value, $duration, $path, $domain, $secure, $imgod);
 }
 
 // Eliminar una cookie.
 // - $param: Parametro/Nombre.
-// - $path: Ubicación donde es válida.
-// - $domain: Dominio donde es válida.
+// - $path: UbicaciÃ³n donde es vÃ¡lida.
+// - $domain: Dominio donde es vÃ¡lida.
 function _DELCOOKIE($param, $path = '', $domain = '')
 {
-	return Core::delCookie($param, $path, $domain);
+	return Core::DELCOOKIE($param, $path, $domain);
+}
+
+// Definir una sesiÃ³n. (SegÃºn se adecua la situaciÃ³n)
+// - $param: Parametro/Nombre.
+// - $value: Valor, si se deja vacio se retornara el valor actual.
+function _CACHE($param, $value = '')
+{
+	return Core::CACHE($param, $value);
+}
+
+// Eliminar una sesiÃ³n. (SegÃºn se adecua la situaciÃ³n)
+// - $param: Parametro/Nombre.
+function _DELCACHE($param)
+{
+	return Core::DELCACHE($param);
 }
 
 #############################################################
-## DEFINICIÓN DE VARIABLES GLOBALES
+## RECUPERACIÃ“N AVANZADA
 #############################################################
 
-// Variables de fecha y tiempo.
-$date['f'] = (time() - (8 * 60));
-$date['d'] = date('d');
-$date['G'] = date('G');
-$date['i'] = date('i');
-$date['s'] = date('s');
-$date['N'] = date('N');
-$date['n'] = date('n');
-$date['j'] = date('j');
-$date['Y'] = date('Y');
+Bit::AdvBackup();
 
-// Definición - Nombre de la aplicación.
+#############################################################
+## DEFINICIÃ“N DE VARIABLES GLOBALES
+#############################################################
+
+// DefiniciÃ³n - Nombre de la aplicaciÃ³n.
 define('SITE_NAME', $site['site_name']);
 
-// Definición - Dirección local del Logo.
+// DefiniciÃ³n - DirecciÃ³n local del Logo.
 if(!empty($site['site_logo']))
 	define('LOGO', RESOURCES . '/images/'.$site['site_logo']);
 
-// Definición - Motor del navegador web del usuario.
+// DefiniciÃ³n - Motor del navegador web del usuario.
 define('ENGINE', Client::Get('engine'));
-// Definición - Navegador web del usuario.
+// DefiniciÃ³n - Navegador web del usuario.
 define('BROWSER', Client::Get('browser'));
-// Definición - Sistema operativo del usuario.
+// DefiniciÃ³n - Sistema operativo del usuario.
 define('OS', Client::Get('os'));
-// Definición - Host/DNS del usuario.
+// DefiniciÃ³n - Host/DNS del usuario.
 define('HOST', Client::Get('host'));
-// Definición - Dominio actual.
+// DefiniciÃ³n - PaÃ­s del usuario.
+define('COUNTRY', Client::Get('country'));
+// DefiniciÃ³n - Timezone del usuario.
+define('TIMEZONE', Client::Get('timezone'));
+// DefiniciÃ³n - Dominio actual.
 define('DOMAIN', Core::GetHost(PATH));
-// Definición - Dirección del RSS
+// DefiniciÃ³n - DirecciÃ³n del RSS
 define('RSS', $site['site_rss_path']);
 
-// Constantes definidas.
+if($config['server']['timezone'] == true AND TIMEZONE !== '')
+	date_default_timezone_set(TIMEZONE);
+
 $constants = get_defined_constants(true);
 $constants = $constants['user'];
 
-// Definir variables de plantilla para todas las constantes.
+// Definir variables de plantilla para las constantes propias. %PATH%, %RESOURCES%, etc..
 Tpl::Set($constants);
-// Definir variables de configuración de sitio.
+
+// Definir variables de configuraciÃ³n de sitio.
 Tpl::Set($site);
 
 #############################################################
-## MODO SEGURO
+## SEGURIDAD
 #############################################################
 
-// Almacenar información filtrada en variables cortas.
+// Almacenar informaciÃ³n filtrada en variables cortas.
 $G 	= _f($_GET);
 $GC = _c($_GET);
 
@@ -467,9 +483,22 @@ $PA = $_POST;
 $GA = $_GET;
 $RA = $_REQUEST;
 
+// Sospechas de inyecciÃ³n.
+foreach($_REQUEST as $key => $value)
+{
+	$value = strtoupper(urldecode($value));
+
+	preg_match("/SELECT ([^<]+) FROM/is", $value, $verify);
+	preg_match("/DELETE ([^<]+) FROM/is", $value, $verify2);
+	preg_match("/UPDATE FROM/is", $value, $verify3);
+
+	if(count($verify) !== 0 OR count($verify2) !== 0 OR count($verify3) !== 0)
+		Core::SendWait();
+}
+
 // Si el modo seguro esta activado filtrar toda
-// información proviniente del usuario y sesiones.
-// Además de eliminar información delicada.
+// informaciÃ³n proviniente del usuario y sesiones.
+// AdemÃ¡s de eliminar informaciÃ³n delicada.
 if($config['security']['enabled'] OR $Kernel['secure'] == true AND $Kernel['secure'] !== false)
 {
 	$_POST 		= $P;
@@ -480,19 +509,25 @@ if($config['security']['enabled'] OR $Kernel['secure'] == true AND $Kernel['secu
 }
 
 #############################################################
-## VERIFICACIÓN DE CONEXIÓN DE USUARIO ACTIVA
+## VERIFICACIÃ“N DE CONEXIÃ“N ACTIVA DEL USUARIO
 #############################################################
 
 $my = null;
 $ms = null;
 
-Users::CheckSession();
-Users::CheckCookie();
+Users::Session();
+Users::Cookie();
+
+#############################################################
+## FUNCIONES PERSONALIZADAS
+#############################################################
+
+require APP . 'Functions.php';
 
 #############################################################
 ## HEMOS TERMINADO
 #############################################################
 
-include KERNEL . 'Functions.php';
+include APP . 'Setup.php';
 Reg('BeatRock se ha cargado correctamente.');
 ?>

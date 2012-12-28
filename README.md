@@ -7,6 +7,15 @@ Te damos la bienvenida a BeatRock "Labs", dentro encontrarás la última versió
 
 Ten en cuenta que al ser una versión en desarrollo esta copia de BeatRock puede romperse o explotar en cualquier momento así que ten cuidado y experimenta siempre con gafas puestas.
 
+NOTAS DE ESTA VERSIÓN
+------------------------
+
+- La instalación esta incompleta, cuando llegues al paso 4 dirigete a tu aplicación.
+
+- La implementación de Jade tiene problemas aún.
+
+- La API de VirusTotal puede tener problemas.
+
 ¿Has encontrado un problema?
 ------------------------
 

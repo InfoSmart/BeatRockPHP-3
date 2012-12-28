@@ -4,5 +4,6 @@
 
 User-agent: *
 Disallow: /Kernel/
+Disallow: /App/
 Disallow: /Setup/
 Disallow: /imgod/

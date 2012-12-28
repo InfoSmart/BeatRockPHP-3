@@ -3,8 +3,8 @@
 /* TEAM */
 
 	/*
-		Escribe aquí separados por secciones los miembros que ayudaron
-		a la creación de esta aplicación.
+		Escribe aquÃ­ separados por secciones los miembros que ayudaron
+		a la creaciÃ³n de esta aplicaciÃ³n.
 	*/
 
 	<tu cargo>: <tu nombre>
@@ -16,7 +16,7 @@
 /* THANKS */
 
 	/*
-		Escribe aquí nombres y direcciones de los usuarios
+		Escribe aquÃ­ nombres y direcciones de los usuarios
 		que dieron recomendaciones, reportaron o errores o 
 		merecen agradecimientos.
 	*/
@@ -28,11 +28,11 @@
 	Standards: CSS3, JavaScript
 
 	/* DEVELOPMENT */
-	/* Programas que usaste para desarrollar la aplicación */
+	/* Programas que usaste para desarrollar la aplicaciÃ³n */
 	BeatRock: http://beatrock.infosmart.mx/
 
 	/* SOFTWARE */
-	/* Programas que usas para mantener la aplicación */
+	/* Programas que usas para mantener la aplicaciÃ³n */
 	PHP: http://php.net/
 	MySQL: http://mysql.com/
 

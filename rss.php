@@ -1,10 +1,10 @@
-<?php
+<?
 #####################################################
 ## 					 BeatRock				   	   ##
 #####################################################
 ## Framework avanzado de procesamiento para PHP.   ##
 #####################################################
-## InfoSmart © 2012 Todos los derechos reservados. ##
+## InfoSmart Â© 2012 Todos los derechos reservados. ##
 ## http://www.infosmart.mx/						   ##
 #####################################################
 ## http://beatrock.infosmart.mx/				   ##
@@ -17,11 +17,11 @@ if($site['site_rss'] !== 'true')
 	exit;
 
 // Obteniendo 10 noticias.
-$rss['get'] = Site::Get('news', 10);
+Site::Get('news', 10);
 
 // Enviando cabecera de documento XML.
 header('Content-type: text/xml');
-echo '<?xml version="1.0" encoding="ISO-8859-1"?>';
+echo '<?xml version="1.0" encoding="UTF-8"?>';
 ?>
 <rss version="2.0">
 	<channel>
@@ -40,7 +40,7 @@ echo '<?xml version="1.0" encoding="ISO-8859-1"?>';
 			<description><?=($row['sub_content'])?></description>
 			<pubDate><?=date('r', $row['date'])?></pubDate>
 			<!-- 
-			Descomentar en caso de tener una página de visualización de noticias
+			Descomentar en caso de tener una pÃ¡gina de visualizaciÃ³n de noticias
 			<link><?=PATH?>/news?id=<?=$row['id']?></link>
 			-->
 		</item>

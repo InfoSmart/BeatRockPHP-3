@@ -75,18 +75,20 @@ if($_POST['sql_type'] == 'mysql')
 
 if(empty($error))
 {
-	$dbname 			= ROOT . 'App' . DS . $_POST['sql_lite_name'] . '.sqlite';
-	$_POST['sql_name'] 	= $dbname;
+	
 
 	if($_POST['sql_type'] == 'mysql')
 		$db 				= CreateDB($mysql);
 	else
 	{
+		$dbname 			= ROOT . 'App' . DS . $_POST['sql_lite_name'] . '.sqlite';
+		$_POST['sql_name'] 	= $dbname;
+
 		$db 				= CreateDBLite($dbname);
 		$_POST['sql_host'] 	= '';
 	}
 
-	if($db !== true)
+	if($db !== true AND $_POST['sql_type'] == 'mysql' OR $db == false AND $_POST['sql_type'] == 'sqlite')
 	{
 		$result['code'] 	= 'ERROR';
 		$result['message'] 	= 'Ha ocurrido un problema al intentar importar la base de datos. Asegurese de haber descargado BeatRock completamente e intentelo nuevamente. - Error: ' . $db;
