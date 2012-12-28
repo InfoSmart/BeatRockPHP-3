@@ -19,7 +19,4 @@ NOTAS DE ESTA VERSIÓN
 ¿Has encontrado un problema?
 ------------------------
 
-Al parecer estas cumpliendo tu trabajo... Si has encontrado un bug o quieres dar una sugerencia no dudes en escribirnos a: webmaster@infosmart.mx o comentarlo en el documento de "log de cambios".
-
-Puedes mirar el log de cambios aquí:
-https://docs.google.com/document/d/1nrKlahRn77FdJdbzCXxMpvwvyAPRywH_j2UP6lp2M0I/edit
+Al parecer estas cumpliendo tu trabajo... Si has encontrado un bug o quieres dar una sugerencia no dudes en escribirnos a: webmaster@infosmart.mx o enviar un Tweet a la cuenta @Kolesias123
