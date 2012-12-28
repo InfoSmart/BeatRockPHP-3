@@ -1,0 +1,20 @@
+{
+	"page.welcome":
+	{
+		"welcome":			"¡Welcome to {SITE_NAME}!",
+		"regards":			"¡Regards {IP}! Start program for {SITE_NAME} in Kernel/Templates/index.tpl",
+
+		"remember.path1":	"Remember that",
+		"remember.path2":	"is the same at",
+
+		"watch.vars1":		"And look!",
+		"watch.vars2":		"is the same as",
+
+		"have.felt":		"Do not you have felt? It's because you have not seen the code in",
+
+		"view.examples":	"Also check out some examples of the power of <b>BeatRock</b> page of",
+		"examples":			"examples",
+
+		"language.live":	"Part of the translation system in real time."
+	}
+}

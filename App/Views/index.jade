@@ -1,0 +1,35 @@
+	
+		// Contenido de ejemplo
+
+		div.content
+			h2 <?=MySite::HelloWorldLang()?>
+
+			div.c1
+				p %regards%
+
+				p %remember.path1% %PATH% %remember.path2% <b><?=PATH?></b>
+
+				p %watch.vars1% <b>"<?=$hello?>"</b> %watch.vars2% <b>"{$hello}"</b>
+
+				p <b>"<?=$hell['test']?>"</b> %watch.vars2% <b>"{$hell.test}"</b>
+
+				p %have.felt% <b>{%APP_TPL}index.tpl</b>
+
+				p %view.examples% <a href="%PATH%/demos/">%examples%</a>.
+
+				p
+					// Nueva forma de usar constantes.
+					{%ROOT}
+					br
+
+			div.c2
+				// Sistema de traducción en tiempo real, para ver más detalles
+				// vaya a /resources/beatrock/js/functions.page.js
+
+				p
+					a(data-lng="es") Español
+					a(data-lng="en") English
+					a(data-lng="pt") Português
+
+				p
+					%language.live%

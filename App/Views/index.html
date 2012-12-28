@@ -1,0 +1,80 @@
+<!--
+	Contenido de ejemplo
+-->
+<div class="content">
+	<h2>
+		<!--
+			Ejemplo de controladores propios.
+			Para ver el código visita /App/Controllers/MySite.php
+			(también para ver porque este "Hola mundo" no se traduce en tiempo real...)
+		-->
+		<?=MySite::HelloWorldLang()?>
+	</h2>
+
+	<!--
+		Con BeatRock tienes los siguientes escenarios:
+
+		- Para usar variables de PHP 	| $hola = 'Hola'
+		= {$hola}
+
+		- Para usar matrices de PHP 	| $ma['hola'] = 'Hola'
+		= {$ma.hola}
+		NOTA: Solo funciona con matrices de un nivel.
+
+		- Para usar constantes de PHP 	| define('HELLO', 'Hola')
+		= {%HELLO}
+
+
+		- Para usar variables de vistas | _t('hello', 'Hola mundo')
+		= %hello%
+
+	-->
+
+	<div class="c1">
+		<p>
+			%regards%
+		</p>
+		
+		<p>
+			%remember.path1% %PATH% %remember.path2% <b><?=PATH?></b>
+		</p>
+
+		<p>
+			%watch.vars1% <b>"<?=$hello?>"</b> %watch.vars2% <b>"{$hello}"</b>
+		</p>
+
+		<p>
+			<b>"<?=$hell['test']?>"</b> %watch.vars2% <b>"{$hell.test}"</b>
+		</p>
+
+		<p>
+			%have.felt% <b>{%APP_TPL}index.tpl</b>
+		</p>
+
+		<? if(is_dir(ROOT . 'demos')) { ?>
+		<p>
+			%view.examples% <a href="%PATH%/demos/">%examples%</a>.
+		</p>
+		<? } ?>
+
+		<p>
+			{%ROOT}<br />
+		</p>
+	</div>
+
+	<div class="c2">
+		<!--
+			Sistema de traducción en tiempo real, para más información
+			vaya a /resources/beatrock/js/functions.page.js
+		-->
+		<p>
+			<a data-lng="es">Español</a>
+			<a data-lng="en">English</a>
+			<a data-lng="pt">Português</a>
+		</p>
+
+		<p>
+			%language.live%
+		</p>
+	</div>
+</div>
