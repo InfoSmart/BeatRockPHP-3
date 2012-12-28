@@ -9,8 +9,8 @@ Options -Indexes
 # Permisos de acceso a directorios.
 # ---------------------------------------------------
 
-Order deny,allow
-Deny from all
+#Order deny,allow
+#Deny from all
 
 # ---------------------------------------------------
 # Denegar acceso a archivos delicados.

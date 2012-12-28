@@ -1,1 +1,0 @@
-<footer>	<a>%site_publisher%</a> © <?=$date['Y']?>. Todos los derechos reservados.</footer></div>

@@ -1,0 +1,49 @@
+<html>
+	<head>
+		 
+	</head>
+	<body style="color: #444444 !important; font-family: Arial; font-size: 12px; margin: 0; padding: 0;">
+		<h2 style="background: #F5F5F5; border: 1px solid #D8D8D8; border-radius: 1px; color: #1C1C1C !important; font-size: 23px; font-weight: 300; line-height: 35px; margin: 15px 0; padding: 20px 15px; font-family: Open Sans, Droid Sans, Segoe UI, Arial;">Sospechas de inyección en "<?=(defined('SITE_NAME')) ? SITE_NAME : PATH?>"</h2>
+		
+		<p>
+			Se ha enviado este correo electrónico para notificarle que BeatRock ha detectado un intento de inyección en <a href="<?=PATH?>"><?=(defined('SITE_NAME')) ? SITE_NAME : PATH?></a>.<br />
+			Le recomendamos investigar acerca de una posible vulnerabilidad de seguridad y bloquear al usuario que intenta aprovecharla.
+		</p>
+
+		<p>
+			A continuación se presenta más información:
+		</p>
+
+		<p>
+			<span style="display: block; font-weight: bold;">Dirección de la posible inyección:</span>
+			<?=PATH_NOW?>
+		</p>
+
+		<p>
+			<span style="display: block; font-weight: bold;">Datos POST:</span>
+			<?=_r($_POST)?>
+		</p>
+
+		<p>
+			<span style="display: block; font-weight: bold;">Datos GET:</span>
+			<?=_r($_GET)?>
+		</p>
+
+		<p>
+			<span style="display: block; font-weight: bold;">Dirección IP del "atacante":</span>
+			<?=IP?>
+		</p>
+
+		<br /><br />
+		
+		<cite>Este correo electrónico ha sido enviado automaticamente por el sistema de BeatRock en tu sitio web. Los mensajes enviados a la misma no serán leidos ni procesados.</cite>
+
+		<br /><br />
+		
+		<p>
+			<b><?=SITE_NAME?></b><br />
+			<?=PATH?><br />
+			Todos los derechos reservados.
+		</p>
+	</body>
+</html>

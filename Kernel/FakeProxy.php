@@ -4,7 +4,7 @@
 #####################################################
 ## Framework avanzado de procesamiento para PHP.   ##
 #####################################################
-## InfoSmart © 2012 Todos los derechos reservados. ##
+## InfoSmart Â© 2012 Todos los derechos reservados. ##
 ## http://www.infosmart.mx/						   ##
 #####################################################
 ## http://beatrock.infosmart.mx/				   ##
@@ -21,20 +21,20 @@ require '../Init.php';
 ## --------------------------------------------------
 
 // Permitir el uso de este Script por AJAX para cualquier dominio.
-// Comente la siguiente línea si solo desea usarlo localmente.
+// Comente la siguiente l?nea si solo desea usarlo localmente.
 Tpl::AllowCross('*');
 
-// Dirección a visitar codificada en Base64.
-$url = base64_decode($RC['toUrl']);
+// DirecciÃ³n a visitar.
+$url = urldecode($RC['url']);
 
-// ¿No hay dirección?	
+// Â¿No hay direcciÃ³n?	
 if(empty($url))
 	exit;
 
-// Información a enviar.
+// InformaciÃ³n a enviar.
 $post = $_REQUEST;
 
 // Visitando sitio y devolviendo respuesta.
-Curl::Init($url);
-echo Curl::Post($post);
+$request = new Curl($url);
+echo $request->Post($post);
 ?>
