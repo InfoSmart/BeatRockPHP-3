@@ -1,25 +1,25 @@
-CREATE TABLE IF NOT EXISTS {DB_ALIAS}site_config 
+CREATE TABLE IF NOT EXISTS {DB_PREFIX}site_config 
 (
   var varchar(100) NOT NULL,
   result text NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='ConfiguraciÛn';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Configuraci?n';
 
-INSERT INTO {DB_ALIAS}site_config (var, result) VALUES
-('site_name', 'Mi sitio web'),
+INSERT INTO {DB_PREFIX}site_config (var, result) VALUES
+('site_name', 'Mi aplicaci√≥n web'),
 ('site_separation', '~'),
 ('site_slogan', ''),
-('site_charset', 'iso-8859-15'),
+('site_charset', 'utf-8'),
 ('site_language', 'es'),
 ('site_locale', 'es_LA'),
 ('site_description', ''),
-('site_keywords', 'infosmart, beatrock'),
+('site_keywords', 'beatrock'),
 ('site_status', 'open'),
 ('site_visits', '0'),
 ('site_favicon', ''),
 ('site_logo', ''),
 ('site_version', '1.0'),
-('site_revision',  'de 2012'),
-('site_publisher', ''),
+('site_revision',  'de 2013'),
+('site_publisher', 'InfoSmart'),
 ('site_sitemap', 'true'),
 ('site_rss', 'true'),
 ('site_rss_path', '{RSS}'),
@@ -30,21 +30,24 @@ INSERT INTO {DB_ALIAS}site_config (var, result) VALUES
 ('site_compress', 'false'),
 ('site_recovery', 'false'),
 ('site_header_javascript', ''),
-('site_optimized_javascript', 'true'),
+('site_optimized_javascript', 'false'),
 ('site_backups_servers', 'true'),
+('site_jade', 'false'),
+('site_jade_path', ''),
 ('cpu_limit', '0'),
 ('apache_limit', '0'),
-('session_alias', ''),
-('cookie_alias', ''),
+('session_alias', 'app_'),
+('cookie_alias', 'app_'),
 ('cookie_duration', '300'),
 ('cookie_domain', ''),
 ('register_all_visits', 'false'),
 ('ddos_time', '4'),
 ('ddos_warnings', '5'),
 ('ddos_redirect', 'http://www.google.com/'),
-('ddos_htaccess', 'false');
+('ddos_htaccess', 'false'),
+('cache_tables', 'site_backups_servers,site_countrys,site_maps,wordsfilter');
 
-CREATE TABLE IF NOT EXISTS {DB_ALIAS}site_backups_servers (
+CREATE TABLE IF NOT EXISTS {DB_PREFIX}site_backups_servers (
   id int(5) NOT NULL AUTO_INCREMENT,
   host varchar(50) NOT NULL,
   port int(5) NOT NULL,
@@ -53,17 +56,17 @@ CREATE TABLE IF NOT EXISTS {DB_ALIAS}site_backups_servers (
   directory varchar(100) NOT NULL,
   last int(100) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 COMMENT='Servidores de recuperaciÛn.' AUTO_INCREMENT=1;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='Servidores de recuperaci√≥n.' AUTO_INCREMENT=1;
 
-CREATE TABLE {DB_ALIAS}site_cache 
+CREATE TABLE {DB_PREFIX}site_cache 
 (
   id INT( 100 ) NOT NULL AUTO_INCREMENT ,
   page VARCHAR( 50 ) NOT NULL ,
   time INT( 100 ) NOT NULL DEFAULT  '12',
   PRIMARY KEY (id)
-) ENGINE=MYISAM DEFAULT CHARSET=latin1 COMMENT='CachÈ';
+) ENGINE=MYISAM DEFAULT CHARSET=utf8 COMMENT='P√°ginas en cach√©';
 
-CREATE TABLE IF NOT EXISTS {DB_ALIAS}site_countrys 
+CREATE TABLE IF NOT EXISTS {DB_PREFIX}site_countrys 
 (
   id int(11) NOT NULL AUTO_INCREMENT,
   isoNum smallint(6) DEFAULT NULL,
@@ -71,54 +74,54 @@ CREATE TABLE IF NOT EXISTS {DB_ALIAS}site_countrys
   code3 char(3) DEFAULT NULL,
   name varchar(80) DEFAULT NULL,
   PRIMARY KEY (id)
-) ENGINE=MYISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=241;
+) ENGINE=MYISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=241;
 
-INSERT INTO {DB_ALIAS}site_countrys (id, isoNum, code2, code3, name) VALUES
-(1, 4, 'AF', 'AFG', 'Afganist·n'),
+INSERT INTO {DB_PREFIX}site_countrys (id, isoNum, code2, code3, name) VALUES
+(1, 4, 'AF', 'AFG', 'Afganist√°n'),
 (2, 248, 'AX', 'ALA', 'Islas Gland'),
 (3, 8, 'AL', 'ALB', 'Albania'),
 (4, 276, 'DE', 'DEU', 'Alemania'),
 (5, 20, 'AD', 'AND', 'Andorra'),
 (6, 24, 'AO', 'AGO', 'Angola'),
 (7, 660, 'AI', 'AIA', 'Anguilla'),
-(8, 10, 'AQ', 'ATA', 'Ant·rtida'),
+(8, 10, 'AQ', 'ATA', 'Ant√°rtida'),
 (9, 28, 'AG', 'ATG', 'Antigua y Barbuda'),
 (10, 530, 'AN', 'ANT', 'Antillas Holandesas'),
-(11, 682, 'SA', 'SAU', 'Arabia SaudÌ'),
+(11, 682, 'SA', 'SAU', 'Arabia Saud√≠'),
 (12, 12, 'DZ', 'DZA', 'Argelia'),
 (13, 32, 'AR', 'ARG', 'Argentina'),
 (14, 51, 'AM', 'ARM', 'Armenia'),
 (15, 533, 'AW', 'ABW', 'Aruba'),
 (16, 36, 'AU', 'AUS', 'Australia'),
 (17, 40, 'AT', 'AUT', 'Austria'),
-(18, 31, 'AZ', 'AZE', 'Azerbaiy·n'),
+(18, 31, 'AZ', 'AZE', 'Azerbaiy√°n'),
 (19, 44, 'BS', 'BHS', 'Bahamas'),
-(20, 48, 'BH', 'BHR', 'BahrÈin'),
+(20, 48, 'BH', 'BHR', 'Bahr√©in'),
 (21, 50, 'BD', 'BGD', 'Bangladesh'),
 (22, 52, 'BB', 'BRB', 'Barbados'),
 (23, 112, 'BY', 'BLR', 'Bielorrusia'),
-(24, 56, 'BE', 'BEL', 'BÈlgica'),
+(24, 56, 'BE', 'BEL', 'B√©lgica'),
 (25, 84, 'BZ', 'BLZ', 'Belice'),
 (26, 204, 'BJ', 'BEN', 'Benin'),
 (27, 60, 'BM', 'BMU', 'Bermudas'),
-(28, 64, 'BT', 'BTN', 'Bhut·n'),
+(28, 64, 'BT', 'BTN', 'Bhut√°n'),
 (29, 68, 'BO', 'BOL', 'Bolivia'),
 (30, 70, 'BA', 'BIH', 'Bosnia y Herzegovina'),
 (31, 72, 'BW', 'BWA', 'Botsuana'),
 (32, 74, 'BV', 'BVT', 'Isla Bouvet'),
 (33, 76, 'BR', 'BRA', 'Brasil'),
-(34, 96, 'BN', 'BRN', 'BrunÈi'),
+(34, 96, 'BN', 'BRN', 'Brun√©i'),
 (35, 100, 'BG', 'BGR', 'Bulgaria'),
 (36, 854, 'BF', 'BFA', 'Burkina Faso'),
 (37, 108, 'BI', 'BDI', 'Burundi'),
 (38, 132, 'CV', 'CPV', 'Cabo Verde'),
-(39, 136, 'KY', 'CYM', 'Islas Caim·n'),
+(39, 136, 'KY', 'CYM', 'Islas Caim√°n'),
 (40, 116, 'KH', 'KHM', 'Camboya'),
-(41, 120, 'CM', 'CMR', 'Camer˙n'),
-(42, 124, 'CA', 'CAN', 'Canad·'),
-(43, 140, 'CF', 'CAF', 'Rep˙blica Centroafricana'),
+(41, 120, 'CM', 'CMR', 'Camer√∫n'),
+(42, 124, 'CA', 'CAN', 'Canad√°'),
+(43, 140, 'CF', 'CAF', 'Rep√∫blica Centroafricana'),
 (44, 148, 'TD', 'TCD', 'Chad'),
-(45, 203, 'CZ', 'CZE', 'Rep˙blica Checa'),
+(45, 203, 'CZ', 'CZE', 'Rep√∫blica Checa'),
 (46, 152, 'CL', 'CHL', 'Chile'),
 (47, 156, 'CN', 'CHN', 'China'),
 (48, 196, 'CY', 'CYP', 'Chipre'),
@@ -127,7 +130,7 @@ INSERT INTO {DB_ALIAS}site_countrys (id, isoNum, code2, code3, name) VALUES
 (51, 166, 'CC', 'CCK', 'Islas Cocos'),
 (52, 170, 'CO', 'COL', 'Colombia'),
 (53, 174, 'KM', 'COM', 'Comoras'),
-(54, 180, 'CD', 'COD', 'Rep˙blica Democr·tica del Congo'),
+(54, 180, 'CD', 'COD', 'Rep√∫blica Democr√°tica del Congo'),
 (55, 178, 'CG', 'COG', 'Congo'),
 (56, 184, 'CK', 'COK', 'Islas Cook'),
 (57, 408, 'KP', 'PRK', 'Corea del Norte'),
@@ -138,25 +141,25 @@ INSERT INTO {DB_ALIAS}site_countrys (id, isoNum, code2, code3, name) VALUES
 (62, 192, 'CU', 'CUB', 'Cuba'),
 (63, 208, 'DK', 'DNK', 'Dinamarca'),
 (64, 212, 'DM', 'DMA', 'Dominica'),
-(65, 214, 'DO', 'DOM', 'Rep˙blica Dominicana'),
+(65, 214, 'DO', 'DOM', 'Rep√∫blica Dominicana'),
 (66, 218, 'EC', 'ECU', 'Ecuador'),
 (67, 818, 'EG', 'EGY', 'Egipto'),
 (68, 222, 'SV', 'SLV', 'El Salvador'),
-(69, 784, 'AE', 'ARE', 'Emiratos ¡rabes Unidos'),
+(69, 784, 'AE', 'ARE', 'Emiratos √Årabes Unidos'),
 (70, 232, 'ER', 'ERI', 'Eritrea'),
 (71, 703, 'SK', 'SVK', 'Eslovaquia'),
 (72, 705, 'SI', 'SVN', 'Eslovenia'),
-(73, 724, 'ES', 'ESP', 'EspaÒa'),
+(73, 724, 'ES', 'ESP', 'Espa√±a'),
 (74, 581, 'UM', 'UMI', 'Islas ultramarinas de Estados Unidos'),
 (75, 840, 'US', 'USA', 'Estados Unidos'),
 (76, 233, 'EE', 'EST', 'Estonia'),
-(77, 231, 'ET', 'ETH', 'EtiopÌa'),
+(77, 231, 'ET', 'ETH', 'Etiop√≠a'),
 (78, 234, 'FO', 'FRO', 'Islas Feroe'),
 (79, 608, 'PH', 'PHL', 'Filipinas'),
 (80, 246, 'FI', 'FIN', 'Finlandia'),
 (81, 242, 'FJ', 'FJI', 'Fiyi'),
 (82, 250, 'FR', 'FRA', 'Francia'),
-(83, 266, 'GA', 'GAB', 'GabÛn'),
+(83, 266, 'GA', 'GAB', 'Gab√≥n'),
 (84, 270, 'GM', 'GMB', 'Gambia'),
 (85, 268, 'GE', 'GEO', 'Georgia'),
 (86, 239, 'GS', 'SGS', 'Islas Georgias del Sur y Sandwich del Sur'),
@@ -173,31 +176,31 @@ INSERT INTO {DB_ALIAS}site_countrys (id, isoNum, code2, code3, name) VALUES
 (97, 226, 'GQ', 'GNQ', 'Guinea Ecuatorial'),
 (98, 624, 'GW', 'GNB', 'Guinea-Bissau'),
 (99, 328, 'GY', 'GUY', 'Guyana'),
-(100, 332, 'HT', 'HTI', 'HaitÌ'),
+(100, 332, 'HT', 'HTI', 'Hait√≠'),
 (101, 334, 'HM', 'HMD', 'Islas Heard y McDonald'),
 (102, 340, 'HN', 'HND', 'Honduras'),
 (103, 344, 'HK', 'HKG', 'Hong Kong'),
-(104, 348, 'HU', 'HUN', 'HungrÌa'),
+(104, 348, 'HU', 'HUN', 'Hungr√≠a'),
 (105, 356, 'IN', 'IND', 'India'),
 (106, 360, 'ID', 'IDN', 'Indonesia'),
-(107, 364, 'IR', 'IRN', 'Ir·n'),
+(107, 364, 'IR', 'IRN', 'Ir√°n'),
 (108, 368, 'IQ', 'IRQ', 'Iraq'),
 (109, 372, 'IE', 'IRL', 'Irlanda'),
 (110, 352, 'IS', 'ISL', 'Islandia'),
 (111, 376, 'IL', 'ISR', 'Israel'),
 (112, 380, 'IT', 'ITA', 'Italia'),
 (113, 388, 'JM', 'JAM', 'Jamaica'),
-(114, 392, 'JP', 'JPN', 'JapÛn'),
+(114, 392, 'JP', 'JPN', 'Jap√≥n'),
 (115, 400, 'JO', 'JOR', 'Jordania'),
-(116, 398, 'KZ', 'KAZ', 'Kazajst·n'),
+(116, 398, 'KZ', 'KAZ', 'Kazajst√°n'),
 (117, 404, 'KE', 'KEN', 'Kenia'),
-(118, 417, 'KG', 'KGZ', 'Kirguist·n'),
+(118, 417, 'KG', 'KGZ', 'Kirguist√°n'),
 (119, 296, 'KI', 'KIR', 'Kiribati'),
 (120, 414, 'KW', 'KWT', 'Kuwait'),
 (121, 418, 'LA', 'LAO', 'Laos'),
 (122, 426, 'LS', 'LSO', 'Lesotho'),
 (123, 428, 'LV', 'LVA', 'Letonia'),
-(124, 422, 'LB', 'LBN', 'LÌbano'),
+(124, 422, 'LB', 'LBN', 'L√≠bano'),
 (125, 430, 'LR', 'LBR', 'Liberia'),
 (126, 434, 'LY', 'LBY', 'Libia'),
 (127, 438, 'LI', 'LIE', 'Liechtenstein'),
@@ -209,7 +212,7 @@ INSERT INTO {DB_ALIAS}site_countrys (id, isoNum, code2, code3, name) VALUES
 (133, 458, 'MY', 'MYS', 'Malasia'),
 (134, 454, 'MW', 'MWI', 'Malawi'),
 (135, 462, 'MV', 'MDV', 'Maldivas'),
-(136, 466, 'ML', 'MLI', 'MalÌ'),
+(136, 466, 'ML', 'MLI', 'Mal√≠'),
 (137, 470, 'MT', 'MLT', 'Malta'),
 (138, 238, 'FK', 'FLK', 'Islas Malvinas'),
 (139, 580, 'MP', 'MNP', 'Islas Marianas del Norte'),
@@ -219,10 +222,10 @@ INSERT INTO {DB_ALIAS}site_countrys (id, isoNum, code2, code3, name) VALUES
 (143, 480, 'MU', 'MUS', 'Mauricio'),
 (144, 478, 'MR', 'MRT', 'Mauritania'),
 (145, 175, 'YT', 'MYT', 'Mayotte'),
-(146, 484, 'MX', 'MEX', 'MÈxico'),
+(146, 484, 'MX', 'MEX', 'M√©xico'),
 (147, 583, 'FM', 'FSM', 'Micronesia'),
 (148, 498, 'MD', 'MDA', 'Moldavia'),
-(149, 492, 'MC', 'MCO', 'MÛnaco'),
+(149, 492, 'MC', 'MCO', 'M√≥naco'),
 (150, 496, 'MN', 'MNG', 'Mongolia'),
 (151, 500, 'MS', 'MSR', 'Montserrat'),
 (152, 508, 'MZ', 'MOZ', 'Mozambique'),
@@ -231,22 +234,22 @@ INSERT INTO {DB_ALIAS}site_countrys (id, isoNum, code2, code3, name) VALUES
 (155, 520, 'NR', 'NRU', 'Nauru'),
 (156, 524, 'NP', 'NPL', 'Nepal'),
 (157, 558, 'NI', 'NIC', 'Nicaragua'),
-(158, 562, 'NE', 'NER', 'NÌger'),
+(158, 562, 'NE', 'NER', 'N√≠ger'),
 (159, 566, 'NG', 'NGA', 'Nigeria'),
 (160, 570, 'NU', 'NIU', 'Niue'),
 (161, 574, 'NF', 'NFK', 'Isla Norfolk'),
 (162, 578, 'NO', 'NOR', 'Noruega'),
 (163, 540, 'NC', 'NCL', 'Nueva Caledonia'),
 (164, 554, 'NZ', 'NZL', 'Nueva Zelanda'),
-(165, 512, 'OM', 'OMN', 'Om·n'),
-(166, 528, 'NL', 'NLD', 'PaÌses Bajos'),
-(167, 586, 'PK', 'PAK', 'Pakist·n'),
+(165, 512, 'OM', 'OMN', 'Om√°n'),
+(166, 528, 'NL', 'NLD', 'Pa√≠ses Bajos'),
+(167, 586, 'PK', 'PAK', 'Pakist√°n'),
 (168, 585, 'PW', 'PLW', 'Palau'),
 (169, 275, 'PS', 'PSE', 'Palestina'),
-(170, 591, 'PA', 'PAN', 'Panam·'),
-(171, 598, 'PG', 'PNG', 'Pap˙a Nueva Guinea'),
+(170, 591, 'PA', 'PAN', 'Panam√°'),
+(171, 598, 'PG', 'PNG', 'Pap√∫a Nueva Guinea'),
 (172, 600, 'PY', 'PRY', 'Paraguay'),
-(173, 604, 'PE', 'PER', 'Per˙'),
+(173, 604, 'PE', 'PER', 'Per√∫'),
 (174, 612, 'PN', 'PCN', 'Islas Pitcairn'),
 (175, 258, 'PF', 'PYF', 'Polinesia Francesa'),
 (176, 616, 'PL', 'POL', 'Polonia'),
@@ -254,21 +257,21 @@ INSERT INTO {DB_ALIAS}site_countrys (id, isoNum, code2, code3, name) VALUES
 (178, 630, 'PR', 'PRI', 'Puerto Rico'),
 (179, 634, 'QA', 'QAT', 'Qatar'),
 (180, 826, 'GB', 'GBR', 'Reino Unido'),
-(181, 638, 'RE', 'REU', 'ReuniÛn'),
+(181, 638, 'RE', 'REU', 'Reuni√≥n'),
 (182, 646, 'RW', 'RWA', 'Ruanda'),
 (183, 642, 'RO', 'ROU', 'Rumania'),
 (184, 643, 'RU', 'RUS', 'Rusia'),
 (185, 732, 'EH', 'ESH', 'Sahara Occidental'),
-(186, 90, 'SB', 'SLB', 'Islas SalomÛn'),
+(186, 90, 'SB', 'SLB', 'Islas Salom√≥n'),
 (187, 882, 'WS', 'WSM', 'Samoa'),
 (188, 16, 'AS', 'ASM', 'Samoa Americana'),
-(189, 659, 'KN', 'KNA', 'San CristÛbal y Nevis'),
+(189, 659, 'KN', 'KNA', 'San Crist√≥bal y Nevis'),
 (190, 674, 'SM', 'SMR', 'San Marino'),
-(191, 666, 'PM', 'SPM', 'San Pedro y MiquelÛn'),
+(191, 666, 'PM', 'SPM', 'San Pedro y Miquel√≥n'),
 (192, 670, 'VC', 'VCT', 'San Vicente y las Granadinas'),
 (193, 654, 'SH', 'SHN', 'Santa Helena'),
-(194, 662, 'LC', 'LCA', 'Santa LucÌa'),
-(195, 678, 'ST', 'STP', 'Santo TomÈ y PrÌncipe'),
+(194, 662, 'LC', 'LCA', 'Santa Luc√≠a'),
+(195, 678, 'ST', 'STP', 'Santo Tom√© y Pr√≠ncipe'),
 (196, 686, 'SN', 'SEN', 'Senegal'),
 (197, 891, 'CS', 'SCG', 'Serbia y Montenegro'),
 (198, 690, 'SC', 'SYC', 'Seychelles'),
@@ -278,46 +281,47 @@ INSERT INTO {DB_ALIAS}site_countrys (id, isoNum, code2, code3, name) VALUES
 (202, 706, 'SO', 'SOM', 'Somalia'),
 (203, 144, 'LK', 'LKA', 'Sri Lanka'),
 (204, 748, 'SZ', 'SWZ', 'Suazilandia'),
-(205, 710, 'ZA', 'ZAF', 'Sud·frica'),
-(206, 736, 'SD', 'SDN', 'Sud·n'),
+(205, 710, 'ZA', 'ZAF', 'Sud√°frica'),
+(206, 736, 'SD', 'SDN', 'Sud√°n'),
 (207, 752, 'SE', 'SWE', 'Suecia'),
 (208, 756, 'CH', 'CHE', 'Suiza'),
 (209, 740, 'SR', 'SUR', 'Surinam'),
 (210, 744, 'SJ', 'SJM', 'Svalbard y Jan Mayen'),
 (211, 764, 'TH', 'THA', 'Tailandia'),
-(212, 158, 'TW', 'TWN', 'Taiw·n'),
+(212, 158, 'TW', 'TWN', 'Taiw√°n'),
 (213, 834, 'TZ', 'TZA', 'Tanzania'),
-(214, 762, 'TJ', 'TJK', 'Tayikist·n'),
-(215, 86, 'IO', 'IOT', 'Territorio Brit·nico del OcÈano Õndico'),
+(214, 762, 'TJ', 'TJK', 'Tayikist√°n'),
+(215, 86, 'IO', 'IOT', 'Territorio Brit√°nico del Oc√©ano √çndico'),
 (216, 260, 'TF', 'ATF', 'Territorios Australes Franceses'),
 (217, 626, 'TL', 'TLS', 'Timor Oriental'),
 (218, 768, 'TG', 'TGO', 'Togo'),
 (219, 772, 'TK', 'TKL', 'Tokelau'),
 (220, 776, 'TO', 'TON', 'Tonga'),
 (221, 780, 'TT', 'TTO', 'Trinidad y Tobago'),
-(222, 788, 'TN', 'TUN', 'T˙nez'),
+(222, 788, 'TN', 'TUN', 'T√∫nez'),
 (223, 796, 'TC', 'TCA', 'Islas Turcas y Caicos'),
-(224, 795, 'TM', 'TKM', 'Turkmenist·n'),
-(225, 792, 'TR', 'TUR', 'TurquÌa'),
+(224, 795, 'TM', 'TKM', 'Turkmenist√°n'),
+(225, 792, 'TR', 'TUR', 'Turqu√≠a'),
 (226, 798, 'TV', 'TUV', 'Tuvalu'),
 (227, 804, 'UA', 'UKR', 'Ucrania'),
 (228, 800, 'UG', 'UGA', 'Uganda'),
 (229, 858, 'UY', 'URY', 'Uruguay'),
-(230, 860, 'UZ', 'UZB', 'Uzbekist·n'),
+(230, 860, 'UZ', 'UZB', 'Uzbekist√°n'),
 (231, 548, 'VU', 'VUT', 'Vanuatu'),
 (232, 862, 'VE', 'VEN', 'Venezuela'),
 (233, 704, 'VN', 'VNM', 'Vietnam'),
-(234, 92, 'VG', 'VGB', 'Islas VÌrgenes Brit·nicas'),
-(235, 850, 'VI', 'VIR', 'Islas VÌrgenes de los Estados Unidos'),
+(234, 92, 'VG', 'VGB', 'Islas V√≠rgenes Brit√°nicas'),
+(235, 850, 'VI', 'VIR', 'Islas V√≠rgenes de los Estados Unidos'),
 (236, 876, 'WF', 'WLF', 'Wallis y Futuna'),
 (237, 887, 'YE', 'YEM', 'Yemen'),
 (238, 262, 'DJ', 'DJI', 'Yibuti'),
 (239, 894, 'ZM', 'ZMB', 'Zambia'),
 (240, 716, 'ZW', 'ZWE', 'Zimbabue');
 
-CREATE TABLE IF NOT EXISTS {DB_ALIAS}site_errors 
+CREATE TABLE IF NOT EXISTS {DB_PREFIX}site_errors 
 (
   id int(100) NOT NULL AUTO_INCREMENT,
+  report_code varchar(10) NOT NULL,
   code varchar(100) NOT NULL DEFAULT '000',
   title varchar(100) NOT NULL,
   response text NOT NULL,
@@ -326,11 +330,12 @@ CREATE TABLE IF NOT EXISTS {DB_ALIAS}site_errors
   line int(100) NOT NULL,
   out_file varchar(300) NOT NULL,
   more text NOT NULL,
+  visit_ip int(50) NOT NULL,
   date int(100) NOT NULL,
   PRIMARY KEY (id)
-) ENGINE=INNODB DEFAULT CHARSET=latin1 COMMENT='Errores producidos' AUTO_INCREMENT=1;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='Errores' AUTO_INCREMENT=1;
 
-CREATE TABLE  {DB_ALIAS}site_logs 
+CREATE TABLE {DB_PREFIX}site_logs 
 (
   id INT( 255 ) NOT NULL AUTO_INCREMENT ,
   logs TEXT NOT NULL ,
@@ -338,9 +343,9 @@ CREATE TABLE  {DB_ALIAS}site_logs
   path VARCHAR( 300 ) NOT NULL ,
   date INT( 100 ) NOT NULL ,
   PRIMARY KEY (id)
-) ENGINE=INNODB DEFAULT CHARSET=latin1 COMMENT='Logs guardados' AUTO_INCREMENT=1;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='Logs guardados' AUTO_INCREMENT=1;
 
-CREATE TABLE IF NOT EXISTS {DB_ALIAS}site_maps 
+CREATE TABLE IF NOT EXISTS {DB_PREFIX}site_maps 
 (
   id int(10) NOT NULL AUTO_INCREMENT,
   page varchar(100) NOT NULL,
@@ -348,16 +353,16 @@ CREATE TABLE IF NOT EXISTS {DB_ALIAS}site_maps
   changefrec enum('always','hourly','daily','weekly','monthly','yearly','never') NOT NULL DEFAULT 'always',
   priority varchar(10) NOT NULL DEFAULT '1.0',
   PRIMARY KEY (id)
-) ENGINE=MYISAM  DEFAULT CHARSET=latin1 COMMENT='Mapa del sitio' AUTO_INCREMENT=2 ;
+) ENGINE=MYISAM  DEFAULT CHARSET=utf8 COMMENT='Mapa del sitio' AUTO_INCREMENT=2 ;
 
-INSERT INTO {DB_ALIAS}site_maps (id, page, lastmod, changefrec, priority) VALUES
+INSERT INTO {DB_PREFIX}site_maps (id, page, lastmod, changefrec, priority) VALUES
 (1, 'index', '', 'always', '1.0');
 
-CREATE TABLE IF NOT EXISTS {DB_ALIAS}site_news 
+CREATE TABLE IF NOT EXISTS {DB_PREFIX}site_news 
 (
   id int(10) NOT NULL AUTO_INCREMENT,
   title varchar(100) NOT NULL,
-  sub_content varchar(100) NOT NULL,
+  short varchar(100) NOT NULL,
   content text NOT NULL,
   image varchar(300) NOT NULL,
   images varchar(1000) NOT NULL,
@@ -365,18 +370,18 @@ CREATE TABLE IF NOT EXISTS {DB_ALIAS}site_news
   date varchar(100) NOT NULL,
   comments enum('0','1') NOT NULL DEFAULT '1',
   PRIMARY KEY (id)
-) ENGINE=MYISAM DEFAULT CHARSET=latin1 COMMENT='Noticias' AUTO_INCREMENT=1;
+) ENGINE=MYISAM DEFAULT CHARSET=utf8 COMMENT='Noticias' AUTO_INCREMENT=1;
 
-CREATE TABLE IF NOT EXISTS {DB_ALIAS}site_timers 
+CREATE TABLE IF NOT EXISTS {DB_PREFIX}site_timers 
 (
   id int(10) NOT NULL AUTO_INCREMENT,
   action varchar(100) NOT NULL,
   time int(100) NOT NULL,
-  nexttime int(100) NOT NULL,
+  next int(100) NOT NULL,
   PRIMARY KEY (id)
-) ENGINE=MYISAM DEFAULT CHARSET=latin1 COMMENT='Cronometros' AUTO_INCREMENT=1;
+) ENGINE=MYISAM DEFAULT CHARSET=utf8 COMMENT='Cron√≥metros' AUTO_INCREMENT=1;
 
-CREATE TABLE IF NOT EXISTS {DB_ALIAS}site_visits 
+CREATE TABLE IF NOT EXISTS {DB_PREFIX}site_visits 
 (
   ip varchar(100) NOT NULL,
   host varchar(150) NOT NULL,
@@ -387,11 +392,11 @@ CREATE TABLE IF NOT EXISTS {DB_ALIAS}site_visits
   type enum('desktop','mobile','bot') NOT NULL DEFAULT 'desktop',
   date varchar(100) NOT NULL,
   last int(100) NOT NULL,
-  last_warning int(10) NOT NULL DEFAULT '0',
+  last_warnings int(10) NOT NULL DEFAULT '0',
   last_forgive int(10) NOT NULL DEFAULT '0'
-) ENGINE=INNODB DEFAULT CHARSET=latin1 COMMENT='Visitas por IP' AUTO_INCREMENT=1;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='Visitas por IP' AUTO_INCREMENT=1;
 
-CREATE TABLE IF NOT EXISTS {DB_ALIAS}site_visits_total 
+CREATE TABLE IF NOT EXISTS {DB_PREFIX}site_visits_total 
 (
   ip varchar(100) NOT NULL,
   host varchar(150) NOT NULL,
@@ -402,87 +407,89 @@ CREATE TABLE IF NOT EXISTS {DB_ALIAS}site_visits_total
   phpid varchar(300) NOT NUll,
   type enum('desktop','mobile','bot') NOT NULL DEFAULT 'desktop',
   date varchar(100) NOT NULL
-) ENGINE=INNODB DEFAULT CHARSET=latin1 COMMENT='Visitas totales' AUTO_INCREMENT=1;
+) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='Visitas totales' AUTO_INCREMENT=1;
 
-CREATE TABLE IF NOT EXISTS {DB_ALIAS}users 
+CREATE TABLE IF NOT EXISTS {DB_PREFIX}users 
 (
   id int(100) NOT NULL AUTO_INCREMENT,
   username varchar(32) NOT NULL,
   password varchar(300) NOT NULL,
   name varchar(100) NOT NULL,
   email varchar(48) NOT NULL,
+  email_verified enum('0', '1') NOT NULL DEFAULT '0',
   photo varchar(300) NOT NULL,
   rank int(2) NOT NULL DEFAULT '1',
   status varchar(48) NOT NULL,
   birthday varchar(100) NOT NULL,
-  account_birthday varchar(100) NOT NULL,
+  account_creation varchar(100) NOT NULL,
   lastaccess varchar(100) NOT NULL,
   lastonline varchar(100) NOT NULL DEFAULT '0',
-  ip_address varchar(100) NOT NULL,
-  reg_ip_address varchar(100) NOT NULL,
+  ip varchar(100) NOT NULL,
+  reg_ip varchar(100) NOT NULL,
   newsletter enum('0', '1') NOT NULL DEFAULT '1',
-  emailVerified enum('0', '1') NOT NULL DEFAULT '0',
   browser varchar(100) NOT NULL,
   agent varchar(500) NOT NULL,
   os varchar(100) NOT NULL,
   lasthost varchar(200) NOT NULL,
   country varchar(3) NOT NULL,
-  cookie_session varchar(60) NOT NULL,
-  user_hash varchar(80) NOT NULL,
-  service varchar(50) NOT NULL,
-  banned enum('true', 'false') NOT NULL,
+  cookie varchar(60) NOT NULL,
+  service_hash varchar(80) NOT NULL,
+  secret varchar(100) NOT NULL,
+  banned enum('true', 'false') NOT NULL DEFAULT 'false',
   PRIMARY KEY (id)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Usuarios' AUTO_INCREMENT=1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Usuarios' AUTO_INCREMENT=1;
 
-CREATE TABLE {DB_ALIAS}users_services 
+CREATE TABLE {DB_PREFIX}users_services 
 (
   id INT( 100 ) NOT NULL AUTO_INCREMENT ,
   identification VARCHAR( 100 ) NOT NULL ,
   service VARCHAR(50) NOT NULL,
   name VARCHAR( 100 ) NOT NULL ,
-  user_hash VARCHAR( 80 ) NOT NULL ,
+  service_hash VARCHAR( 80 ) NOT NULL ,
   info TEXT NOT NULL,
   date VARCHAR( 100 ) NOT NULL ,
   PRIMARY KEY (id)
-) ENGINE=MYISAM DEFAULT CHARSET=latin1 COMMENT='Servicios de los usuarios' AUTO_INCREMENT=1;
+) ENGINE=MYISAM DEFAULT CHARSET=utf8 COMMENT='Servicios de los usuarios' AUTO_INCREMENT=1;
 
-CREATE TABLE IF NOT EXISTS {DB_ALIAS}wordsfilter 
+CREATE TABLE IF NOT EXISTS {DB_PREFIX}wordsfilter 
 (
-  word varchar(100) NOT NULL
-) ENGINE=MYISAM DEFAULT CHARSET=latin1 COMMENT='Filtro de Palabras';
+  id INT( 100 ) NOT NULL AUTO_INCREMENT ,
+  word varchar(100) NOT NULL,
+  PRIMARY KEY (id)
+) ENGINE=MYISAM DEFAULT CHARSET=utf8 COMMENT='Malas palabras';
 
-INSERT INTO {DB_ALIAS}wordsfilter (word) VALUES
-('puto'),
-('puta'),
-('pendejo'),
-('pendeja'),
-('pito'),
-('verga'),
-('pene'),
-('vagina'),
-('cabron'),
-('cabrona'),
-('chingada'),
-('chingados'),
-('mierda'),
-('popo'),
-('shit'),
-('motherfucker'),
-('motherfuck'),
-('p.u.t.o'),
-('p.u.t.h.o'),
-('putho'),
-('mamawebo'),
-('mamahuevo'),
-('mmg'),
-('putha'),
-('putho'),
-('pija'),
-('dick'),
-('bitch'),
-('b!tch'),
-('dumbass'),
-('joto'),
-('jotho'),
-('asshole'),
-('culo');
+INSERT INTO {DB_PREFIX}wordsfilter (id, word) VALUES
+(1, 'puto'),
+(2, 'puta'),
+(3, 'pendejo'),
+(4, 'pendeja'),
+(5, 'pito'),
+(6, 'verga'),
+(7, 'pene'),
+(8, 'vagina'),
+(9, 'cabron'),
+(10, 'cabrona'),
+(11, 'chingada'),
+(12, 'chingados'),
+(13, 'mierda'),
+(14, 'popo'),
+(15, 'shit'),
+(16, 'motherfucker'),
+(17, 'motherfuck'),
+(18, 'p.u.t.o'),
+(19, 'p.u.t.h.o'),
+(20, 'putho'),
+(21, 'mamawebo'),
+(22, 'mamahuevo'),
+(23, 'mmg'),
+(24, 'putha'),
+(25, 'putho'),
+(26, 'pija'),
+(27, 'dick'),
+(28, 'bitch'),
+(29, 'b!tch'),
+(30, 'dumbass'),
+(31, 'joto'),
+(32, 'jotho'),
+(33, 'asshole'),
+(34, 'culo');

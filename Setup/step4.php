@@ -1,92 +1,87 @@
-<?php
+<?
 #####################################################
 ## 					 BeatRock				   	   ##
 #####################################################
 ## Framework avanzado de procesamiento para PHP.   ##
 #####################################################
-## InfoSmart © 2012 Todos los derechos reservados. ##
+## InfoSmart Â© 2012 Todos los derechos reservados. ##
 ## http://www.infosmart.mx/						   ##
 #####################################################
 ## http://beatrock.infosmart.mx/				   ##
 #####################################################
 
-$page['gzip'] = false;
-require('../Init.php');
+require '../Init.php';
 
-if(file_exists('../Kernel/Configuration.php') OR file_exists('./SECURE'))
-{
-	if($_SESSION['install']['secure'] !== true)
-	{
-		header('Location: ./error_ready.php');
-		exit;
-	}
-}
+$page = 'step4';
 
-$page['name'] = 'Configuración de la aplicación';
-require('./Header.php');
+// Recursos de la instalaciÃ³n.
+define('RESOURCES_INS', '//resources.infosmart.mx');
+
+if($_SERVER['HTTP_X_REQUESTED_WITH'] !== 'XMLHttpRequest')
+	require 'content/header.php';
 ?>
-<div class="pre">
-	<section class="left">
-		<h2>¿Como será su aplicación?</h2>
-		<cite>Nombre, descripción, el eslogan y otras partes de su aplicación o sitio web.</cite>
+<div class="info">
+	<div class="wrapper">
+		<div class="left">
+			<h2>AplicaciÃ³n</h2>
 
-		<p>
-			Ahora proceda a darle nombre a su aplicación o sitio web, así como una descripción corta, un eslogan y otras configuraciones de acuerdo a lo que tratará o las funcionalidades que tendrá.
-		</p>
+			<p>
+				Â¡Ya casi acabamos! ahora sigue lo mÃ¡s importante, definir la informaciÃ³n de tu aplicaciÃ³n: <b>Nombre de la aplicaciÃ³n, descripciÃ³n, logo, etc</b>
+			</p>
 
-		<p>
-			Recuerde que el proposito principal de BeatRock es ahorrarle trabajo para que usted pueda desarrollar la idea principal de su aplicación directamente, algunas de estas configuraciones tendrán efecto directo en las cabeceras donde tanto robots de indexación como robots sociales podrán obtener información de su aplicación y ofrecer mejores experiencias a sus usuarios.
-		</p>
-	</section>
+			<p style="color: red">
+				Â¡Lo sentimos! Esta versiÃ³n aÃºn es BETA y este paso esta incompleto, no sirve. AÃºn asÃ­ ya puedes acceder a tu <a href="<?=PATH?>">aplicaciÃ³n</a>.
+			</p>
+		</div>
 
-	<figure class="right">
-		<img src="<?=RESOURCES_INS?>/systemv2/setup/images/step4.png" />
-	</figure>
+		<figure>
+			<img src="<?=RESOURCES_INS?>/systemv2/setup/images/step4.png" />
+		</figure>
+	</div>
 </div>
 
-<div class="content">	
-	<form action="./actions/save_step4.php" method="POST">
+<div class="wrapper">
+<div class="content">
+	<div class="box-error" id="error">
+	</div>
+
+	<form>		
 		<section>
-			<h2>General</h2>
-
-			<div class="c1">			
+			<div class="col1">
 				<p>
-					<label for="site_name">Nombre de la aplicación:</label>
-					<input type="text" name="site_name" id="site_name" value="<?=$site['site_name']?>" placeholder="Mi Aplicación" required autofocus autocomplete="off" x-webkit-speech speech />
-					
-					<span>Escribe el nombre de tu aplicación, la misma será mostrada en el titulo de la página.</span>
-				</p>
-			
-				<p>
-					<label for="site_separation">Separación de titulo:</label>
-					<input type="text" name="site_separation" id="site_separation" value="<?=$site['site_separation']?>" placeholder="~" autocomplete="off" />
-					
-					<span>Escribe una separación de titulo que será usado para por ejemplo, separar el nombre de tu aplicación y el eslogan o nombre de la página.</span>
+					<label>Nombre</label>
+					<input type="text" name="site_name" value="<?=$site['site_name']?>" placeholder="Mi aplicaciÃ³n" autofocus x-webkit-speech speech />
+					<span class="h">Escribe el nombre de tu aplicaciÃ³n</span>
 				</p>
 
 				<p>
-					<label for="site_keywords">Palabras clave de la aplicación:</label>
-					<textarea name="site_keywords" id="site_keywords" placeholder="infosmart, beatrock" required><?=$site['site_keywords']?></textarea>
-					
-					<span>Escriba una serie de palabras separadas por comas (,) que indiquen referencias acerca del contenido de su aplicación.</span>
-				</p>				
-				
+					<label>SeparaciÃ³n de titulo</label>
+					<input type="text" name="site_separation" value="<?=$site['site_separation']?>" placeholder="-" />
+					<span class="h">Escribe un caracter que serÃ¡ usado para separar el nombre de la aplicaciÃ³n del nombre de una pÃ¡gina.</span>
+				</p>
+
 				<p>
-					<label>Mapa del sitio:</label>
+					<label>SeparaciÃ³n de titulo</label>
+					<textarea name="site_keywords" value="<?=$site['site_keywords']?>" placeholder="infosmart, beatrock"></textarea>
+					<span class="h">Escriba una serie de palabras separadas por comas (,) que definan el contenido y uso de su aplicaciÃ³n.</span>
+				</p>
+
+				<p>
+					<label>Mapa del sitio</label>
 					
 					<select name="site_sitemap" class="btn">
 						<option value="false">No</option>
 						<option value="true">Si</option>	
 					</select>
 					
-					<span>Seleccione si su aplicación tendrá un "mapa del sitio" que será ubicado <b><?=PATH?>/sitemap</b>.</span>
+					<span class="h">Seleccione si su aplicaciÃ³n tendrÃ¡ un "mapa del sitio". El mismo serÃ¡ ubicado en <b><?=PATH?>/sitemap</b>.</span>
 				</p>
 
 				<p>
-					<label for="site_favicon">Favicon:</label>
-					<?=RESOURCES?>/images/<input type="text" name="site_favicon" id="site_favicon" value="<?=$site['site_favicon']?>" placeholder="favicon.ico" autocomplete="off" class="short" />
+					<label>Favicon</label>
+					<b><?=RESOURCES?>/images/</b><input type="text" name="site_favicon" id="site_favicon" value="<?=$site['site_favicon']?>" placeholder="favicon.ico" autocomplete="off" class="short" />
 					
-					<span>Escriba el nombre del archivo de su imagen Favicon.</span>
+					<span class="h">Escriba el nombre del archivo de su imagen Favicon.</span>
 				</p>
 
 				<p>
@@ -96,523 +91,9 @@ require('./Header.php');
 						<option value="true">Si</option>	
 					</select>
 					
-					<span>Seleccione si desea registrar todas las visitas y accesos a su sitio, desactivarlo aliviana el peso de su base de datos.</span>
-				</p>
-			</div>
-
-			<div class="c2">
-				<p>
-					<label for="site_slogan">Eslogan de la aplicación:</label>
-					<input type="text" name="site_slogan" id="site_slogan" value="<?=$site['site_slogan']?>" placeholder="Tecnología limpia y creativa para todos" autocomplete="off" x-webkit-speech speech />
-					
-					<span>Escribe un eslogan para tu aplicación, una frase corta que describa de lo que trata.</span>
-				</p>
-
-				<p>
-					<label>Codificación:</label>
-					
-					<select name="site_charset" class="btn" required>
-						<option value="iso-8859-15">iso-8859-15</option>
-						<option value="iso-8859-1">iso-8859-1</option>
-						<option value="utf-8">utf-8</option>
-					</select>
-					
-					<span>Selecciona la codificación de letras para la aplicación, para letras en español recomendamos usar <b>iso-8859-15</b>.</span>
-				</p>
-
-				<p>
-					<label for="site_description">Descripción de la aplicación:</label>
-					<textarea name="site_description" id="site_description" placeholder="Aplicación útil para todas las edades..."><?=$site['site_description']?></textarea>
-					
-					<span>Escriba la descripción de la aplicación.</span>
-				</p>
-
-				<p>
-					<label>RSS:</label>
-					
-					<select name="site_rss" class="btn">
-						<option value="false">No</option>
-						<option value="true">Si</option>
-					</select>
-					
-					<span>Seleccione si su aplicación tendrá un RSS de noticias.</span>
-				</p>
-
-				<p>
-					<label>Dirección RSS:</label>
-					
-					<input type="text" name="site_rss_path" id="site_rss_path" value="<?=$site['site_rss_path']?>" placeholder="{RSS}" />					
-					<span>Escriba la dirección de su página RSS.<br /><b>{RSS}</b> = <b><?=PATH?>/rss</b>.</span>
-				</p>
-
-				<p>
-					<label for="site_logo">Logo:</label>
-					<?=RESOURCES?>/images/<input type="text" name="site_logo" id="site_logo" value="<?=$site['site_logo']?>" placeholder="logo.png" autocomplete="off" class="short" />
-					
-					<span>Escriba el nombre del archivo de su imagen Logo.</span>
+					<span class="h">Seleccione si desea registrar todas las visitas y accesos a su sitio, desactivarlo aliviana el peso de su base de datos.</span>
 				</p>
 			</div>
 		</section>
-
-		<section>
-			<h2>Seguridad</h2>
-
-			<div class="c1">
-				<p>
-					<label>Tiempo entre conexiones para considerar alerta DDOS</label>
-
-					<select name="ddos_time" class="btn" required>
-						<option value="0">Desactivado</option>
-						<option value="1">1 segundo</option>
-						<option value="2">2 segundos</option>
-						<option value="3">3 segundos</option>
-						<option value="4">4 segundos</option>
-						<option value="5" selected>5 segundos</option>
-						<option value="6">6 segundos</option>
-						<option value="7">7 segundos</option>
-						<option value="8">8 segundos</option>
-					</select>
-
-					<span>Si la carga entre conexiones/páginas del sitio tarda menos que los segundos especificados se le considerada una <b>"Alerta de DDOS"</b>.</span>
-				</p>
-
-				<p>
-					<label for="ddos_redirect">Redirección al ataque.</label>
-
-					<input type="url" name="ddos_redirect" id="ddos_redirect" value="<?=$site['ddos_redirect']?>" />
-					<span>La conexión atacante será redireccionada a esta dirección web.</span>
-				</p>
-
-				<p>
-					Tenga en cuenta que el sistema AntiDDOS de BeatRock no es del todo funcional, puede "alivianar" la carga realizada por un ataque pero recomendamos activar este sistema con servicios mejores como <a href="https://www.cloudflare.com/" target="_blank">CloudFlare</a>.
-				</p>
-			</div>
-
-			<div class="c2">
-				<p>
-					<label for="ddos_warnings">Numero de Alertas DDOS máximas.</label>
-
-					<input type="number" name="ddos_warnings" id="ddos_warnings" value="<?=$site['ddos_warnings']?>" min="1" max="20" required />
-					<span>Cuando una conexión sobrepase el número de Alertas especificadas se le considerada un <b>Ataque DDOS</b> y su dirección IP será bloqueada.</span>
-				</p>
-
-				<p>
-					<label>Protección AntiDDOS desde htaccess</label>
-
-					<select name="ddos_htaccess" class="btn" required>
-						<option value="false">Desactivado</option>
-						<option value="true">Activado</option>
-					</select>
-
-					<span>Si usas Apache se puede configurar esta opción para que BeatRock pueda usar la directiva <b>"deny from IP"</b> en el archivo .htaccess para el sistema AntiDDOS.</span>
-				</p>
-			</div>
-		</section>
-
-		<section>
-			<h2>Técnico</h2>
-
-			<div class="c1">
-				<p>
-					<label for="site_compress">Compresión HTML:</label>
-
-					<select name="site_compress" class="btn">
-						<option value="false">Desactivado</option>
-						<option value="true">Activado</option>						
-					</select>
-
-					<span>Comprime el código HTML de la aplicación quitando espacios innecesarios y comentarios haciendola menos pesada y más rápida de ejecutar, sin embargo puede ocacionar problemas con JavaScript incrustado dentro del HTML.</span>
-				</p>
-
-				<p>
-					<label for="cpu_limit">Limite de carga del CPU:</label>
-					
-					<select name="cpu_limit" class="btn" required>
-						<option value="0">Desactivado</option>
-						<option value="50">50%</option>
-						<option value="60">60%</option>
-						<option value="70">70%</option>
-						<option value="80">80%</option>
-						<option value="90">90%</option>
-						<option value="95">95%</option>
-					</select>
-					
-					<span>Seleccione el limite de carga media del CPU (Procesador), en caso de que supere la cantidad seleccionada se mostrará una página de "Sobrecarga".</span>
-				</p>
-
-				<p>
-					<label for="session_alias">Prefijo de las Sesiones:</label>
-					<input type="text" name="session_alias" id="session_alias" value="<?=$site['session_alias']?>" placeholder="beatrock_" autocomplete="off" />
-					
-					<span>Escriba un prefijo para la definición de "$_SESSION", esto con el fin de evitar conflictos con otras aplicaciones.</span>
-				</p>
-				
-				<p>
-					<label for="cookie_alias">Prefijo de las Cookies:</label>
-					<input type="text" name="cookie_alias" id="cookie_alias" value="<?=$site['cookie_alias']?>" placeholder="beatrock_" autocomplete="off" />
-					
-					<span>Escriba un prefijo para la definición de "$_COOKIE", esto con el fin de evitar conflictos con otras aplicaciones.</span>
-				</p>
-
-				<p>
-					<label>Optimización de JavaScript:</label>
-					
-					<select name="site_optimized_javascript" class="btn">
-						<option value="false">No</option>
-						<option value="true">Si</option>
-					</select>
-					
-					<span>La optimización de JavaScript carga los archivos JavaScript de su aplicación en el pie de página de la misma.</span>
-				</p>
-			</div>
-
-			<div class="c2">
-				<p>
-					<label for="site_recovery">Recuperación avanzada:</label>
-
-					<select name="site_recovery" class="btn">
-						<option value="true">Activado</option>
-						<option value="false">Desactivado</option>
-					</select>
-
-					<span>La recuperación avanzada recupera el archivo de configuración y la base de datos en caso de que hayan sido eliminados.</span>
-				</p>
-
-				<?php if(file_exists('../.htaccess')) { ?>
-				<p>
-					<label>Carga de memoria limite de Apache:</label>
-					
-					<select name="apache_limit" class="btn" required>
-						<option value="0">Desactivado</option>
-						<option value="52428800">50 MB</option>
-						<option value="83886080">80 MB</option>
-						<option value="104857600">100 MB</option>
-						<option value="157286400">150 MB</option>
-						<option value="209715200">200 MB</option>
-						<option value="314572800">300 MB</option>
-						<option value="419430400">400 MB</option>
-						<option value="524288000">500 MB</option>
-						<option value="629145600">600 MB</option>
-						<option value="734003200">800 MB</option>
-						<option value="1073741824">1 GB</option>
-						<option value="1610612736">1.5 GB</option>
-						<option value="2147483648">2 GB</option>
-						<option value="5368709120">5 GB</option>
-					</select>
-					
-					<span>Seleccione la carga de memoria limite para el proceso de Apache <b>(httpd)</b>, en caso de que supere la cantidad seleccionada se mostrará una página de "Sobrecarga".</span>
-				</p>
-				<?php } ?>
-
-				<p>
-					<label for="cookie_duration">Duración de la Cookie:</label>
-					<input type="number" name="cookie_duration" id="cookie_duration" value="<?=$site['cookie_duration']?>" placeholder="300" required autocomplete="off" min="30" />
-					
-					<span>Especifique el tiempo de duración en minutos de las Cookie.</span>
-				</p>
-				
-				<p>
-					<label for="cookie_domain">Dominio válido de las Cookie:</label>
-					<input type="text" name="cookie_domain" id="cookie_domain" value="<?=$site['cookie_domain']?>" placeholder="infosmart.mx" autocomplete="off" />
-					
-					<span>Escriba el dominio en donde será válido las Cookies, dejelo en blanco para omitir esta opción.</span>
-				</p>
-			</div>
-		</section>
-
-		<section>
-			<h2>Idioma y traducción</h2>
-
-			<div class="c1">
-				<p>
-					<label for="site_language">Idioma de la aplicación:</label>
-					<input type="text" name="site_language" id="site_language" value="<?=$site['site_language']?>" placeholder="es" required autocomplete="off" maxlength="2" />
-					
-					<span>Escriba las dos primeras letras del idioma de la aplicación, la misma como una referencia para robots como Google y para un estandar recomendado por la W3C.</span>
-				</p>
-			</div>
-
-			<div class="c2">
-				<p>
-					<label>Obligar idioma:</label>					
-					<input type="text" name="site_translate" id="site_translate" value="<?=$site['site_translate']?>" placeholder="es" autocomplete="off" maxlength="2" />
-					
-					<span>Si desea obligar a usar un idioma/traducción en su aplicación indique las dos primeras letras del idioma, dejelo en blanco para usar el idioma nativo del usuario.</span>
-				</p>
-			</div>
-		</section>
-		
-		<section>
-			<h2>Información</h2>
-
-			<div class="c1">			
-				<p>
-					<label for="site_version">Versión:</label>
-					<input type="text" name="site_version" id="site_version" value="<?=$site['site_version']?>" placeholder="1.0.0" required autocomplete="off" />
-					
-					<span>Escriba la versión de su aplicación.</span>
-				</p>
-
-				<p>
-					Use el archivo <b>humans.txt</b> para especificar los desarrolladores, diseñadores, creadores de un buen café y personas que participaron en la creación de esta aplicación. <a href="http://humanstxt.org/ES" target="_blank">Más información</a>
-				</p>
-			</div>
-
-			<div class="c2">			
-				<p>
-					<label for="site_revision">Última revisión:</label>
-					<input type="text" name="site_revision" id="site_revision" value="<?=$site['site_revision']?>" placeholder="27 de oct de <?=date('Y')?>" required autocomplete="off" />
-					
-					<span>Escriba la fecha de la última revisión o edición de su aplicación.</span>
-				</p>
-
-				<p>
-					<label for="site_publisher">Empresa / Compañia / Organización distribuidora:</label>
-					<input type="text" name="site_publisher" id="site_publisher" value="<?=$site['site_publisher']?>" placeholder="InfoSmart" required autocomplete="off" x-webkit-speech speech />
-					
-					<span>Escriba la empresa / compañia / organización que mantiene esta aplicación y se encarga de distribuirla.</span>
-				</p>
-			</div>			
-		</section>
-
-		<section>
-			<h2>Open Graph</h2>
-
-			<div class="c1">
-				<p>
-					<label for="site_locale">Lugar de la aplicación:</label>
-					<input type="text" name="site_locale" id="site_locale" value="<?=$site['site_locale']?>" placeholder="es_LA" required autocomplete="off" maxlength="5" />
-					
-					<span>Escriba el formato del lugar/ubicación de la aplicación. (lenguaje)_(territorio)</span>
-				</p>
-
-				<div class="oo" data-to="music.album">
-					<p>
-						<label for="music:album">Albúm:</label>
-						<input type="text" name="site_og[music:album]" disabled />
-					</p>
-
-					<p>
-						<label for="music:musician">Músico/Artista/Banda:</label>
-						<input type="text" name="site_og[music:musician]" disabled />
-					</p>
-
-					<p>
-						<label for="music:release_date">Fecha de lanzamiento:</label>
-						<input type="text" name="site_og[music:release_date]" disabled />
-					</p>
-				</div>
-
-				<div class="oo" data-to="profile">
-					<p>
-						<label for="profile:first_name">Nombre:</label>
-						<input type="text" name="site_og[profile:first_name]" disabled />
-					</p>
-
-					<p>
-						<label for="profile:last_name">Apellidos:</label>
-						<input type="text" name="site_og[profile:last_name]" disabled />
-					</p>
-
-					<p>
-						<label for="profile:username">Nombre en la web (Nombre de usuario):</label>
-						<input type="text" name="site_og[profile:username]" disabled />
-					</p>
-
-					<p>
-						<label for="profile:gender">Sexo:</label>
-						<select name="profile:gender" disabled>
-							<option value="male">Hombre</option>
-							<option value="female">Mujer</option>
-						</select>
-					</p>
-				</div>
-			</div>
-
-			<div class="c2">
-				<p>
-					<label for="site_type">Tipo de aplicación:</label>
-
-					<select name="site_type" id="site_type" class="btn">
-						<option value="website">Sitio web normal</option>
-						<option value="music.album">Aplicación musical para un albúm</option>
-						<option value="video.other">Aplicación visual normal</option>
-						<option value="profile">Blog personal / Perfil</option>
-					</select>
-
-					<span>Selecciona que tipo de aplicación crearás, si es una aplicación independiente propia selecciona "Sitio web normal".</span>
-				</p>
-
-				<p>
-					<a href="http://ogp.me/" target="_blank">Más información de Open Graph</a>
-				</p>
-			</div>			
-		</section>
-		
-		<section>
-			<h2>Tareas cronometradas</h2>
-
-			<div class="c1">			
-				<p>
-					<label>Optimización de la base de datos:</label>
-					
-					<select name="stopwatch_optimize_db" class="btn">
-						<option value="">Desactivada</option>
-						<option value="1440">A diario</option>
-						<option value="2880">Cada 2 días</option>
-						<option value="5760">Cada 4 días</option>
-						<option value="10080">Cada semana</option>
-						<option value="14400">Cada semana, 3 días</option>
-						<option value="20160">Cada 2 semanas</option>
-						<option value="44640">Cada mes</option>
-						<option value="89280">Cada 2 meses</option>
-						<option value="133920">Cada 3 meses</option>
-					</select>
-					
-					<span>Optimiza todas la tablas de la base de datos.</span>
-				</p>
-
-				<p>
-					<label>Recuperación de la base de datos:</label>
-					
-					<select name="stopwatch_backup_db" class="btn">
-						<option value="">Desactivada</option>
-						<option value="1440">A diario</option>
-						<option value="2880">Cada 2 días</option>
-						<option value="5760">Cada 4 días</option>
-						<option value="10080">Cada semana</option>
-						<option value="14400">Cada semana, 3 días</option>
-						<option value="20160">Cada 2 semanas</option>
-						<option value="44640">Cada mes</option>
-						<option value="89280">Cada 2 meses</option>
-						<option value="133920">Cada 3 meses</option>
-					</select>
-					
-					<span>Crea un archivo SQL con los datos más recientes de la base de datos.</span>
-				</p>
-
-				<p>
-					<label>Recuperación de los archivos de la aplicación y la base de datos:</label>
-					
-					<select name="stopwatch_backup_total" class="btn">
-						<option value="">Desactivada</option>
-						<option value="1440">A diario</option>
-						<option value="2880">Cada 2 días</option>
-						<option value="5760">Cada 4 días</option>
-						<option value="10080">Cada semana</option>
-						<option value="14400">Cada semana, 3 días</option>
-						<option value="20160">Cada 2 semanas</option>
-						<option value="44640">Cada mes</option>
-						<option value="89280">Cada 2 meses</option>
-						<option value="133920">Cada 3 meses</option>
-					</select>
-					
-					<span>Crea un archivo ZIP con todos los archivos de la aplicación y un SQL de los datos de la base de datos.</span>
-				</p>
-
-				<!--
-				<p>
-					<label>Examinación de archivos malintencionados:</label>
-					
-					<select name="stopwatch_antimalware" class="btn">
-						<option value="">Desactivada</option>
-						<option value="1440">A diario</option>
-						<option value="2880">Cada 2 días</option>
-						<option value="5760">Cada 4 días</option>
-						<option value="10080">Cada semana</option>
-						<option value="14400">Cada semana, 3 días</option>
-						<option value="20160">Cada 2 semanas</option>
-						<option value="44640">Cada mes</option>
-						<option value="89280">Cada 2 meses</option>
-						<option value="133920">Cada 3 meses</option>
-					</select>
-					
-					<span>Busca por archivos malintencionados y envia una copia de su aplicación al servicio de <a href="https://www.virustotal.com/" target="_blank">Virus Total</a>.</span>
-				</p>
-				-->
-			</div>
-
-			<div class="c2">			
-				<p>
-					<label>Limpieza de la base de datos:</label>
-					
-					<select name="stopwatch_maintenance_db" class="btn">
-						<option value="">Desactivada</option>
-						<option value="1440">A diario</option>
-						<option value="2880">Cada 2 días</option>
-						<option value="5760">Cada 4 días</option>
-						<option value="10080">Cada semana</option>
-						<option value="14400">Cada semana, 3 días</option>
-						<option value="20160">Cada 2 semanas</option>
-						<option value="44640">Cada mes</option>
-						<option value="89280">Cada 2 meses</option>
-						<option value="133920">Cada 3 meses</option>
-					</select>
-					
-					<span>Limpia las tablas "site_errors" (Errores), "site_visits" (Visitas por IP) y "site_visits_total" (Visitas totales) de la base de datos.</span>
-				</p>
-
-				<p>
-					<label>Recuperación de los archivos de la aplicación:</label>
-					
-					<select name="stopwatch_backup_app" class="btn">
-						<option value="">Desactivada</option>
-						<option value="1440">A diario</option>
-						<option value="2880">Cada 2 días</option>
-						<option value="5760">Cada 4 días</option>
-						<option value="10080">Cada semana</option>
-						<option value="14400">Cada semana, 3 días</option>
-						<option value="20160">Cada 2 semanas</option>
-						<option value="44640">Cada mes</option>
-						<option value="89280">Cada 2 meses</option>
-						<option value="133920">Cada 3 meses</option>
-					</select>
-					
-					<span>Crea un archivo ZIP con todos los archivos de la aplicación.</span>
-				</p>
-
-				<p>
-					<label>Limpieza de Recuperaciones, logs y archivos temporales:</label>
-					
-					<select name="stopwatch_maintenance_backups" class="btn">
-						<option value="">Desactivada</option>
-						<option value="1440">A diario</option>
-						<option value="2880">Cada 2 días</option>
-						<option value="5760">Cada 4 días</option>
-						<option value="10080">Cada semana</option>
-						<option value="14400">Cada semana, 3 días</option>
-						<option value="20160">Cada 2 semanas</option>
-						<option value="44640">Cada mes</option>
-						<option value="89280">Cada 2 meses</option>
-						<option value="133920">Cada 3 meses</option>
-					</select>
-					
-					<span>Elimina los archivos dentro de los directorios "Logs", "Backups" y "Temp" del directorio "Kernel/BitRock/".</span>
-				</p>
-			</div>
-		</section>
-		
-		<section>
-			<h2>Otros</h2>
-
-			<div class="c1">
-				<p>
-					<input type="checkbox" name="site_backups_servers" value="true" /> Usar los servidores de recuperación para el envío de backups.
-					<span>Los Backups de archivos y base de datos serán enviados a los servidores de recuperación al momento que se crean.</span>
-				</p>
-			</div>
-
-			<div class="c2">
-				<p>
-					<input type="checkbox" name="register" value="true" /> Seleccionar una licencia para mi aplicación.
-					<span>Serás enviado a la página de Creative Commons para escojer una licencia que se adapte a tu aplicación, cuando termines serás redireccionado a la página de finalización y los datos de tu licencia se guardaran en el directorio raiz de BeatRock.</span>
-				</p>
-			</div>
-		</section>
-		
-		<p>
-			<input type="submit" value="Guardar y terminar" class="ibtn" />
-		</p>
 	</form>
 </div>
-<?php require('Footer.php')?>

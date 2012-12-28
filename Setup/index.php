@@ -1,175 +1,287 @@
-<?php
+<?
 #####################################################
 ## 					 BeatRock				   	   ##
 #####################################################
 ## Framework avanzado de procesamiento para PHP.   ##
 #####################################################
-## InfoSmart © 2012 Todos los derechos reservados. ##
+## InfoSmart ¬© 2012 Todos los derechos reservados. ##
 ## http://www.infosmart.mx/						   ##
 #####################################################
 ## http://beatrock.infosmart.mx/				   ##
 #####################################################
 
-$page['id'] = 'index';
+$page = 'index';
+
 require 'Init.php';
+require 'content/header.php';
 
-$page['name'] = 'Bienvenido';
-require 'Header.php';
+$release 	= CheckRelease();
+GetSystem();
 ?>
-<div class="pre">
-	<section class="left">
-		<h2>Hagamos magia con PHP.</h2>
-		<cite>Poderoso, inteligente y r·pido. øListo para maximizar su poder en PHP?</cite>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/es_LA/all.js#xfbml=1&appId=250213508414346";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
 
-		<p>
-			BeatRock es un Framework en PHP que f·cilita el trabajo a los desarrolladores de aplicaciones web recreando a PHP como un lenguaje <b>"m·s hermoso, f·cil e interactivo"</b>. Con herramientas ˙tiles y potentes que pueden proporcionar a sus proyectos m·s funciones interactivas.
-		</p>
-
-
-		<p>
-			BeatRock usa la tecnologÌa de PHP 5 para hacer aplicaciones sorprendentes y compatibles con distintos navegadores web y robots de b˙squeda. Una completa amistad con <b>HTML 5 y CSS 3</b> le proporcionara aplicaciones m·s novedosas y simples.
-		</p>
-
-		<p>
-			Es sencillo, f·cil de manejar y que al igual que en PHP es solo cuestiÛn de practica para encontrar su potencial y usarlo al m·ximo.
-		</p>
-
-		<p>
-			Hemos creado BeatRock usando los estandares recomendados de varias compaÒias, organizaciones y proyectos que crean el futuro de la Web, adem·s su cÛdigo es sencillo y de f·cil comprensiÛn para los desarrolladores semi-expertos en PHP 5 lo cual hace su ediciÛn m·s sencilla.
-		</p>
-	</section>
-
-	<figure class="right">
-		<img src="<?=RESOURCES_INS?>/systemv2/setup/images/<?=$page['id']?>.png" />
-	</figure>
-</div>
-</div>
-
-<div class="content index">
+<div class="info">
 	<div class="wrapper">
-	<section class="version">
-		<h2>øQuÈ vamos a instalar?</h2>
+		<div class="left">
+			<h2>Introducci√≥n</h2>
 
-		<div class="left">		
-			<li><b>Nombre cÛdigo:</b> <?=$Info['code']?></li>
-			<li><b>VersiÛn:</b> <?=$Info['version.revision']?></li>
-			<li><b>Fase:</b> <?=$Info['version.fase']?></li>
-			<li><b>Fecha de creaciÛn:</b> <?=$Info['date']?></li>
-			<li><b>Hora de creaciÛn:</b> <?=$Info['date_hour']?></li>
-			<li><b>Nombre:</b> <?=$Info['version.code']?></li>
+			<p>
+				¬°Desarrollador de la nueva era! Bienvenid@ a la instalaci√≥n de BeatRock, un potente Framework en PHP r√°pido, seguro y con inteligencia propia. BeatRock esta pensado para los desarrolladores que quieren optimizar su tiempo y productividad sin sacrificar el orden del c√≥digo, las tareas autom√°ticas ni la sencillez.
+			</p>
+
+			<p>
+				Con controladores que van desde las herramientas m√°s utilizadas en una aplicaci√≥n hasta las distintas API's de servicios como Facebook, Twitter, Google+, Steam y VirusTotal.
+			</p>
 		</div>
 
-		<div class="right">
-			<span><?=CheckRelease()?></span>
-		</div>
-	</section>
-
-	<section>
-		<h2>øSu servidor esta preparado?</h2>
-
-		<table cellspacing="0" cellpadding="0" class="intable">
-			<thead>
-				<tr>
-					<th>FunciÛn / CaracterÌstica</th>
-					<th>Estado</th>
-					<th>M·s informaciÛn</th>
-				</tr>
-			</thead>
-
-			<tbody>
-				<tr>
-					<th>Carpeta "/Setup/" escribible</th>
-					<th class="icon"><?=$status['setup']?></th>
-					<th>
-						Permite el bloqueo de otros intentos de instalaciÛn y la eliminaciÛn autom·tica al terminar.
-					</th>
-				</tr>
-
-				<tr>
-					<th>Carpeta "/Kernel/" escribible</th>
-					<th class="icon"><?=$status['kernel']?></th>
-					<th>
-						Permite la creaciÛn del archivo de configuraciÛn.
-					</th>
-				</tr>
-
-				<tr>
-					<th>Archivo "/Setup/templates/Configuration" leible</th>
-					<th class="icon"><?=$status['config']?></th>
-					<th>
-						Permite la lectura de la plantilla del archivo de configuraciÛn.
-					</th>
-				</tr>
-
-				<tr>
-					<th>Archivo "/Setup/templates/DATABASE" leible</th>
-					<th class="icon"><?=$status['db']?></th>
-					<th>
-						Permite la lectura de la plantilla de la base de datos.
-					</th>
-				</tr>
-
-				<tr>
-					<th>Archivo "/Setup/templates/Htaccess" leible</th>
-					<th class="icon"><?=$status['htaccess']?></th>
-					<th>
-						Permite la lectura de la plantilla del archivo "htaccess".
-					</th>
-				</tr>
-
-				<tr>
-					<th>Archivo "/Setup/templates/Webconfig" leible</th>
-					<th class="icon"><?=$status['webconfig']?></th>
-					<th>
-						Permite la lectura de la plantilla del archivo "web.config".
-					</th>
-				</tr>
-
-				<tr>
-					<th>LibrerÌa cURL</th>
-					<th class="icon"><?=$status['curl']?></th>
-					<th>
-						<a href="http://www.codigogratis.com.ar/como-habilitar-curl-en-xampp-enabling-curl-on-xampp/" target="_blank">Instalar en Xampp</a> - <a href="http://www.pressthered.com/how_to_install_php_curl_on_iis/" target="_blank">Instalar en IIS (En Ingles)</a>
-					</th>
-				</tr>
-
-				<tr>
-					<th>LibrerÌa JSON</th>
-					<th class="icon"><?=$status['json']?></th>
-					<th></th>
-				</tr>
-
-				<tr>
-					<th>Etiqueta corta de PHP</th>
-					<th class="icon"><?=$status['shorttag']?></th>
-					<th>
-						Hace que la instalaciÛn y algunas partes de BeatRock funcionen correctamente. - <a href="http://www.cristalab.com/tutoriales/usar-etiqueta-corta-en-php-5-c27491l/" target="_blank">Activar</a>
-					</th>
-				</tr>
-
-				<tr>
-					<th>VersiÛn de PHP - (Usted tiene: <?=phpversion()?>)</th>
-					<th class="icon"><?=$status['php']?></th>
-					<th>
-						BeatRock solamente es compatible con las versiones <b>5.3</b> o superiores de PHP.
-					</th>
-				</tr>
-			</tbody>
-		</table>
-	</section>
-	
-	<p class="center">
-	<?php if($continue) { ?>	
-		<a href="./step2.php" class="ibtn igreen">Comenzar instalaciÛn</a>
-	<?php } else { ?>
-		<a class="ibtn ired">Es necesario que cumpla con los requisitos anteriores</a>
-	<?php } ?>
-	</p>
-	
-	<figure class="res">
-		<a href="http://www.w3schools.com/html5/default.asp" target="_blank" title="HTML 5"><img src="http://www.w3.org/html/logo/downloads/HTML5_Logo_512.png" /></a>
-		<a href="http://php.net/?beta=1" target="_blank" title="PHP"><img src="<?php echo RESOURCES_INS; ?>/systemv2/setup/images/PHP.png" /></a>
-		<a href="http://www.opensource.org/" target="_blank" title="Open Source"><img src="http://www.opensource.org/files/garland_logo.png" /></a>
-	</figure>
+		<figure>
+			<img src="<?=RESOURCES_INS?>/systemv2/setup/images/index.png" />
+		</figure>
+	</div>
 </div>
+
+<div class="wrapper">
+<div class="content">
+	<div class="col1">
+		<section>
+			Entre sus distintas funciones, BeatRock le ofrece:
+
+			<ul>
+				<li>
+					<a href="http://beatrock.infosmart.mx/wiki/Recuperaci√≥n_Avanzada" target="_blank">Recuperaci√≥n</a> en caso de perdida del archivo de configuraci√≥n y la base de datos de forma autom√°tica.
+				</li>
+
+				<li>
+					Creaci√≥n de copias de seguridad tanto de la base de datos como de los archivos de la aplicaci√≥n de forma autom√°tica y periodica.
+				</li>
+
+				<li>
+					Reporte de errores, sospechas de inyecci√≥n y recuperaci√≥n del sistema por correo electr√≥nico.
+				</li>
+
+				<li>
+					Sistemas inteligentes para los Usuarios y las API's (Funciones para hacer m√°s con menos)
+				</li>
+
+				<li>
+					API's de los servicios m√°s populares: Facebook, Twitter, Steam, Google+, VirusTotal, Gravatar, Microsoft Translate, Google Translate, IPInfoDB.
+				</li>
+
+				<li>
+					Limpieza y optimizaci√≥n de la base de datos de forma periodica.
+				</li>
+
+				<li>
+					Compatiblidad con <a href="http://jade-lang.com/" target="_blank">Jade</a>.
+				</li>
+
+				<li>
+					Compatibilidad con Cach√© para MySQL, creaci√≥n de ara√±as (robots), cURL, manipulaci√≥n de im√°genes (GD), conexi√≥n con servidores FTP y Memcached, soporte para Sockets.
+				</li>
+
+				<li>
+					A√∫n m√°s...
+				</li>
+			</ul>
+		</section>
+
+		<section>
+			<h3>¬øEsta usando la versi√≥n m√°s reciente?</h3>
+
+			<div class="table">		
+				<li><b>Nombre c√≥digo:</b> <?=$Info['code']?></li>
+				<li><b>Versi√≥n:</b> <?=$Info['version.revision']?></li>
+				<li><b>Fase:</b> <?=$Info['version.fase']?></li>
+				<li><b>Fecha de creaci√≥n:</b> <?=$Info['date']?></li>
+				<li><b>Hora de creaci√≥n:</b> <?=$Info['date_hour']?></li>
+				<li><b>Nombre:</b> <?=$Info['version.code']?></li>
+			</div>
+		</section>
+
+		<section>
+			<h3>¬øSu servidor esta preparado?</h3>
+
+			<table cellspacing="0" cellpadding="0" class="intable">
+				<thead>
+					<tr>
+						<th>Requisito</th>
+						<th>Estado</th>
+						<th>M√°s informaci√≥n</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<tr>
+						<th>Permisos de escritura en /Setup/</th>
+						<th><?=$system['setup']?></th>
+						<th>Con ella podemos escribir un archivo de seguridad para evitar que terceros intenten acceder a la instalaci√≥n.</th>
+					</tr>
+
+					<tr>
+						<th>Permisos de escritura en /Kernel/</th>
+						<th><?=$system['kernel']?></th>
+						<th>BeatRock los necesita para poder escribir copias de seguridad y logs.</th>
+					</tr>
+
+					<tr>
+						<th>Permisos de escritura en /App/</th>
+						<th><?=$system['kernel']?></th>
+						<th>BeatRock los necesita para poder escribir el archivo de configuraci√≥n.</th>
+					</tr>
+
+					<tr>
+						<th>Lectura del archivo /Setup/templates/Configuration</th>
+						<th><?=$system['config']?></th>
+						<th>Necesitamos que este archivo pueda ser leido.</th>
+					</tr>
+
+					<tr>
+						<th>Lectura del archivo /Setup/templates/Database</th>
+						<th><?=$system['db']?></th>
+						<th>Necesitamos que este archivo pueda ser leido.</th>
+					</tr>
+
+					<tr>
+						<th>Lectura del archivo /Setup/templates/Htaccess</th>
+						<th><?=$system['htaccess']?></th>
+						<th>Necesitamos que este archivo pueda ser leido.</th>
+					</tr>
+
+					<tr>
+						<th>Lectura del archivo /Setup/templates/Webconfig</th>
+						<th><?=$system['webconfig']?></th>
+						<th>Necesitamos que este archivo pueda ser leido.</th>
+					</tr>
+
+					<tr>
+						<th>cURL</th>
+						<th><?=$system['curl']?></th>
+						<th>cURL es necesario para muchas cosas en BeatRock, desde la creaci√≥n de robots hasta el proxy falso.</th>
+					</tr>
+
+					<tr>
+						<th>JSON</th>
+						<th><?=$system['json']?></th>
+						<th>JSON es necesario para poder leer y procesar informaci√≥n interna (incluyendo las API's)</th>
+					</tr>
+
+					<tr>
+						<th>Etiqueta corta</th>
+						<th><?=$system['shorttag']?></th>
+						<th>La etiqueta corta es usada en el c√≥digo de BeatRock y por lo tanto es necesaria.</th>
+					</tr>
+
+					<tr>
+						<th>Versi√≥n de PHP</th>
+						<th><?=$system['php']?></th>
+						<th>Esta versi√≥n de BeatRock es compatible solamente con la versi√≥n 5.3+ (Usted tiene la: <?=PHP_VERSION?>)</th>
+					</tr>
+				</tbody>
+			</table>
+		</section>
+
+		<section>
+			<h3>Extras</h3>
+
+			<p>
+				Los siguientes requisitos no son obligatorios sin embargo tenerlos activados proporciona m√°s funciones.
+			</p>
+
+			<table cellspacing="0" cellpadding="0" class="intable">
+				<thead>
+					<tr>
+						<th>Requisito</th>
+						<th>Estado</th>
+						<th>M√°s informaci√≥n</th>
+					</tr>
+				</thead>
+
+				<tbody>
+					<tr>
+						<th>Permisos Shell</th>
+						<th><?=$system['shell']?></th>
+						<th>La funci√≥n <code>shell_exec</code> es necesaria para conocer el nivel de carga del servidor y procesar plantillas en <a href="http://jade-lang.com/" target="_blank">Jade</a>.</th>
+					</tr>
+
+					<tr>
+						<th>Cach√© para MySQL</th>
+						<th><?=$system['cache']?></th>
+						<th>La extensi√≥n <code>mysqlnd_qc</code> es necesaria para activar la cach√© en las consultas MySQL</th>
+					</tr>
+
+					<tr>
+						<th>Memcache</th>
+						<th><?=$system['memcache']?></th>
+						<th>La extensi√≥n <code>memcache</code> es necesaria para activar el uso de <a href="http://es.wikipedia.org/wiki/Memcached" target="_blank">Memcached</a> en BeatRock.</th>
+					</tr>
+
+					<tr>
+						<th>SQLite 3</th>
+						<th><?=$system['sqlite']?></th>
+						<th>La extensi√≥n <code>sqlite3</code> es necesaria para activar la compatibilidad con bases de datos SQLite 3
+					</tr>
+				</tbody>
+			</table>
+		</section>
+	</div>
+
+	<div class="col2">
+		<section class="center">
+			<div class="fb-like-box" data-href="http://www.facebook.com/infosmart.beatrock" data-width="300" data-height="300" data-show-faces="true" data-border-color="white" data-stream="false" data-header="false"></div>
+		</section>
+
+		<section>
+			<h4>¬øSab√≠a que...?</h4>
+
+			<p>
+				Una de las metas en BeatRock es separar totalmente el HTML del PHP.
+			</p>
+
+			<p>
+				BeatRock es uno de los pocos Frameworks en PHP compatibles con Jade.
+			</p>
+
+			<p>
+				Con BeatRock solo necesita 2 funciones para tener la API de Facebook funcional.
+			</p>
+		</section>
+
+		<section>
+			<div class="release">
+				<? if(!is_array($release)) { ?>
+				<span class="error">Error con el sistema de comprobaci√≥n.</span>
+				<p>
+					Lo sentimos, pero al parecer el sistema de comprobaci√≥n de versi√≥n no se encuentra disponible.
+				</p>
+
+				<? } else if($release['code'] == 'ERROR') { ?>
+				<span class="error">Actualizaci√≥n disponible.</span>
+				<p>
+					La versi√≥n <b><?=$release['ver']?></b> de BeatRock ya se encuentra disponible. Le recomendamos <a href="<?=$release['download']?>">descargarla</a> para evitar posibles bugs o problemas de seguridad con esta versi√≥n.
+				</p>
+
+				<? } else if($release['code'] !== 'ERROR') { ?>
+				<span class="error">BeatRock esta actualizado.</span>
+				<p>
+					Puede continuar con la instalaci√≥n.
+				</p>
+				<? } ?>
+			</div>
+		</section>
+
+		<section class="center">
+			<? if($ready == true) { ?>
+			<a data-to="step2" class="ibtn">Continuar</a>
+			<? } else {  ?>
+			<a class="ibtn ired">Es necesario cumplir todos los requisitos</a>
+			<? } ?>
+		</section>
+	</div>
 </div>

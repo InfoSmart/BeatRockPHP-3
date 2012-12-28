@@ -30,7 +30,7 @@
         {config_errors}
 
         <!--
-            Controladores de páginas
+            Controladores de pÃ¡ginas
         -->
         <pages>
             <controls>
@@ -61,29 +61,44 @@
         <urlCompression doStaticCompression="true" />
 
         <!--
-            Módulo Rewrite
+            MÃ³dulo Rewrite
         -->
         <rewrite>
             <rule name="Regla de seguridad 1">
-                <match url="Kernel/Site/(.*)" ignoreCase="false" />
+                <match url="Kernel/BitRock/(.*)" ignoreCase="false" />
                 <action type="Rewrite" url="/index.php" />
             </rule>
 
             <rule name="Regla de seguridad 2">
-                <match url="Kernel/Templates/(.*)" ignoreCase="false" />
+                <match url="Kernel/Views/(.*)" ignoreCase="false" />
                 <action type="Rewrite" url="/index.php" />
             </rule>
 
-            <rule name="Regla de seguridad 2">
+             <rule name="Regla de seguridad 3">
+                <match url="App/Controllers/(.*)" ignoreCase="false" />
+                <action type="Rewrite" url="/index.php" />
+            </rule>
+
+             <rule name="Regla de seguridad 4">
+                <match url="App/Languages/(.*)" ignoreCase="false" />
+                <action type="Rewrite" url="/index.php" />
+            </rule>
+
+             <rule name="Regla de seguridad 5">
+                <match url="App/Views/(.*)" ignoreCase="false" />
+                <action type="Rewrite" url="/index.php" />
+            </rule>
+
+            <rule name="Sitemap">
                 <match url="sitemap.xml$" ignoreCase="false" />
                 <action type="Rewrite" url="/sitemap.php" />
             </rule>
 
             <!--
-                ESCRIBA AQUÍ SUS REGLAS
+                ESCRIBA AQUÃ SUS REGLAS
             -->
 
-            <rule name="Acceder sin extensión">
+            <rule name="Acceder sin extensiÃ³n">
                 <match url="(.*)$" ignoreCase="false" />
                 <action type="Rewrite" url="{R:1}\.php" />
             </rule>
@@ -92,17 +107,15 @@
         <security>
             <requestFiltering>
                 <!--
-                    Protección
+                    ProtecciÃ³n
                 -->
                 <denyUrlSequences>
                     <add sequence="shell" />
                     <add sequence="sh2ell" />
                     <add sequence="sh2ells" />
-                    <add sequence="hell" />
-                    <add sequence="she" />
                     <add sequence="C99" />
                     <add sequence="c99" />
-                    <add sequence="Secret_Hash" />
+                    <add sequence="SECRET" />
                 </denyUrlSequences>
 
                 <!--
@@ -122,6 +135,7 @@
                     <add fileExtension=".dist" allowed="false" />
                     <add fileExtension=".tpl" allowed="false" />
                     <add fileExtension=".json" allowed="false" />
+                    <add fileExtension=".sqlite" allowed="false" />
                 </fileExtensions>
             </requestFiltering>
         </security>

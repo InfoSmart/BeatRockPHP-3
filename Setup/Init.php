@@ -1,292 +1,263 @@
-<?php
-##############################################################
-## 						  BeatRock				  	   		##
-##############################################################
-## Framework avanzado de procesamiento para PHP.   			##
-##############################################################
-## InfoSmart © 2012 Todos los derechos reservados. 			##
-## Iván Bravo Bravo - Kolesias123			  	   			##
-## http://www.infosmart.mx/									##
-##############################################################
-## BeatRock se encuentra bajo la licencia de	   			##
-## Creative Commons "Attribution-ShareAlike 3.0 Unported"	##
-## http://creativecommons.org/licenses/by-sa/3.0/			##
-##############################################################
-## http://beatrock.infosmart.mx/				  			##
-##############################################################
+<?
+#####################################################
+## 					 BeatRock				   	   ##
+#####################################################
+## Framework avanzado de procesamiento para PHP.   ##
+#####################################################
+## InfoSmart Â© 2012 Todos los derechos reservados. ##
+## http://www.infosmart.mx/						   ##
+#####################################################
+## http://beatrock.infosmart.mx/				   ##
+#####################################################
 
 #############################################################
-## PREPARACIÓN DE CONSTANTES Y OPCIONES INTERNAS	
+## PREPARACIÃ“N DE CONSTANTES Y OPCIONES INTERNAS	
 #############################################################
 
 // Permitir acciones internas.
 define('BEATROCK', 	true);
 
-// Información esencial del cliente.
-define('IP', 		$_SERVER['REMOTE_ADDR']);
-
-// Dirección actual y uso del protocolo seguro.
+// InformaciÃ³n esencial del usuario.
+define('IP', 	$_SERVER['REMOTE_ADDR']);
+define('CHARSET',	(ini_get('default_charset') == '') ? 'UTF-8' : strtoupper(ini_get('default_charset')));
 define('URL', 		$_SERVER['SERVER_NAME'] . $_SERVER["REQUEST_URI"]);
-define('SSL', 		@$_SERVER['HTTPS']);
 
-// Ajustando configuración de PHP recomendada.
-ini_set('zlib.output_compression', 'Off');
+// Recursos de la instalaciÃ³n.
+define('RESOURCES_INS', '//resources.infosmart.mx');
+
+// Ajustando configuraciÃ³n de PHP recomendada.
+ini_set('zlib.output_compression', 	'Off');
 
 // Reporte de errores predeterminado.
 error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
 
-// Enviando cabeceras predeterminadas.
-header('Server: X');
-header('X-Powered-By: BeatRock: http://beatrock.infosmart.mx/');
-
-// Empezar sesión.
+// Empezar sesiÃ³n.
 session_start();
 
-// Ejecutar la función de apagado cuando BeatRock termine.
-register_shutdown_function('ShutDown');
+// Apagado
+register_shutdown_function('Shutdown');
 
 #############################################################
-## DEFINICIÓN DE VARIABLES GLOBALES
+## FUNCIONES
 #############################################################
 
-// Variables de fecha y tiempo.
-$date['mc'] = microtime();
-$date['f'] = (time() - (8 * 60));
+function CheckRelease()
+{
+	global $Info;
 
-#############################################################
-## FUNCIONES DE PROCESAMIENTO INTERNO
-#############################################################
+	$check = file_get_contents('http://beatrock.infosmart.mx/system/check_release?ver=' . $Info['version']);
+	$check = json_decode($check, true);
+
+	return $check;
+}
+
+function CheckSystem()
+{
+	$result = [];
+
+	$result['setup']		= is_writable('../Setup/');
+	$result['kernel']		= is_writable('../Kernel/');
+	$result['app']			= is_writable('../App/');
+
+	$result['config'] 		= is_readable('./templates/Configuration');
+	$result['db'] 			= is_readable('./templates/Database');
+	$result['htaccess'] 	= is_readable('./templates/Htaccess');
+	$result['webconfig'] 	= is_readable('./templates/Webconfig');
+
+	$result['curl'] 		= function_exists('curl_init');
+	$result['json'] 		= function_exists('json_encode');
+
+	$result['shorttag'] 	= ini_get('short_open_tag');	
+	$result['php'] 			= version_compare(PHP_VERSION, '5.4.0', '>=');
+
+	$result['shell'] 		= function_exists('shell_exec');
+	$result['cache']		= extension_loaded('mysqlnd_qc');
+	$result['memcache']		= extension_loaded('memcache');
+	$result['sqlite']		= extension_loaded('sqlite3');
+
+	global $system;
+	$system = $result;
+}
+
+function GetSystem()
+{
+	global $system;
+	$result = $system;
+
+	foreach($result as $key => $value)
+	{
+		if($value == true)
+			$result[$key] = '<label class="icon" style="color: green">&#xe03b;</label>';
+		else
+		{
+			$result[$key] = '<label class="icon" style="color: red">&#xe039;</label>';
+		}
+	}
+
+	$system = $result;
+}
+
+function CreateDB($mysql)
+{
+	$database 	= file_get_contents('../templates/Database');
+	$database 	= str_ireplace('{DB_PREFIX}', $_POST['sql_prefix'], $database);
+
+	$db 		= explode(';', $database);
+
+	if(CHARSET == 'UTF-8')
+		$mysql->query("SET NAMES 'utf8'");
+
+	foreach($db as $query)
+	{
+		$query = trim($query);
+
+		if(empty($query))
+			continue;
+
+		$result = $mysql->query($query);
+
+		if($result == false)
+			return "'$query': " . $mysql->error;
+	}
+
+	return true;
+}
+
+function CreateDBLite($dbname)
+{
+	$database 	= file_get_contents('../templates/Database_SQLite');
+	$result 	= file_put_contents($dbname, $database);
+
+	return $result;
+}
+
+function Shutdown()
+{
+	if($_SERVER['HTTP_X_REQUESTED_WITH'] !== 'XMLHttpRequest')
+		require 'content/footer.php';
+}
+
+function _c($str, $from = '', $to = '')
+{
+	if(empty($to))
+		$to = CHARSET;
+
+	if(is_array($str))
+	{
+		if(count($str) > 50)
+			return;
+
+		$final = [];
+			
+		foreach($str as $param => $value)
+			$final[$param] = _c($value, $from, $to);
+				
+		return $final;
+	}
+		
+	if(!is_string($str))
+		return $str;
+			
+	$str = trim($str);
+	$str = htmlentities($str, ENT_COMPAT | ENT_SUBSTITUTE, $from, false);			
+	$str = str_replace('&amp;', '&', $str);
+		
+	if(!empty($from) AND $from !== $to)
+		$str = iconv($from, $to . '//TRANSLIT//IGNORE', $str);
+		
+	return nl2br($str);
+}
 
 function Random($length, $letters = true, $numbers = true, $other = false)
 {
 	if(!is_numeric($length))
 		return;
 			
-	$result = "";
-	$poss = "";
+	$result = '';
+	$poss = '';
 	$i = 0;
 		
 	if($letters)
-		$poss .= "abcdefhijklwxyz";
-			
-	if($numbers)
-		$poss .= "0123456789";
-			
-	if($other)
-		$poss .= "ABCDEFHIJKL@%&^(){}-_";
-			
-	while($i < $length)
-	{
-		$result .= substr($poss, mt_rand(0, strlen($poss) - 1), 1);
-		$i++;
-	}
+		$poss .= 'abcdefghijklmnopqrstuvwxyz';
 	
+	if($numbers)
+		$poss .= '0123456789';
+
+	if($other)
+		$poss .= 'ABCDEFHIJKL@%&^*/(){}-_';
+
+	$poss = str_split($poss, 1);
+
+	for($i = 1; $i < $length; ++$i)
+	{
+		mt_srand((double)microtime() * 1000000);
+
+		$num 		= mt_rand(1, count($poss));
+		$result 	.= $poss[$num - 1];
+	}
+		
 	return $result;
 }
 
-function CleanText($str)
+function Valid($value, $type = 'email')
 {
-	if(is_array($str))
-	{
-		$final = Array();
-		
-		foreach($str as $param => $value)
-			$final[$param] = CleanText($value);
+	if($type == 'email')
+		$p = '^[^0-9][a-zA-Z0-9_-]+([.][a-zA-Z0-9_-]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,48}$/';
+	if($type == 'username')
+		$p = '^[a-z\d_]{5,32}$/i';
+	if($type == 'ip')
+		$p = '^(([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/';
+	if($type == 'credit.card')
+		$p = '^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6011[0-9]{12}|3(?:0[0-5]|[68][0-9])[0-9]{11}|3[47][0-9]{13})$/';
+	if($type == 'url')
+		$p = '^(http|https):\/\/([A-Z0-9][A-Z0-9_-]*(?:\.[A-Z0-9][A-Z0-9_-]*)+):?(\d+)?\/?/i';
+	if($type == 'password')
+		$p = '^[a-z+0-9]/i';
+	if($type == 'subdomain')
+		$p = '^[a-z]{3,10}$/i';
+	if($type == 'domain')
+		$p = '^([A-Z0-9][A-Z0-9_-]*(?:\.[A-Z0-9][A-Z0-9_-]*)+):?(\d+)?\/?/i';
 			
-		return $final;
-	}
-
-	if(!is_string($str))
-		return $str;
-	
-	$str = stripslashes(trim($str));
-	$str = htmlentities($str, ENT_COMPAT | ENT_SUBSTITUTE, 'ISO-8859-15', false);
+	if(empty($p) OR empty($value))
+		return false;
 			
-	$str = str_replace('&amp;', '&', $str);
-	$str = iconv('ISO-8859-15', 'ISO-8859-15//TRANSLIT//IGNORE', $str);
-	
-	return nl2br($str);
-}
-
-function Encrypte($str, $level = 4, $hash)
-{
-	if(!is_string($str))
-		return $str;
-		
-	if($level == 1)
-		$str = md5($str . $hash);
-	if($level == 2)
-		$str = sha1($str . $hash);
-	if($level == 3)
-	{
-		$s = hash_init('sha256', HASH_HMAC, $hash);
-		hash_update($s, sha1($str));
-		hash_update($s, $hash);
-		$str = hash_final($s);
-	}
-	if($level == 4)
-	{
-		$s = hash_init('sha256', HASH_HMAC, $hash);
-		hash_update($s, sha1($str));
-		hash_update($s, $hash);
-		$str = hash_final($s);
-		$str = md5($hash . $str);
-	}
-	if($level == 5)
-	{
-		$result = "";
-		
-		for($i = 0; $i < strlen($str); $i++)
-		{
-			$char = substr($str, $i, 1);
-			$keychar = substr($hash, ($i % strlen($hash)) -1, 1);
-			$char = chr(ord($char) + ord($keychar));
-			$result .= $char;
-		}
-		
-		$str = base64_encode($result);
-	}
-		
-	return $str;			
-}
-
-function isValid($str, $type = 'email')
-{
-	if($type == "email")
-		$p = "^[^0-9][a-zA-Z0-9_-]+([.][a-zA-Z0-9_-]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,48}$/";
-	if($type == "username")
-		$p = "^[a-z\d_]{5,32}$/i";
-	if($type == "ip")
-		$p = "^(([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/";
-	if($type == "credit.card")
-		$p = "^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6011[0-9]{12}|3(?:0[0-5]|[68][0-9])[0-9]{11}|3[47][0-9]{13})$/";
-	if($type == "url")
-		$p = "^(http|https):\/\/([A-Z0-9][A-Z0-9_-]*(?:\.[A-Z0-9][A-Z0-9_-]*)+):?(\d+)?\/?/i";
-	if($type == "password")
-		$p = "^[a-z+0-9]/i";
-			
-	if(empty($p) OR empty($str))
-		return 'NO';
-			
-	$valid = preg_match("/$p", $str);
+	$valid = preg_match("/$p", $value);
 	return (!$valid) ? false : true;
 }
 
-function CreateDB($sql)
+#############################################################
+## PROCESOS
+#############################################################
+
+$ready 	= true;
+$system = [];
+
+CheckSystem();
+
+foreach($system as $key => $value)
 {
-	global $P;
-	
-	$database = file_get_contents('../templates/Database');
-	$database = str_ireplace("{DB_ALIAS}", $P['mysql_prefix '], $database);
-			
-	$db = explode(";", $database);
-			
-	foreach($db as $query)
+	if($key !== 'cache' AND $key !== 'memcache' AND $key !== 'shell')
 	{
-		$query = trim($query);
-			
-		if(empty($query))
-			continue;
-					
-		mysql_query($query, $sql);
-	}
-}
-
-function ShutDown()
-{
-	/*session_write_close();
-	
-	if(!defined('NO_FOOTER'))
-		require('Footer.php');*/
-}
-
-function CheckInit()
-{
-	$result['setup'] 		= is_writable('../Setup/');
-	$result['kernel'] 		= is_writable('../Kernel/');
-	
-	$result['config'] 		= is_readable('./templates/Configuration');
-	$result['db'] 			= is_readable('./templates/Database');
-	$result['htaccess'] 	= is_readable('./templates/Htaccess');
-	$result['webconfig'] 	= is_readable('./templates/Webconfig');
-	
-	$result['curl'] 		= (function_exists('dl')) ? true : function_exists('curl_init');
-	$result['json'] 		= (function_exists('dl')) ? true : function_exists('json_encode');
-
-	$result['shorttag'] 	= ini_get('short_open_tag');	
-	$result['php'] 			= version_compare(PHP_VERSION, '5.3.0', '>=');
-	
-	return $result;
-}
-
-function CheckReady()
-{
-	if(file_exists('../Kernel/Configuration.php') OR file_exists('./SECURE'))
-	{
-		if($_SESSION['install']['secure'] !== true)
+		if($value == false)
 		{
-			header("Location: ./error_ready.php");
-			exit;
+			$ready = false;
+			break;
 		}
 	}
-}
-
-function CheckRelease()
-{
-	global $Info;
-	$check = file_get_contents("http://beatrock.infosmart.mx/system/check_release?ver=" . $Info['version']);
-	$check = json_decode(trim($check), true);
-	
-	if(!is_array($check))
-		$status = "&times; Error de verificación de versión.";
-	else if($check['code'] == "ERROR")
-		$status = 'Hay una actualización disponible (' . $check['ver'] . ')<br /><center><a href="' . $check['download'] . '" class="ibtn">Descargar</a> <a href="' . $check['url'] . '" target="_blank" class="ibtn">Más información</a></center>';
-	else
-		$status = "&radic; BeatRock está actualizado.";
-		
-	return $status;
 }
 
 #############################################################
 ## MODO SEGURO
 #############################################################
 
-// Almacenar información en variables cortas.
-$P = CleanText($_POST);
-$G = CleanText($_GET);
-	
-#############################################################
-## VERIFICACIÓN DE PREPARACIÓN
-#############################################################
+// Almacenar informaciÃ³n en variables cortas.
+$P = _c($_POST);
+$G = _c($_GET);
 
-if(!defined("NO_FOOTER"))
-{
-	$status = CheckInit();
-	$continue = true;
-
-	foreach($status as $param => $value)
-	{
-		if($value == false)
-		{
-			if($page['id'] !== 'index')
-			{
-				header("Location: ./index");
-				exit;
-			}
-			else
-				$status[$param] = '<label style="color: red">&#xe039;</label>';
-
-			$continue = false;
-		}
-		else
-			$status[$param] = '<label style="color: green">&#xe03b;</label>';
-	}
-}
-	
 #############################################################
 ## HEMOS TERMINADO
 #############################################################
 
-if(!defined('NO_FOOTER'))
-	require('../Kernel/Info.php');
+// InformaciÃ³n del Kernel.
+include '../Kernel/Info.php';
 ?>

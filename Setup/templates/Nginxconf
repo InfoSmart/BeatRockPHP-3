@@ -85,12 +85,12 @@ http
             include        fastcgi_params;
         }        
 
-        location ~* \.(bak|config|sql|fla|psd|ini|log|sh|inc|swp|dist|tpl|json)$ 
+        location ~* \.(bak|config|sql|fla|psd|ini|log|sh|inc|swp|dist|tpl|json|sqlite)$ 
         {
             deny all;
         }
 
-        location ~* \.(shell|sh2ell|shells|hell|she|C99|c99)$ 
+        location ~* \.(shell|sh2ell|shells|C99|c99)$ 
         {
             deny all;
         }

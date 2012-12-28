@@ -1,74 +1,95 @@
-{
-	/*######################################################
-	//	CONEXI�N AL SERVIDOR [MYSQL]
-	//####################################################*/
-	"mysql": 
-	{
-		"host": 		"{mysql_host}",
-		"user": 		"{mysql_user}",
-		"pass": 		"{mysql_pass}",
-		"name": 		"{mysql_name}",
-		"prefix": 		"{mysql_prefix}",
-		"port":			"3306",
-		"repair":		false,
-		"repair.error": 		{mysql_repair_error}
-	},
+<?
+// Acción ilegal.
+if(!defined('BEATROCK'))
+	exit;
 
-	/*######################################################
-	//	UBICACI�N DEL SITIO WEB
-	//####################################################*/
-	"site": 
-	{
-		"country": 			"{site_country}",
-		"path": 			"{site_path}",
-		"admin": 			"{site_admin}",
-		"resources": 		"{site_resources}",
-		"resources.sys": 	"{site_resources_sys}"
-	},
+//######################################################
+//	CONEXIÓN AL SERVIDOR SQL
+//######################################################
 
-	/*######################################################
-	//	SEGURIDAD
-	//####################################################*/
-	"security": 
-	{
-		"enabled": 	{security_enabled},
-		"level": 	{security_level},
-		"hash": 	"{security_hash}",
-		"antiddos": {security_antiddos}
-	},
+$config['sql'] = array(
 
-	/*######################################################
-	//	ERRORES	& CONSOLA
-	//####################################################*/
-	"errors": 
-	{
-		"details": 	{errors_details},
-		"hidden": 	{errors_hidden},
-		"email.to": "{errors_email_to}"
-	},
+	'type' 		=> '{sql_type}',
+	'host'		=> '{sql_host}',
+	'user'		=> '{sql_user}',
+	'pass'		=> '{sql_pass}',
+	'name'		=> '{sql_name}',
+	'prefix'	=> '{sql_prefix}',
+	'port'		=> '{sql_port}',
 
-	"logs": 
-	{
-		"capture": 	{logs_capture},
-		"save": 	"{logs_save}"
-	},
+	'repair'		=> false,
+	'repair.error'	=> {sql_repair_error}
 
-	/*######################################################
-	//	PARAMETROS EXTRA DE SERVIDOR
-	//####################################################*/
-	"server": 
-	{
-		"gzip": {server_gzip},
-		"host": {server_host},
-		"ssl": 	{server_ssl}
-	},
+);
 
-	/*######################################################
-	//	MEMCACHE
-	//####################################################*/
-	"memcache": 
-	{
-		"host": "{memcache_host}",
-		"port": {memcache_port}
-	}
-}
+//######################################################
+//	UBICACIÓN DE LA APLICACIÓN
+//######################################################
+
+$config['site'] = array(
+
+	'timezone'			=> '{site_timezone}',
+	'path'				=> '{site_path}',
+	'admin'				=> '{site_path}/admin',
+	'resources'			=> '{site_resources}',
+	'resources.global'	=> '{site_resources_global}'
+
+);
+
+//######################################################
+//	SEGURIDAD
+//######################################################
+
+$config['security'] = array(
+
+	'enabled'	=> false,
+	'level'		=> {security_level},
+	'hash'		=> '{security_hash}',
+	'antiddos'	=> {security_antiddos}
+
+);
+
+//######################################################
+//	ERRORES	& LOGS
+//######################################################
+
+$config['errors'] = array(
+
+	'details'		=> {errors_details},
+	'hidden'		=> {errors_hidden},
+	'email.reports'	=> '{errors_email_reports}'
+
+);
+
+$config['logs'] = array(
+
+	'capture'	=> {logs_capture},
+	'save'		=> '{logs_save}'
+
+);
+
+//######################################################
+//	PARAMETROS EXTRA PARA EL SERVIDOR
+//######################################################
+
+$config['server'] = array(
+
+	'gzip'		=> {server_gzip},
+	'host'		=> {server_host},
+	'timezone'	=> {server_timezone},
+	'ssl'		=> {server_ssl},
+	'backup'	=> {server_backup}
+
+);
+
+//######################################################
+//	MEMCACHE
+//######################################################
+
+$config['memcache'] = array(
+
+	'host'	=> '{memcache_host}',
+	'port'	=> {memcache_port}
+
+);
+?>

@@ -15,6 +15,7 @@ deny from all
 </IfModule>
 
 Options -MultiViews
+AddDefaultCharset {charset}
 
 # ---------------------------------------------------
 # Permisos de acceso a directorios.
@@ -25,11 +26,11 @@ Allow from all
 
 {config_errors}
 # ---------------------------------------------------
-# ConfiguraciÛn PHP recomendada.
+# Configuraci√≥n PHP recomendada.
 # ---------------------------------------------------
 
 <ifModule mod_php5.c>
-  php_value default_charset iso-8859-15
+  php_value default_charset {charset}
   php_value max_execution_time "{max_execution}"
   php_value max_input_time "{max_input}"
   php_value memory_limit "{memory_limit}M"
@@ -43,16 +44,23 @@ Allow from all
 </ifModule>
 
 # ---------------------------------------------------
-# MÛdulo Rewrite.
+# M√≥dulo Rewrite.
 # ---------------------------------------------------
 
 <ifModule mod_rewrite.c>
   Options +FollowSymlinks
   RewriteEngine on
 
+  # Reglas de seguridad.
+  RewriteRule ^Kernel/BitRock/(.*) ./index.php
+  RewriteRule ^Kernel/Views/(.*) ./index.php
+  RewriteRule ^App/Controllers/(.*) ./index.php
+  RewriteRule ^App/Languages/(.*) ./index.php
+  RewriteRule ^App/Views/(.*) ./index.php
+
   RewriteRule ^sitemap.xml ./sitemap.php
   
-  # ESCRIBA AQUÕ SUS REGLAS.
+  # ESCRIBA AQU√ç SUS REGLAS.
   
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{REQUEST_FILENAME} !-f
@@ -98,13 +106,13 @@ FileETag None
 # Denegar acceso a archivos delicados.
 # ---------------------------------------------------
 
-<FilesMatch "(\.(bak|config|sql|fla|psd|ini|log|sh|inc|swp|dist|tpl|json)|~)$">
+<FilesMatch "(\.(bak|config|sql|fla|psd|ini|log|sh|inc|swp|dist|tpl|json|sqlite)|~)$">
   Order allow,deny
   Deny from all
   Satisfy All
 </FilesMatch>
 
-<FilesMatch "Secret_Hash$">
+<FilesMatch "SECRET$">
   Order allow,deny
   Deny from all
   Satisfy All
@@ -114,18 +122,18 @@ FileETag None
 {config_gzip}
 
 # ---------------------------------------------------
-# ProtecciÛn.
+# Protecci√≥n.
 # ---------------------------------------------------
 
-<FilesMatch "^(shell|sh2ell|shells|hell|she|C99|c99)\.php$">
+<FilesMatch "^(shell|sh2ell|shells|C99|c99)\.php$">
   deny from all
 </FilesMatch>
 
 # ---------------------------------------------------
-# ProtecciÛn - ANTIDDOS
+# Protecci√≥n - ANTIDDOS
 # ---------------------------------------------------
 
-## °ATENCI”N! Las lÌneas de m·s abajo ser·n agregadas por BeatRock
-## si tiene activado el sistema de AntiDDOS por htaccess
+# ¬°ATENCI√ìN! No agregue m√°s l√≠neas debajo, este espacio
+# ser√° utilizado por BeatRock para el sistema AntiDDoS
 
 deny from 67.213.218.72

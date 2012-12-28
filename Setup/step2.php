@@ -1,1 +1,567 @@
-<?php####################################################### 					 BeatRock				   	   ######################################################### Framework avanzado de procesamiento para PHP.   ######################################################### InfoSmart © 2012 Todos los derechos reservados. #### http://www.infosmart.mx/						   ######################################################### http://beatrock.infosmart.mx/				   #######################################################$page['id'] = 'step2';require 'Init.php';	file_put_contents('./SECURE', 'SECURE - ' . IP . ' - ' . URL);$_SESSION['install']['secure'] = true;$step['mysql_host'] = 'localhost';$step['mysql_name'] = 'beatrock';$step['mysql_port'] = '3306';$step['memcache_port'] 	= 11211;$step['site_path'] 		= str_ireplace('/Setup/step2.php', '', URL);$step['site_resources'] 	= $step['site_path'] . '/resources/beatrock';$step['site_resources_sys'] = $step['site_path'] . '/resources/system';$step['security_hash'] = Random(80, true, true, true);$step['security_test'] = Encrypte('BeatRock-InfoSmart-@', 4, $step['security_hash']);$page['name'] = 'ConfiguraciÛn Maestra';require 'Header.php';?><div class="pre">	<section class="left">		<h2>Configuremos BeatRock</h2>		<cite>Precisamos de un archivo de configuraciÛn para continuar.</cite>		<p>			°AquÌ vamos! BeatRock por ahora solo es compatible con servidores de base de datos "<b>MySQL</b>" y necesitamos que proporciones los datos para realizar una conexiÛn y crear la base de datos.		</p>		<p>			Igualmente aquÌ puedes configurar otros aspectos como el uso de un servidor <a href="http://memcached.org/" target="_blank">Memcached</a>, el reporte de errores, la seguridad y la carga media limite del servidor.		</p>		<p>			Toma en cuenta que...		</p>		<ul>			<li>La base de datos esta escrita en ingles.</li>			<li>Puede haber problemas con codificaciones fuera de "ISO-8859".</li>			<li>BeatRock crear· la base de datos autom·ticamente.</li>		</ul>	</section>	<figure class="right">		<img src="<?=RESOURCES_INS?>/systemv2/setup/images/<?=$page['id']?>.png" />	</figure></div><div class="box-error">	Por favor resuelve los siguientes problemas:	<div id="errors"></div></div><div class="content">		<form id="process-form">		<section>			<h2>Base de datos (MySQL)</h2>			<input type="hidden" name="mysql_repair" value="false" />			<div class="c1">				<p>					<label for="mysql_host">Host:</label>					<input type="text" name="mysql_host" id="mysql_host" placeholder="localhost" value="<?=$step['mysql_host']?>" required autofocus autocomplete="off" />										<span>Host a donde se realizar· la conexiÛn al servidor MySQL.</span>				</p>				<p>					<label for="mysql_port">Puerto:</label>					<input type="number" name="mysql_port" id="mysql_port" placeholder="3306" value="<?=$step['mysql_port']?>" required autocomplete="off" />										<span>Puerto a donde se realizar· la conexiÛn al servidor MySQL.</span>				</p>				<p>					<label for="mysql_name">Nombre de la base de datos:</label>					<input type="text" name="mysql_name" id="mysql_name" value="<?=$step['mysql_name']?>" required autocomplete="off" />									<span>Nombre de la base de datos, tenga en cuenta que la instalaciÛn la crear· automaticamente en caso de que no exista.</span>				</p>				<p>					<label>ReparaciÛn en error:</label>										<select name="mysql_repair_error" class="btn" required>						<option value="true">Activado</option>						<option value="false">Desactivado</option>					</select>										<span>En caso de que se produzca un error relacionado con la base de datos, BeatRock reparar· todas las tablas para intentar reparar el problema.</span>				</p>			</div>			<div class="c2">				<p>					<label for="mysql_user">Nombre de usuario:</label>					<input type="text" name="mysql_user" id="mysql_user" placeholder="root" value="<?=$step['mysql_user']?>" required autocomplete="off" />										<span>Nombre de usuario para la autenticaciÛn con el servidor MySQL.</span>				</p>				<p>					<label for="mysql_pass">ContraseÒa:</label>					<input type="password" name="mysql_pass" id="mysql_pass" value="<?=$step['mysql_pass']?>" required autocomplete="off" />									<span>ContraseÒa para la autenticaciÛn con el servidor MySQL.</span>				</p>				<p>					<label for="mysql_prefix">Prefijo de las tablas:</label>					<input type="text" name="mysql_prefix" id="mysql_prefix" value="<?=$step['mysql_prefix']?>" placeholder="myapp_" autocomplete="off" />										<span>Si mantendr· varias copias de BeatRock en una sola base de datos escriba un Prefijo para las tablas, esto evitar· un conflicto entre ellas.</span>				</p>			</div>		</section>		<section>			<h2>Servidor "Memcached"</h2>			<div class="c1">				<p>					<label for="memcache_host">Host:</label>					<input type="text" name="memcache_host" id="memcache_host" placeholder="localhost" value="<?=$step['memcache_host']?>" autocomplete="off" />					<span>Si cuentas con un servidor Memcache, especifica el host a donde se realizar· la conexiÛn.</span>				</p>			</div>			<div class="c2">				<p>					<label for="memcache_port">Puerto:</label>					<input type="number" name="memcache_port" id="memcache_port" value="<?=$step['memcache_port']?>" autocomplete="off" />					<span>Si cuentas con un servidor Memcache, especifica el puerto a donde se realizar· la conexiÛn.</span>				</p>			</div>		</section>				<section>			<h2>UbicaciÛn de la aplicaciÛn</h2>			<div class="c1">							<p>					<label>Zona de formato de fecha:</label>										<select name="site_country" class="btn" required>						<option value="Pacific/Midway">(GMT-11:00) Midway Island, Samoa</option>						<option value="America/Adak">(GMT-10:00) Hawaii-Aleutian</option>						<option value="Etc/GMT+10">(GMT-10:00) Hawaii</option>						<option value="Pacific/Marquesas">(GMT-09:30) Marquesas Islands</option>						<option value="Pacific/Gambier">(GMT-09:00) Gambier Islands</option>						<option value="America/Anchorage">(GMT-09:00) Alaska</option>						<option value="America/Ensenada">(GMT-08:00) Tijuana, Baja California</option>						<option value="Etc/GMT+8">(GMT-08:00) Pitcairn Islands</option>						<option value="America/Los_Angeles">(GMT-08:00) Pacific Time (US & Canada)</option>						<option value="America/Denver">(GMT-07:00) Mountain Time (US & Canada)</option>						<option value="America/Chihuahua">(GMT-07:00) Chihuahua, La Paz, Mazatlan</option>						<option value="America/Dawson_Creek">(GMT-07:00) Arizona</option>						<option value="America/Belize">(GMT-06:00) Saskatchewan, Central America</option>						<option value="America/Mexico_City" selected>(GMT-06:00) Guadalajara, Mexico City, Monterrey</option>						<option value="Chile/EasterIsland">(GMT-06:00) Easter Island</option>						<option value="America/Chicago">(GMT-06:00) Central Time (US & Canada)</option>						<option value="America/New_York">(GMT-05:00) Eastern Time (US & Canada)</option>						<option value="America/Havana">(GMT-05:00) Cuba</option>						<option value="America/Bogota">(GMT-05:00) Bogota, Lima, Quito, Rio Branco</option>						<option value="America/Caracas">(GMT-04:30) Caracas</option>						<option value="America/Santiago">(GMT-04:00) Santiago</option>						<option value="America/La_Paz">(GMT-04:00) La Paz</option>						<option value="Atlantic/Stanley">(GMT-04:00) Faukland Islands</option>						<option value="America/Campo_Grande">(GMT-04:00) Brazil</option>						<option value="America/Goose_Bay">(GMT-04:00) Atlantic Time (Goose Bay)</option>						<option value="America/Glace_Bay">(GMT-04:00) Atlantic Time (Canada)</option>						<option value="America/St_Johns">(GMT-03:30) Newfoundland</option>						<option value="America/Araguaina">(GMT-03:00) UTC-3</option>						<option value="America/Montevideo">(GMT-03:00) Montevideo</option>						<option value="America/Miquelon">(GMT-03:00) Miquelon, St. Pierre</option>						<option value="America/Godthab">(GMT-03:00) Greenland</option>						<option value="America/Argentina/Buenos_Aires">(GMT-03:00) Buenos Aires</option>						<option value="America/Sao_Paulo">(GMT-03:00) Brasilia</option>						<option value="America/Noronha">(GMT-02:00) Mid-Atlantic</option>						<option value="Atlantic/Cape_Verde">(GMT-01:00) Cape Verde Is.</option>						<option value="Atlantic/Azores">(GMT-01:00) Azores</option>						<option value="Europe/Belfast">(GMT) Greenwich Mean Time : Belfast</option>						<option value="Europe/Dublin">(GMT) Greenwich Mean Time : Dublin</option>						<option value="Europe/Lisbon">(GMT) Greenwich Mean Time : Lisbon</option>						<option value="Europe/London">(GMT) Greenwich Mean Time : London</option>						<option value="Africa/Abidjan">(GMT) Monrovia, Reykjavik</option>						<option value="Europe/Amsterdam">(GMT+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna</option>						<option value="Europe/Belgrade">(GMT+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague</option>						<option value="Europe/Brussels">(GMT+01:00) Brussels, Copenhagen, Madrid, Paris</option>						<option value="Africa/Algiers">(GMT+01:00) West Central Africa</option>						<option value="Africa/Windhoek">(GMT+01:00) Windhoek</option>						<option value="Asia/Beirut">(GMT+02:00) Beirut</option>						<option value="Africa/Cairo">(GMT+02:00) Cairo</option>						<option value="Asia/Gaza">(GMT+02:00) Gaza</option>						<option value="Africa/Blantyre">(GMT+02:00) Harare, Pretoria</option>						<option value="Asia/Jerusalem">(GMT+02:00) Jerusalem</option>						<option value="Europe/Minsk">(GMT+02:00) Minsk</option>						<option value="Asia/Damascus">(GMT+02:00) Syria</option>						<option value="Europe/Moscow">(GMT+03:00) Moscow, St. Petersburg, Volgograd</option>						<option value="Africa/Addis_Ababa">(GMT+03:00) Nairobi</option>						<option value="Asia/Tehran">(GMT+03:30) Tehran</option>						<option value="Asia/Dubai">(GMT+04:00) Abu Dhabi, Muscat</option>						<option value="Asia/Yerevan">(GMT+04:00) Yerevan</option>						<option value="Asia/Kabul">(GMT+04:30) Kabul</option>						<option value="Asia/Yekaterinburg">(GMT+05:00) Ekaterinburg</option>						<option value="Asia/Tashkent">(GMT+05:00) Tashkent</option>						<option value="Asia/Kolkata">(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi</option>						<option value="Asia/Katmandu">(GMT+05:45) Kathmandu</option>						<option value="Asia/Dhaka">(GMT+06:00) Astana, Dhaka</option>						<option value="Asia/Novosibirsk">(GMT+06:00) Novosibirsk</option>						<option value="Asia/Rangoon">(GMT+06:30) Yangon (Rangoon)</option>						<option value="Asia/Bangkok">(GMT+07:00) Bangkok, Hanoi, Jakarta</option>						<option value="Asia/Krasnoyarsk">(GMT+07:00) Krasnoyarsk</option>						<option value="Asia/Hong_Kong">(GMT+08:00) Beijing, Chongqing, Hong Kong, Urumqi</option>						<option value="Asia/Irkutsk">(GMT+08:00) Irkutsk, Ulaan Bataar</option>						<option value="Australia/Perth">(GMT+08:00) Perth</option>						<option value="Australia/Eucla">(GMT+08:45) Eucla</option>						<option value="Asia/Tokyo">(GMT+09:00) Osaka, Sapporo, Tokyo</option>						<option value="Asia/Seoul">(GMT+09:00) Seoul</option>						<option value="Asia/Yakutsk">(GMT+09:00) Yakutsk</option>						<option value="Australia/Adelaide">(GMT+09:30) Adelaide</option>						<option value="Australia/Darwin">(GMT+09:30) Darwin</option>						<option value="Australia/Brisbane">(GMT+10:00) Brisbane</option>						<option value="Australia/Hobart">(GMT+10:00) Hobart</option>						<option value="Asia/Vladivostok">(GMT+10:00) Vladivostok</option>						<option value="Australia/Lord_Howe">(GMT+10:30) Lord Howe Island</option>						<option value="Etc/GMT-11">(GMT+11:00) Solomon Is., New Caledonia</option>						<option value="Asia/Magadan">(GMT+11:00) Magadan</option>						<option value="Pacific/Norfolk">(GMT+11:30) Norfolk Island</option>						<option value="Asia/Anadyr">(GMT+12:00) Anadyr, Kamchatka</option>						<option value="Pacific/Auckland">(GMT+12:00) Auckland, Wellington</option>						<option value="Etc/GMT-12">(GMT+12:00) Fiji, Kamchatka, Marshall Is.</option>						<option value="Pacific/Chatham">(GMT+12:45) Chatham Islands</option>						<option value="Pacific/Tongatapu">(GMT+13:00) Nuku'alofa</option>						<option value="Pacific/Kiritimati">(GMT+14:00) Kiritimati</option>					</select>										<span>Seleccione la zona de formato de fecha usada para esta aplicaciÛn, la misma afecta a todas las funciones de tiempo de PHP.</span>				</p>				<p>					<label for="site_resources">DirecciÛn de los Recursos de la aplicaciÛn:</label>					<input type="text" name="site_resources" id="site_resources" value="<?=$step['site_resources']?>" required autocomplete="off" />										<span>Escriba la direcciÛn de los recursos (CSS, Im·genes, JavaScript) de la aplicaciÛn. Sin "http://" al principio ni "/" al final.</span>				</p>			</div>			<div class="c2">							<p>					<label for="site_path">DirecciÛn de la aplicaciÛn:</label>					<input type="text" name="site_path" id="site_path" value="<?=$step['site_path']?>" required autocomplete="off" />										<span>Escriba la direcciÛn para acceder a la aplicaciÛn sin "http://" al principio ni "/" al final.</span>				</p>											<p>					<label for="site_resources_sys">DirecciÛn de los Recursos globales:</label>					<input type="text" name="site_resources_sys" id="site_resources_sys" value="<?=$step['site_resources_sys']?>" required autocomplete="off" />										<span>Escriba la direcciÛn de los recursos globales (CSS, Imagenes, JavaScript) que ser·n usadas en todas sus aplicaciones. Sin "http://" al principio ni "/" al final.</span>				</p>			</div>		</section>				<section>			<h2>Seguridad</h2>			<div class="c1">							<p>					<label>Modo seguro:</label>										<select name="security_enabled" class="btn" required>						<option value="false">Desactivado</option>						<option value="true">Activado</option>					</select>										<span>El Modo seguro limpia las variables <b>"$_GET, $_POST, $_REQUEST y $_SESSION"</b> antes de poder usarlas/verlas en su aplicaciÛn. Puede ocacionar errores o resultados no deseados en aplicaciones avanzadas.</span>				</p>							<p>					<label>Sistema de encriptaciÛn:</label>										<select name="security_level" id="security_level" class="btn" required>						<option value="0">Sin encriptaciÛn</option>						<option value="1">CodificaciÛn MD5</option>						<option value="2">CodificaciÛn SHA1</option>						<option value="3">CodificaciÛn avanzada de SHA1 & SHA256</option>						<option value="4" selected>CodificaciÛn avanzada de SHA1 & SHA256 con MD5</option>						<option value="5">CodificaciÛn personalizada reversible</option>					</select>										<span>Seleccione el sistema de encriptaciÛn usada para encriptar cadenas, por ejemplo las contraseÒas.</span>				</p>				<p>					<label>AntiDDOS desde la base:</label>					<select name="security_antiddos" class="btn" required>						<option value="true">Activado</option>						<option value="false">Desactivado</option>					</select>					<span>Cuando el sistema AntiDDOS detecte un intento de ataque al sitio la direcciÛn IP del atacante ser· guardada en <b>black_ip.json</b>. El sistema "AntiDDOS desde la base" bloquea el acceso al sitio de las IP guardadas antes de inicializar por completo BeatRock.</span>				</p>			</div>			<div class="c2">							<p>					<label for="security_hash">Clave de encriptaciÛn:</label>					<input type="text" name="security_hash" id="security_hash" value="<?=$step['security_hash']?>" required />										<span>La clave de encriptaciÛn proporciona m·s seguridad a la hora de cifrar cadenas, sin ella las cadenas no ser·n cifradas correctamente asÌ que <b>procure guardarlo en un lugar seguro</b>.</span>				</p>								<p>					<label>Prueba de encriptaciÛn:</label>					<input type="text" id="security_test" value="<?=$step['security_test']?>" disabled readonly />										<span>Esta es la cadena "BeatRock-InfoSmart-@" encriptada con su configuraciÛn de encriptaciÛn actual.</span>				</p>			</div>		</section>				<section>			<h2>Errores & Logs</h2>			<div class="c1">							<p>					<label>Mostrar los detalles de los errores:</label>										<select name="errors_details" class="btn" required>						<option value="true">Activado</option>						<option value="false">Desactivado</option>					</select>										<span>En caso de que se produzca un error se mostrar·n los detalles del mismo como el mensaje de error, el archivo donde se genero, la funciÛn responsable y probablemente la lÌnea. <b>(Recomendado desactivar en fase de producciÛn)</b></span>				</p>				<p>					<label>Ocultar errores de la base de datos:</label>										<select name="errors_hidden" class="btn" required>						<option value="false">Desactivado</option>						<option value="true">Activado</option>					</select>										<span>En caso de que se produzca un error con la base de datos BeatRock intentar· solucionar el problema y continuar con la peticiÛn del usuario sin darle ning˙n aviso. <b>(Recomendado activar en fase de producciÛn)</b></span>				</p>			</div>			<div class="c2">							<p>					<label>Captura de Logs:</label>										<select name="logs_capture" class="btn" required>						<option value="true">Activado</option>						<option value="false">Desactivado</option>					</select>										<span>Seleccione si desea capturar los Logs que genere BeatRock.</span>				</p>				<p>					<label>Guardado de Logs:</label>										<select name="logs_save" class="btn" required>						<option value="onerror">Solo en errores</option>						<option value="error">Solo errores</option>						<option value="warning">Solo alertas</option>						<option value="info">Solo informativas</option>						<option value="true">Todos</option>						<option value="false">Ninguno</option>					</select>										<span>Seleccione en que ocaciÛn BeatRock guardar· los Logs generados.</span>				</p>				<p>					<label for="errors_email_to">Correo electrÛnico de reportes:</label>					<input type="email" name="errors_email_to" id="errors_email_to" value="" autocomplete="off" />										<span>En caso de que se produzca un error BeatRock enviar· un correo electrÛnico de reporte a esta direcciÛn.</span>				</p>			</div>				</section>				<section>			<h2>Servidor</h2>			<div class="c1">							<p>					<label>CompresiÛn GZIP:</label>										<select name="server_gzip" class="btn" required>						<option value="true">Activado</option>						<option value="false">Desactivado</option>					</select>										<span>Seleccione si desea usar la compresiÛn GZIP. Activarla disminuye el tiempo de carga de su aplicaciÛn.</span>				</p>				<p>					<label>Solicitud de nombre Host/DNS:</label>										<select name="server_host" class="btn" required>						<option value="true">Activado</option>						<option value="false">Desactivado</option>					</select>										<span>Seleccione si desea activar la solicitud de Host/DNS del usuario, de esta manera podr· obtener m·s informaciÛn acerca de el, sin embargo causa un retraso pequeÒo a la hora de ejecutar la aplicaciÛn.</span>				</p>			</div>			<div class="c2">				<p>					<label>Uso del protocolo seguro (HTTPS)</label>										<select name="server_ssl" class="btn" required>						<option value="null">Opcional</option>						<option value="true">Forzar uso</option>						<option value="false">Forzar NO uso</option>					</select>										<span>Seleccione de que manera desea usar el protocolo seguro SSL (HTTPS).</span>				</p>			</div>		</section>				<section>			<h2>Otros</h2>						<p>				<input type="checkbox" name="nodb" id="nodb" value="true" /> No crear la base de datos, solo el archivo de configuraciÛn. (Seleccionelo si ya ha creado la base de datos y las tablas)			</p>		</section>				<p>			<input type="submit" name="save" id="save_step2" value="Guardar configuraciÛn" title="Crear el archivo de configuraciÛn." class="ibtn" />			<input type="submit" name="show" id="show_step2" value="Mostrar configuraciÛn" title="Mostrar el texto del archivo de configuraciÛn." class="ibtn iblue" />		</p>	</form>	<section id="complete" hidden>		<h1>°Todo salio fabuloso!</h1>		<p>			Hemos comprobado que todo sea correcto y °enhorabuena! hemos realizado la conexiÛn con la base de datos y realizado los ajustes necesarios.		</p>		<div id="config_code" hidden>			<p>				Si estas viendo esto es por una de dos razones:			</p>			<ul>				<li>Has solicitado "mostrar el archivo de configuraciÛn" en vez de que BeatRock lo guardara autom·ticamente.</li>				<li>No hemos podido guardar el archivo de configuraciÛn.</li>			</ul>			<p>				Sea cual sea el caso te pedimos que copies y pegues el siguiente cÛdigo en un archivo nuevo llamado <b>"Configuration.json"</b> en la carpeta <b>"/Kernel"</b>.			</p>			<center>				<textarea class="code config" readonly></textarea>				<p>					<a onclick="$('.config').select();">Seleccionar texto</a>				</p>			</center>		</div>		<div id="config_ok" hidden>			<p>				øTe interesa saber que hicimos?			</p>			<ul>				<li>CreaciÛn de la base de datos.</li>				<li>ImportaciÛn de los datos de la base de datos.</li>				<li>CreaciÛn del archivo de configuraciÛn en <b>"/Kernel/Configuration.json"</b>.</li>				<li>CreaciÛn de copia de seguridad del archivo de configuraciÛn en <b>"/Kernel/Configuration.Backup.json"</b>.</li>				<li>CreaciÛn de copia de seguridad de la clave secreta de encriptaciÛn en <b>"/Kernel/Secret_Hash"</b>.</li>			</ul>		</div>		<p>			<a href="./step3.php" class="ibtn iblue">Continuar</a>		</p>	</section></div>
+<?
+#####################################################
+## 					 BeatRock				   	   ##
+#####################################################
+## Framework avanzado de procesamiento para PHP.   ##
+#####################################################
+## InfoSmart ¬© 2012 Todos los derechos reservados. ##
+## http://www.infosmart.mx/						   ##
+#####################################################
+## http://beatrock.infosmart.mx/				   ##
+#####################################################
+
+require 'Init.php';
+
+$page = 'step2';
+
+if($_SERVER['HTTP_X_REQUESTED_WITH'] !== 'XMLHttpRequest')
+	require 'content/header.php';
+
+file_put_contents('./SECURE', 'SECURE - ' . IP . ' - ' . URL);
+$_SESSION['install']['secure'] = true;
+
+$step['sql_host'] 		= 'localhost';
+$step['sql_port'] 		= 3306;
+
+$step['site_path'] 				= str_ireplace('/Setup/step2.php', '', URL);
+$step['site_resources'] 		= $step['site_path'] . '/resources/app';
+$step['site_resources_global'] 	= $step['site_path'] . '/resources/global';
+
+$step['security_hash'] 		= Random(80, true, true, true);
+$step['memcache_port'] 		= 11211;
+?>
+<div class="info">
+	<div class="wrapper">
+		<div class="left">
+			<h2>Configuraci√≥n</h2>
+
+			<p>
+				BeatRock precisa de un archivo de configuraci√≥n que contenga los ajustes m√°s importantes del Framework como los datos para la conexi√≥n al servidor MySQL, la ubicaci√≥n de la aplicaci√≥n y la seguridad a tomar.
+			</p>
+
+			<p>
+				Completa el formulario de m√°s abajo para que BeatRock pueda crear el archivo de configuraci√≥n.
+			</p>
+
+			<p>
+				Puede obtener m√°s informaci√≥n del archivo de configuraci√≥n y la utilidad de sus par√°metros en nuestra <a href="http://beatrock.infosmart.mx/wiki/Configuraci√≥n" target="_blank">wiki</a>.
+			</p>
+		</div>
+
+		<figure>
+			<img src="<?=RESOURCES_INS?>/systemv2/setup/images/step2.png" />
+		</figure>
+	</div>
+</div>
+
+<div class="wrapper">
+<div class="content">
+	<div class="box-error" id="error">
+	</div>
+
+	<form>		
+		<section>
+			<div class="col1">
+				<h3>SQL</h3>
+
+				<p>
+					<label>Tipo de servidor SQL</label>
+					<input type="radio" name="sql_type" id="sql_type" value="mysql" checked /> MySQL<br />
+					<input type="radio" name="sql_type" id="sql_type" value="sqlite" <? if(!extension_loaded('sqlite3')) { ?>disabled title="SQLite no es soportado por su servidor."<? } ?> /> SQLite 3
+				</p>
+
+				<div class="only_mysql">
+					<p>
+						<label>Host / Direcci√≥n IP</label>
+						<input type="text" name="sql_host" value="<?=$step['sql_host']?>" required placeholder="localhost" />
+						<span class="h">El nombre Host o la direcci√≥n IP donde se realizar√° la conexi√≥n al servidor MySQL.</span>
+					</p>
+
+					<p>
+						<label>Nombre de usuario</label>
+						<input type="text" name="sql_user" required placeholder="root" />
+						<span class="h">El nombre de usuario que usaremos para conectarnos al servidor MySQL.</span>
+					</p>
+
+					<p>
+						<label>Contrase√±a</label>
+						<input type="password" name="sql_pass" required />
+						<span class="h">La contrase√±a que usaremos para conectarnos al servidor MySQL.</span>
+					</p>
+
+					<p>
+						<label>Nombre de la base de datos</label>
+						<input type="text" name="sql_name" required placeholder="beatrock" x-webkit-speech speech />
+						<span class="h">Escriba el nombre que le dar√° a su base de datos. Nota: Si no la ha creado, BeatRock intentar√° crearla.</span>
+					</p>
+
+					<p>
+						<label>Prefijo de la base de datos</label>
+						<input type="text" name="sql_prefix" placeholder="app_"  />
+						<span class="h">Puede escribir un prefijo para las tablas de la base de datos. (Opcional)</span>
+					</p>
+
+					<p>
+						<label>Puerto</label>
+						<input type="number" name="sql_port" value="<?=$step['sql_port']?>" required placeholder="3306" />
+						<span class="h">El puerto del servidor MySQL, generalmente es <b>3306</b></span>
+					</p>
+				</div>
+
+				<div class="only_sqlite">
+					<p>
+						<label>Nombre de la base de datos</label>
+						<input type="text" name="sql_lite_name" required placeholder="beatrock" x-webkit-speech speech disabled />
+						<span class="h">Escriba el nombre que le dar√° a su base de datos. Sin la extensi√≥n .sqlite</span>
+					</p>
+				</div>
+
+				<p>
+					<label>Reparaci√≥n en caso de error</label>
+					<select name="sql_repair_error" class="btn">
+						<option value="true">Activado</option>
+						<option value="false">Desactivado</option>
+					</select>
+					<span class="h">En caso de que se ocasione un error en una consulta ¬øIntentar repararlo autom√°ticamente?</span>
+				</p>
+			</div>
+
+			<div class="col2">
+				<section>
+					<h4>¬øSab√≠a que...?</h4>
+
+					<p>
+						BeatRock es compatible con <a href="http://www.php.net/manual/es/book.mysqli.php?beta=1" target="_blank">MySQLi</a> y <a href="http://www.php.net/manual/es/book.sqlite3.php?beta=1" target="_blank">SQLite</a>.
+					</p>
+
+					<div class="only_sqlite">
+						<p>
+							Su base de datos <b>SQLite 3</b> ser√° guardada dentro de la carpeta /App/
+						</p>
+
+						<p>
+							Puede usar herramientas como <a href="https://addons.mozilla.org/es/firefox/addon/sqlite-manager/" target="_blank">SQLite Manager de Firefox</a>, <a href="http://www.sqlabs.net/sqlitemanager.php" target="_blank">SQLite Manager</a> y <a href="http://www.sqliteexpert.com/" target="_blank">SQLite Expert</a> para administrar su base de datos.
+						</p>
+
+						<p>
+							BeatRock deniega cualquier intento de acceso/descarga  a los archivos <b>.sqlite</b> de su aplicaci√≥n. No se preocupe por el lugar donde lo guardara.
+						</p>
+					</div>
+
+					<p class="only_mysql">
+						BeatRock es capaz de solucionar problemas relacionados a consultas MySQL de manera autom√°tica
+					</p>
+
+					<p>
+						Si por accidente o por un ataque de seguridad su base de datos es eliminada BeatRock puede recuperarla autom√°ticamente sin notificarle a sus visitantes
+					</p>
+
+					<p>
+						BeatRock le reportar√° por correo electr√≥nico si uno de sus visitantes intenta realizar una inyecci√≥n SQL.
+					</p>
+
+					<p>
+						La funci√≥n para realizar consultas es <code>q()</code>
+					</p>
+
+					<p>
+						Para usar el prefijo en una consulta solo basta con escribir <code>{DA}</code> dentro de la consulta. Es decir: <code>q('SELECT * FROM {DA}users');</code>. Si no escribio un prefijo <code>{DA}</code> se traducir√° a nada.
+					</p>
+
+					<p>
+						Puede usar el controlador "Query" para crear consultas de forma inteligente, es decir: <code>Query('users')->Select()->Add('email', 'webmaster@infosmart.mx')->Run();</code> es lo mismo a <code>SELECT * FROM {DA}users WHERE email = 'webmaster@infosmart.mx'</code>
+					</p>
+				</section>
+			</div>
+		</section>
+
+		<section>
+			<div class="col1">
+				<h3>Ubicaci√≥n</h3>
+
+				<p>
+					<label>Zona horaria</label>
+					<select name="site_timezone" class="btn" required>
+						<option value="Pacific/Midway">(GMT-11:00) Midway Island, Samoa</option>
+						<option value="America/Adak">(GMT-10:00) Hawaii-Aleutian</option>
+						<option value="Etc/GMT+10">(GMT-10:00) Hawaii</option>
+						<option value="Pacific/Marquesas">(GMT-09:30) Marquesas Islands</option>
+						<option value="Pacific/Gambier">(GMT-09:00) Gambier Islands</option>
+						<option value="America/Anchorage">(GMT-09:00) Alaska</option>
+						<option value="America/Ensenada">(GMT-08:00) Tijuana, Baja California</option>
+						<option value="Etc/GMT+8">(GMT-08:00) Pitcairn Islands</option>
+						<option value="America/Los_Angeles">(GMT-08:00) Pacific Time (US & Canada)</option>
+						<option value="America/Denver">(GMT-07:00) Mountain Time (US & Canada)</option>
+						<option value="America/Chihuahua">(GMT-07:00) Chihuahua, La Paz, Mazatlan</option>
+						<option value="America/Dawson_Creek">(GMT-07:00) Arizona</option>
+						<option value="America/Belize">(GMT-06:00) Saskatchewan, Central America</option>
+						<option value="America/Mexico_City" selected>(GMT-06:00) Guadalajara, Mexico City, Monterrey</option>
+						<option value="Chile/EasterIsland">(GMT-06:00) Easter Island</option>
+						<option value="America/Chicago">(GMT-06:00) Central Time (US & Canada)</option>
+						<option value="America/New_York">(GMT-05:00) Eastern Time (US & Canada)</option>
+						<option value="America/Havana">(GMT-05:00) Cuba</option>
+						<option value="America/Bogota">(GMT-05:00) Bogota, Lima, Quito, Rio Branco</option>
+						<option value="America/Caracas">(GMT-04:30) Caracas</option>
+						<option value="America/Santiago">(GMT-04:00) Santiago</option>
+						<option value="America/La_Paz">(GMT-04:00) La Paz</option>
+						<option value="Atlantic/Stanley">(GMT-04:00) Faukland Islands</option>
+						<option value="America/Campo_Grande">(GMT-04:00) Brazil</option>
+						<option value="America/Goose_Bay">(GMT-04:00) Atlantic Time (Goose Bay)</option>
+						<option value="America/Glace_Bay">(GMT-04:00) Atlantic Time (Canada)</option>
+						<option value="America/St_Johns">(GMT-03:30) Newfoundland</option>
+						<option value="America/Araguaina">(GMT-03:00) UTC-3</option>
+						<option value="America/Montevideo">(GMT-03:00) Montevideo</option>
+						<option value="America/Miquelon">(GMT-03:00) Miquelon, St. Pierre</option>
+						<option value="America/Godthab">(GMT-03:00) Greenland</option>
+						<option value="America/Argentina/Buenos_Aires">(GMT-03:00) Buenos Aires</option>
+						<option value="America/Sao_Paulo">(GMT-03:00) Brasilia</option>
+						<option value="America/Noronha">(GMT-02:00) Mid-Atlantic</option>
+						<option value="Atlantic/Cape_Verde">(GMT-01:00) Cape Verde Is.</option>
+						<option value="Atlantic/Azores">(GMT-01:00) Azores</option>
+						<option value="Europe/Belfast">(GMT) Greenwich Mean Time : Belfast</option>
+						<option value="Europe/Dublin">(GMT) Greenwich Mean Time : Dublin</option>
+						<option value="Europe/Lisbon">(GMT) Greenwich Mean Time : Lisbon</option>
+						<option value="Europe/London">(GMT) Greenwich Mean Time : London</option>
+						<option value="Africa/Abidjan">(GMT) Monrovia, Reykjavik</option>
+						<option value="Europe/Amsterdam">(GMT+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna</option>
+						<option value="Europe/Belgrade">(GMT+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague</option>
+						<option value="Europe/Brussels">(GMT+01:00) Brussels, Copenhagen, Madrid, Paris</option>
+						<option value="Africa/Algiers">(GMT+01:00) West Central Africa</option>
+						<option value="Africa/Windhoek">(GMT+01:00) Windhoek</option>
+						<option value="Asia/Beirut">(GMT+02:00) Beirut</option>
+						<option value="Africa/Cairo">(GMT+02:00) Cairo</option>
+						<option value="Asia/Gaza">(GMT+02:00) Gaza</option>
+						<option value="Africa/Blantyre">(GMT+02:00) Harare, Pretoria</option>
+						<option value="Asia/Jerusalem">(GMT+02:00) Jerusalem</option>
+						<option value="Europe/Minsk">(GMT+02:00) Minsk</option>
+						<option value="Asia/Damascus">(GMT+02:00) Syria</option>
+						<option value="Europe/Moscow">(GMT+03:00) Moscow, St. Petersburg, Volgograd</option>
+						<option value="Africa/Addis_Ababa">(GMT+03:00) Nairobi</option>
+						<option value="Asia/Tehran">(GMT+03:30) Tehran</option>
+						<option value="Asia/Dubai">(GMT+04:00) Abu Dhabi, Muscat</option>
+						<option value="Asia/Yerevan">(GMT+04:00) Yerevan</option>
+						<option value="Asia/Kabul">(GMT+04:30) Kabul</option>
+						<option value="Asia/Yekaterinburg">(GMT+05:00) Ekaterinburg</option>
+						<option value="Asia/Tashkent">(GMT+05:00) Tashkent</option>
+						<option value="Asia/Kolkata">(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi</option>
+						<option value="Asia/Katmandu">(GMT+05:45) Kathmandu</option>
+						<option value="Asia/Dhaka">(GMT+06:00) Astana, Dhaka</option>
+						<option value="Asia/Novosibirsk">(GMT+06:00) Novosibirsk</option>
+						<option value="Asia/Rangoon">(GMT+06:30) Yangon (Rangoon)</option>
+						<option value="Asia/Bangkok">(GMT+07:00) Bangkok, Hanoi, Jakarta</option>
+						<option value="Asia/Krasnoyarsk">(GMT+07:00) Krasnoyarsk</option>
+						<option value="Asia/Hong_Kong">(GMT+08:00) Beijing, Chongqing, Hong Kong, Urumqi</option>
+						<option value="Asia/Irkutsk">(GMT+08:00) Irkutsk, Ulaan Bataar</option>
+						<option value="Australia/Perth">(GMT+08:00) Perth</option>
+						<option value="Australia/Eucla">(GMT+08:45) Eucla</option>
+						<option value="Asia/Tokyo">(GMT+09:00) Osaka, Sapporo, Tokyo</option>
+						<option value="Asia/Seoul">(GMT+09:00) Seoul</option>
+						<option value="Asia/Yakutsk">(GMT+09:00) Yakutsk</option>
+						<option value="Australia/Adelaide">(GMT+09:30) Adelaide</option>
+						<option value="Australia/Darwin">(GMT+09:30) Darwin</option>
+						<option value="Australia/Brisbane">(GMT+10:00) Brisbane</option>
+						<option value="Australia/Hobart">(GMT+10:00) Hobart</option>
+						<option value="Asia/Vladivostok">(GMT+10:00) Vladivostok</option>
+						<option value="Australia/Lord_Howe">(GMT+10:30) Lord Howe Island</option>
+						<option value="Etc/GMT-11">(GMT+11:00) Solomon Is., New Caledonia</option>
+						<option value="Asia/Magadan">(GMT+11:00) Magadan</option>
+						<option value="Pacific/Norfolk">(GMT+11:30) Norfolk Island</option>
+						<option value="Asia/Anadyr">(GMT+12:00) Anadyr, Kamchatka</option>
+						<option value="Pacific/Auckland">(GMT+12:00) Auckland, Wellington</option>
+						<option value="Etc/GMT-12">(GMT+12:00) Fiji, Kamchatka, Marshall Is.</option>
+						<option value="Pacific/Chatham">(GMT+12:45) Chatham Islands</option>
+						<option value="Pacific/Tongatapu">(GMT+13:00) Nuku'alofa</option>
+						<option value="Pacific/Kiritimati">(GMT+14:00) Kiritimati</option>
+					</select>
+					<span class="h">Seleccione la zona horaria predeterminada de tu aplicaci√≥n. En la configuraci√≥n del servidor (m√°s abajo) podr√°s configurar si deseas usar la zona horaria del usuario en vez de esta.</span>
+				</p>
+
+				<p>
+					<label>Ubicaci√≥n de la aplicaci√≥n</label>
+					<input type="text" name="site_path" value="<?=$step['site_path']?>" required placeholder="" />
+					<span class="h">Escriba la direcci√≥n web donde podr√° ser accesible su aplicaci√≥n (Sin http:// al principio ni / al final)
+				</p>
+
+				<p>
+					<label>Ubicaci√≥n de los recursos</label>
+					<input type="text" name="site_resources" value="<?=$step['site_resources']?>" required placeholder="" />
+					<span class="h">Escriba la direcci√≥n web donde podr√° ser accesible a los recursos de su aplicaci√≥n (Sin http:// al principio ni / al final)
+				</p>
+
+				<p>
+					<label>Ubicaci√≥n de los recursos globales</label>
+					<input type="text" name="site_resources_global" value="<?=$step['site_resources_global']?>" required placeholder="" />
+					<span class="h">Escriba la direcci√≥n web donde podr√° ser accesible a los recursos globales (Sin http:// al principio ni / al final)
+				</p>
+			</div>
+
+			<div class="col2">
+				<p>
+					La zona horaria le permite a las funciones de tiempo de PHP poder mostrarse en el horario que escoja. (Por ejemplo: <code>date()</code>)
+				</p>
+
+				<p>
+					BeatRock usa la constante <code>PATH</code> y la variable de plantilla <code>%PATH%</code> para referirse a la direcci√≥n web base de la aplicaci√≥n. (Estos ya tienen el protocolo http:// o https:// al principio)
+				</p>
+
+				<p>
+					<li>%PATH% -> Direcci√≥n web base de la aplicaci√≥n</li>
+
+					<li>%RESOURCES% -> Direcci√≥n web base de los recursos de la aplicaci√≥n</li>
+
+					<li>%RESOURCES_SYS% -> Direcci√≥n web base de los recursos globales</li>
+				</p>
+
+				<p>
+					<code><?=_c('<a href="%PATH%/about">Acerca de nosotros</a>')?></code>
+				</p>
+
+				<p>
+					<code><?=_c('<img src="%RESOURCES%/images/beatrock.png" />')?></code>
+				</p>
+			</div>
+		</section>
+
+		<section>
+			<div class="col1">
+				<h3>Seguridad</h3>
+
+				<p>
+					<label>Nivel de encriptaci√≥n</label>
+					<select name="security_level" class="btn" required>
+						<option value="0">Sin encriptaci√≥n</option>
+						<option value="1">MD5</option>
+						<option value="2">SHA1</option>
+						<option value="3">SHA256 con SHA1</option>
+						<option value="4" selected>SHA256 con SHA1 y MD5</option>
+						<option value="5">Encriptaci√≥n reversible</option>
+					</select>
+					<span class="h">Seleccione el nivel de encriptaci√≥n usada por la funci√≥n <code>Core::Encrypt</code></span>
+				</p>
+
+				<p>
+					<label>Clave de encriptaci√≥n</label>
+					<input type="text" name="security_hash" value="<?=$step['security_hash']?>" required />
+					<span class="h">La clave ofrece una encriptaci√≥n √∫nica para la aplicaci√≥n.</span>
+				</p>
+
+				<p>
+					<label>Uso de lista negra para el sistema Anti-DDoS</label>
+					<select name="security_antiddos" class="btn" required>
+						<option value="true">Activado</option>
+						<option value="false">Desactivado</option>
+					</select>
+					<span class="h">Si esta activado las direcciones IP sospechosas se anotaran en un archivo JSON llamado "black_ip" y antes de la inicializaci√≥n de BeatRock se verificar√° si la IP del visitante esta en este archivo.</span>
+				</p>
+			</div>
+
+			<div class="col2">
+				<section>
+					<p>
+						BeatRock le ofrece niveles de encriptaci√≥n avanzados para proteger informaci√≥n delicada.
+					</p>
+
+					<p>
+						La clave de encriptaci√≥n es importante, BeatRock guardar√° una copia de la misma en un archivo llamado "SECRET" en la carpeta /Kernel/. Si cambia o pierde esta clave toda la informaci√≥n encriptada (Por ejemplo las contrase√±as de los usuarios registrados) podr√≠an da√±arse.
+					</p>
+
+					<p>
+						Si selecciona el nivel "Encriptaci√≥n reversible" podr√° usar la funci√≥n <code>Core::Decrypt</code> para desencriptar informaci√≥n encriptada con este nivel.
+					</p>
+
+					<p>
+						La "Encriptaci√≥n reversible" tambi√©n toma en cuenta su "clave de encriptaci√≥n" por lo que si cambia o pierde esta clave no podr√° desencriptar.
+					</p>
+				</section>
+			</div>
+		</section>
+
+		<section>
+			<div class="col1">
+				<h3>Errores & Logs</h3>
+
+				<p>
+					<label>Mostrar informaci√≥n t√©cnica de los errores</label>
+					<select name="errors_details" class="btn" required>
+						<option value="true">Activado</option>
+						<option value="false">Desactivado</option>
+					</select>
+					<span class="h">Permite mostrar o no la informaci√≥n t√©cnica de los errores. Recomendaci√≥n: Desactivar al pasar al estado de producci√≥n.</span>
+				</p>
+
+				<p>
+					<label>Ocultar errores</label>
+					<select name="errors_hidden" class="btn" required>
+						<option value="false">Desactivado</option>
+						<option value="true">Activado</option>
+					</select>
+					<span class="h">Si esta activado BeatRock tratar√° de ocultar los errores y reanudar√° la sesi√≥n cuando sean solucionados, si los errores no se solucionan se redireccionar√° al visitante a la p√°gina de inicio.</span>
+				</p>
+
+				<p>
+					<label>Correo electr√≥nico de reportes</label>
+					<input type="email" name="errors_email_reports" />
+					<span class="h">Los reportes de errores, posibles inyecciones y recuperaciones del sistema se enviar√°n a esta direcci√≥n de correo electr√≥nico.</span>
+				</p>
+
+				<p>
+					<label>Capturar logs</label>
+					<select name="logs_capture" class="btn" required>
+						<option value="true">Activado</option>
+						<option value="false">Desactivado</option>
+					</select>
+					<span class="h">Si esta activado BeatRock guardar√° los logs recibidos en una variable, desactivarlo puede liberar un poco de memoria pero sacrificando los logs.</span>
+				</p>
+
+				<p>
+					<label>Guardado de logs</label>
+					<select name="logs_save" class="btn" required>
+						<option value="false">Desactivado</option>
+						<option value="onerror" selected>Solo cuando ocurra un error</option>
+						<option value="warning">Solo logs de alerta</option>
+						<option value="error">Solo logs de error</option>
+						<option value="memcache">Solo logs de memcache</option>
+						<option value="all">Siempre (No recomendado)</option>
+					</select>
+					<span class="h">Si esta activado BeatRock guardar√° los logs recibidos en una variable, desactivarlo puede liberar un poco de memoria pero sacrificando los logs.</span>
+				</p>
+			</div>
+
+			<div class="col2">
+				<section>
+					<p>
+						La informaci√≥n t√©cnica contiene informaci√≥n acerca del error, la parte del c√≥digo donde ocurrio, archivo involucrado, posibles soluciones e informacion del visitante.
+					</p>
+
+					<p>
+						"Ocultar errores" es una opci√≥n para aquellas aplicaciones en donde mostrar que ocurrio un error no es la opci√≥n.
+					</p>
+
+					<p>
+						Si no tiene un servidor de correo local (Como Mercury) BeatRock usar√° el servidor de correo de InfoSmart para enviarle los correos electr√≥nicos de reporte. ¬°No se preocupe!
+					</p>
+				</section>
+			</div>
+		</section>
+
+		<section>
+			<div class="col1">
+				<h3>Servidor</h3>
+
+				<p>
+					<label>Compresi√≥n GZIP</label>
+					<select name="server_gzip" class="btn" required>
+						<option value="true">Activado</option>
+						<option value="false">Desactivado</option>
+					</select>
+					<span class="h">La compresi√≥n GZIP permite comprimir el contenido de su aplicaci√≥n para que la carga sea m√°s r√°pida.</span>
+				</p>
+
+				<p>
+					<label>Solicitar Host/DNS del visitante</label>
+					<select name="server_host" class="btn" required>
+						<option value="true">Activado</option>
+						<option value="false">Desactivado</option>
+					</select>
+					<span class="h">Si esta activado BeatRock intentar√° solicitar el nombre Host/DNS del visitante, con ella puede obtener m√°s informaci√≥n del mismo (como la compa√±ia de internet que usa)</span>
+				</p>
+
+				<p>
+					<label>Auto-detectar zona horaria del visitante</label>
+					<select name="server_timezone" class="btn" required>
+						<option value="true">Activado</option>
+						<option value="false">Desactivado</option>
+					</select>
+					<span class="h">Si esta activado las funciones de tiempo de PHP funcionaran en la zona horaria del visitante (reemplazando la zona horaria de la aplicaci√≥n)</span>
+				</p>
+
+				<p>
+					<label>Uso del protocolo seguro HTTPS</label>
+					<select name="server_ssl" class="btn" required>
+						<option value="true">Obligar uso</option>
+						<option value="null" selected>Opcional</option>
+						<option value="false">No usar</option>
+					</select>
+					<span class="h">Permite decidir de que forma se usar√° el protolo HTTPS en su aplicaci√≥n.</span>
+				</p>
+
+				<p>
+					<label>Recuperaci√≥n avanzada</label>
+					<select name="server_backup" class="btn" required>
+						<option value="true">Activado</option>
+						<option value="false">Desactivado</option>
+					</select>
+					<span class="h">Permite usar este sistema para la recuperaci√≥n autom√°tica del archivo de configuraci√≥n y/o la base de datos.</span>
+				</p>
+			</div>
+
+			<div class="col2">
+				<section>
+					<p>
+						<iframe width="340" height="191" src="https://www.youtube.com/embed/Mjab_aZsdxw" frameborder="0" allowfullscreen></iframe>
+					</p>
+
+					<p>
+						Nota: La compresi√≥n GZIP puede usar recursos excesivos del CPU.
+					</p>
+
+					<p>
+						Auto-detectar la zona horaria del visitante le da la posibilidad de representar fechas y tiempos en el horario del visitante.
+					</p>
+
+					<p>
+						Para usar el protocolo HTTPS es necesario instalar un certificado de seguridad en el servidor web.
+					</p>
+
+					<p>
+						La recuperaci√≥n avanzada es un sistema inteligente que le permite a BeatRock restaurar el archivo de configuraci√≥n y/o la base de datos en caso de que estos sean eliminados. <a href="http://beatrock.infosmart.mx/wiki/Recuperaci√≥n_avanzada" target="_blank">M√°s informaci√≥n</a>
+					</p>
+				</section>
+			</div>
+		</section>
+
+		<section>
+			<div class="col1">
+				<h3>Memcached</h3>
+
+				<p>
+					<label>Host / Direcci√≥n IP</label>
+					<input type="text" name="memcache_host" placeholder="localhost" />
+					<span class="h">El nombre Host o la direcci√≥n IP donde se realizar√° la conexi√≥n al servidor Memcached.</span>
+				</p>
+
+				<p>
+					<label>Puerto</label>
+					<input type="number" name="memcache_port" value="<?=$step['memcache_port']?>" placeholder="11211" />
+					<span class="h">El puerto del servidor Memcached, generalmente es <b>11211</b></span>
+				</p>
+			</div>
+
+			<div class="col2">
+				<p>
+					Estado de la extensi√≥n memcache: <b><?=($system['memcache'] == true) ? 'Activado' : 'Desactivado'?></b>
+				</p>
+
+				<p>
+					Si no tiene la extensi√≥n memcache activada no podr√° usar esta caracter√≠stica.
+				</p>
+
+				<p>
+					<a href="http://es.wikipedia.org/wiki/Memcached" target="_blank">Memcached</a> es un sistema de cach√© basado en la memoria RAM, tener un servidor activo y configurarlo con BeatRock le permitir√° guardar las sesiones e informaci√≥n importante/pesada en el servidor Memcached y de esta forma poder liberar recursos del sistema.
+				</p>
+
+				<p>
+					Si deja el campo de "Host/Direcci√≥n IP" vacio se desactivar√° esta caracter√≠stica.
+				</p>
+
+				<p>
+					Puede usar la funci√≥n <code>_CACHE(key, value)</code> para guardar informaci√≥n en el servidor memcached (Si el servidor esta desactivado la informaci√≥n se guardar√° en sesiones normales o <code>_SESSION(key, value)</code>)
+				</p>
+			</div>
+		</section>
+
+		<section>
+			<a id="send_step2" class="ibtn ibig">Crear archivo de configuraci√≥n</a>
+		</section>
+	</form>
+</div>

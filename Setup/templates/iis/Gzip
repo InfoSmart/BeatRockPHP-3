@@ -1,5 +1,5 @@
 		<!--
-			Compresión GZIP
+			CompresiÃ³n GZIP
 		-->
 		<httpCompression directory="%SystemDrive%\websites\_compressed" minFileSizeForComp="1024">
 		    <scheme name="gzip" dll="%Windir%\system32\inetsrv\gzip.dll" />
