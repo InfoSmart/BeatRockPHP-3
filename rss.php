@@ -4,7 +4,7 @@
 #####################################################
 ## Framework avanzado de procesamiento para PHP.   ##
 #####################################################
-## InfoSmart © 2012 Todos los derechos reservados. ##
+## InfoSmart © 2013 Todos los derechos reservados. ##
 ## http://www.infosmart.mx/						   ##
 #####################################################
 ## http://beatrock.infosmart.mx/				   ##
@@ -12,14 +12,19 @@
 
 require 'Init.php';
 
-// Sistema RSS desactivado.
-if($site['site_rss'] !== 'true')
-	exit;
+# El RSS esta desactivado.
+if( $site['site_rss'] !== 'true' )
+{
+	header('HTTP/1.1 404 Not Found');
+	header('Status: 404 Not Found');
 
-// Obteniendo 10 noticias.
+	exit;
+}
+
+# Obtenemos las primeras 10 noticias.
 Site::Get('news', 10);
 
-// Enviando cabecera de documento XML.
+# RSS en text/xml
 header('Content-type: text/xml');
 echo '<?xml version="1.0" encoding="UTF-8"?>';
 ?>
@@ -30,9 +35,9 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 		<link><?=PATH?></link>
 	
 		<?
-		while($row = fetch_assoc())
+		while( $row = Assoc() )
 		{
-			if(!is_numeric($row['date']))
+			if( !is_numeric($row['date']) )
 				$row['date'] = strtotime($row['date']);
 		?>
 		<item>
@@ -40,7 +45,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 			<description><?=($row['sub_content'])?></description>
 			<pubDate><?=date('r', $row['date'])?></pubDate>
 			<!-- 
-			Descomentar en caso de tener una página de visualización de noticias
+			Descomentar en caso de tener una página de visualización de las noticias
 			<link><?=PATH?>/news?id=<?=$row['id']?></link>
 			-->
 		</item>
