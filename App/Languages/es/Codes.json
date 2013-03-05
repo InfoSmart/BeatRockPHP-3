@@ -2,7 +2,7 @@
 	"unknow":
 	{
 		"title":	"Error desconocido",
-		"details":	"El código del error ocurrido no existe."
+		"details":	"El código del error no existe."
 	},
 
 	/* Errores principales */
@@ -152,11 +152,11 @@
 	},
 
 	/* Errores de Plantilla */
-	"tpl.process":
+	"view.process":
 	{
-		"title":	"TPL - Fallo al cargar la plantilla.",
-		"details":	"No ha sido posible cargar la plantilla especificada.",
-		"solution":	"Asegurese de que el archivo de la plantilla exista y no se encuentre dañada o protegida."
+		"title":	"View - Fallo al procesar la vista.",
+		"details":	"No ha sido posible cargar la vista especificada.",
+		"solution":	"Asegurese de que el archivo de la vista exista y no se encuentre dañada o protegida."
 	},
 
 	"tpl.loadfiles":

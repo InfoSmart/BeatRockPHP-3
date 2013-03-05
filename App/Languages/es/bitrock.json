@@ -35,19 +35,26 @@
 		"retry":				"Intentarlo nuevamente"
 	},
 
+	"logs":
+	{
+		"info":					"INFO",
+		"alert":				"ALERTA",
+		"error":				"ERROR"
+	},
+
 	"page.error":
 	{
 		"have.problem":			"Hemos encontrado un problema...",
 		"houston":				"Houston, tenemos un problema...",
-		"break.something":		"Creo que has roto algo...",
+		"break.something":		"Gracias por encontrar un error...",
 
-		"found.problem":		"Al parecer se ha encontrado un problema que nuestros chimpancés superdesarrollados no han podido solucionar o descubrir.",
-		"dont.worry":			"No te preocupes, les hemos reportado del problema y esperaremos a que todo vuelva a la normalidad en poco tiempo.",
+		"found.problem":		"Al parecer has encontrado un problema que nuestros chimpancés superdesarrollados no han podido solucionar o descubrir.",
+		"dont.worry":			"No te preocupes, les hemos reportado del problema y esperemos a que todo vuelva a la normalidad en poco tiempo.",
 		"report":				"Si vez a alguno de esos chimpancés superdesarrollados indicales este código de reporte:",
 
-		"back":					"Volver al pasado",
+		"back":					"Sacame de aquí",
 		"go.home":				"Ir al inicio",
-		"what.happened":		"Pero, ¿que sucedio?",
+		"what.happened":		"Soy un chimpancé superdesarrollado",
 		"what.happened2":		"¿Qué ha pasado?",
 
 		"report.code":			"Código de reporte:",
@@ -57,12 +64,12 @@
 		"more.information":		"Más información",
 
 		"response":				"Respuesta",
-		"file":					"Archivo / Directorio",
+		"file":					"Archivo / Directorio afectado",
 		"function":				"Función",
 		"line":					"Línea",
 		"out_file":				"Archivo de entrada/salida",
 		"query":				"Consulta SQL",
-		"last":					"Último error PHP",
+		"last":					"Último mensaje de PHP",
 
 		"agent":				"Agente del navegador",
 		"browser":				"Navegador web",
@@ -77,7 +84,16 @@
 		"server.overload":		"Lo sentimos, pero actualmente el servidor se encuentra en su limite, vuelve a intentarlo más tarde."
 	},
 
-	"mod.setup":
+	"helper.bitrock":
+	{
+		"checkload.verify":		"Verificación de carga",
+		"checkload.ram":		"Memoria RAM",
+		"checkload.apache.ram":	"Memoria RAM usada por Apache",
+
+		"helper.loaded":		"Se ha cargado el ayudante"
+	},
+
+	"helper.setup":
 	{
 		"error.config.mysql": 	"Los datos para la conexión al servidor MySQL no estan completos.",
 		"error.config.path": 	"Los datos de ubicación de la aplicación no estan completos.",
@@ -94,7 +110,7 @@
 		"config.try.user":		"El archivo de configuración de recuperación no existe, pero se ha restaurado desde la información de recuperación del usuario."
 	},
 
-	"mod.mysql":
+	"helper.mysql":
 	{
 		"error.db":				"No fue posible encontrar la base de datos, por favor asegurese de que esta exista y no se encuentre dañada.",
 		"error.backup.query":	"No ha sido posible ejecutar la siguiente consulta para la recuperación de la base de datos: ",
@@ -113,13 +129,13 @@
 		"backup.create":		"Se ha procesado una recuperación de la base de datos correctamente."
 	},
 
-	"mod.ftp":
+	"helper.ftp":
 	{
 		"error.ftp.login":		"Ha ocurrido un problema al intentar iniciar sesión en el servidor, asegurese de que las credenciales son correctas.",
 		"ftp.connect": 			"Se ha definido la configuración para una conexión FTP a"
 	},
 
-	"mod.io":
+	"helper.io":
 	{
 		"error.write":			"No se ha podido escribir el contenido dentro del archivo de salida.",
 		"error.read":			"No se ha podido leer el contenido dentro del archivo de entrada.",
@@ -136,13 +152,13 @@
 		"getfiles.correct":		"Se han obtenido los archivos del directorio correctamente."
 	},
 
-	"mod.curl":
+	"helper.curl":
 	{
 		"configuration":		"Se ha definido la configuración para una conexión cURL.",
 		"datasend.correct":		"Se ha enviado datos a la conexión cURL correctamente."
 	},
 
-	"mod.tpl":
+	"helper.view":
 	{
 		"error.load.header": 	"No ha sido posible cargar la cabecera en: ",
 		"error.load.subheader":	"No ha sido posible cargar la subcabecera en: ",
@@ -150,7 +166,7 @@
 		"error.load.template":	"No ha sido posible cargar el archivo: "
 	},
 
-	"mod.social":
+	"helper.social":
 	{
 		"error.facebook.data":	"Los datos para la conexión a Facebook no son correctos.",
 		"error.twitter.data":	"Los datos para la conexión a Twitter no son correctos.",
@@ -163,7 +179,7 @@
 		"error.vt":				"No se ha podido preparar la API de VirusTotal correctamente."
 	},
 
-	"mod.zip":
+	"helper.zip":
 	{
 		"error.extract":		"No ha sido posible extraer el archivo ZIP: ",
 		"error.create":			"No ha sido posible crear el archivo ZIP: ",
@@ -174,7 +190,7 @@
 		"add.correct":			"Se han comprimido nuevos archivos en el archivo ZIP: "
 	},
 
-	"mod.mem":
+	"helper.mem":
 	{
 		"error.save":			"No se ha podido guardar: ",
 
@@ -182,12 +198,12 @@
 		"connection.correct":	"Se ha establecido una conexión al servidor Memcache correctamente."
 	},
 
-	"mod.query":
+	"helper.query":
 	{
 		"init":					"Se ha solicitado una instancia de consulta SQL para la tabla "
 	},
 
-	"mod.site":
+	"helper.site":
 	{
 		"timer.correct":		"Se ha ejecutado el cronometro correctamente: "
 	}
