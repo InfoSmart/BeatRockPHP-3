@@ -4,14 +4,14 @@
 #####################################################
 ## Framework avanzado de procesamiento para PHP.   ##
 #####################################################
-## InfoSmart © 2012 Todos los derechos reservados. ##
+## InfoSmart © 2013 Todos los derechos reservados. ##
 ## http://www.infosmart.mx/						   ##
 #####################################################
 ## http://beatrock.infosmart.mx/				   ##
 #####################################################
 
-// Acción ilegal.
-if(!defined('BEATROCK'))
+# Acción ilegal.
+if( !defined('BEATROCK') )
 	exit;
 
 $details = Bit::$details;
@@ -30,8 +30,8 @@ $details = Bit::$details;
 
 	<meta name="robots" content="noodp, nofollow" />
 
-	<link href="//localhost/resources/systemv2/css/style.css" rel="stylesheet" />
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+	<link href="//resources.infosmart.mx/systemv2/css/style.css" rel="stylesheet" />
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	
 	<style>
 	body
@@ -47,27 +47,20 @@ $details = Bit::$details;
 
 	header 
 	{		
-		background: #ffffff;
-		background: -moz-linear-gradient(top, #ffffff 0%, #ece9e9 100%);
-		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#ece9e9));
-		background: -webkit-linear-gradient(top, #ffffff 0%,#ece9e9 100%);
-		background: -o-linear-gradient(top, #ffffff 0%,#ece9e9 100%);
-		background: -ms-linear-gradient(top, #ffffff 0%,#ece9e9 100%);
-		background: linear-gradient(to bottom, #ffffff 0%,#ece9e9 100%);
-		filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ece9e9',GradientType=0 );
-
-		border-bottom: 2px solid #444444;
+		background: #FAFAFA;
+		border-bottom: 1px solid #BDBDBD;
 		padding: 10px;
 	}
 	
 	header h1 
 	{
-		color: black;
+		color: #2E2E2E;
 		float: left;
-		font-family: "Open Sans", Ubuntu, Segoe UI, Arial;
-		font-size: 50px;
+		font-family: "Roboto", "Open Sans", Ubuntu, Segoe UI, Arial;
+		font-size: 30px;
 		font-weight: 300;
-		line-height: 45px;
+		line-height: 40px;
+		margin: 10px 0;
 	}
 
 	.fast-error aside
@@ -79,9 +72,9 @@ $details = Bit::$details;
 
 	.fast-error h3
 	{
-		font-family: "Open Sans", Ubuntu, Segoe UI, Arial;
+		font-family: "Roboto", "Open Sans", Ubuntu, Segoe UI, Arial;
 		font-size: 20px;
-		font-weight: normal;
+		font-weight: 300;
 	}
 
 	.fast-error figure
@@ -91,6 +84,7 @@ $details = Bit::$details;
 
 	.fast-error p
 	{
+		font-family: "Open Sans", Arial;
 		line-height: 21px;
 	}
 
@@ -139,7 +133,7 @@ $details = Bit::$details;
 
 	footer 
 	{
-		border-top: 2px solid #444444;
+		border-top: 1px solid #E6E6E6;
 		color: gray;
 		font-size: 11px;
 		padding: 15px 0;
@@ -156,12 +150,6 @@ $details = Bit::$details;
 </head>
 <body>
 	<div class="page">
-		<header>
-			<div class="wrapper">
-				<h1>%houston%</h1>
-			</div>
-		</header>
-
 		<div class="cwrapper">
 			<section class="fast-error">
 				<aside>
@@ -175,7 +163,7 @@ $details = Bit::$details;
 						%dont.worry%
 					</p>
 
-					<? if(!empty($details['report_code'])) { ?>
+					<? if( !empty($details['report_code']) ) { ?>
 					<p>
 						%report% <b><?=$details['report_code']?></b>
 					</p>
@@ -184,10 +172,10 @@ $details = Bit::$details;
 					<p class="center">
 						<a onclick="history.back()">%back%</a> 
 						- <a onclick="document.location.reload()">%retry%</a> 
-						<? if(defined(PATH)) { ?>- <a href="<?=PATH?>">%go.home%</a><? } ?>
+						<? if( defined(PATH) ) { ?>- <a href="<?=PATH?>">%go.home%</a><? } ?>
 					</p>
 
-					<? if($config['errors']['details'] OR empty($details['report_code'])) { ?>
+					<? if( $config['errors']['details'] OR empty($details['report_code']) ) { ?>
 					<div class="center">
 						<a onclick="ShowDetails()" class="ibtn ismall">%what.happened%</a>
 					</div>
@@ -199,7 +187,7 @@ $details = Bit::$details;
 				</figure>
 			</section>
 
-			<? if($config['errors']['details'] OR empty($details['report_code'])) { ?>
+			<? if( $config['errors']['details'] OR empty($details['report_code']) ) { ?>
 			<section class="details">
 				<div class="c1">
 					<section>						
@@ -210,14 +198,14 @@ $details = Bit::$details;
 							%details%
 						</p>
 
-						<? if(!empty($details['report_code'])) { ?>
+						<? if( !empty($details['report_code']) ) { ?>
 						<p>
 							<b>%report.code%</b> <?=$details['report_code']?>
 						</p>
 						<? } ?>
 					</section>
 
-					<? if(!empty($details['info']['solution'])) { ?>
+					<? if( !empty($details['info']['solution']) ) { ?>
 					<section>
 						<h5>%how.fix%</h5>
 						
@@ -236,26 +224,26 @@ $details = Bit::$details;
 							<b>%error.code%</b> %code%<br />
 
 							<?
-							if(is_array($details['res']))
+							if( is_array($details['res']) )
 							{
-								foreach($details['res'] as $param => $value)
+								foreach( $details['res'] as $param => $value )
 								{
-									if(empty($value))
+									if( empty($value) )
 										continue;
 							?>
 							<b><?='%'.$param.'%'?>:</b> <?=$value?><br />
 							<? } } ?>
 							
 							<b>%agent%:</b> <?=AGENT?><br />
-							<b>%browser%:</b> <?=Core::GetBrowser()?><br />
-							<b>%os%:</b> <?=Core::GetOS()?><br />
+							<b>%browser%:</b> <?=Client::GetBrowser()?><br />
+							<b>%os%:</b> <?=Client::GetOS()?><br />
 							
 							<b>%version%:</b> <?=$Info['version.full']?>
 						</p>
 					</section>
 				</div>
 			</section>
-			<script>ShowDetails();</script>
+			<!--<script>ShowDetails();</script>-->
 			<? } ?>
 		</div>
 
