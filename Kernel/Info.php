@@ -1,17 +1,18 @@
 <?
-#####################################################
-## 					 BeatRock
-#####################################################
-## Framework avanzado de procesamiento para PHP.
-#####################################################
-## InfoSmart © 2012 Todos los derechos reservados.
-## http://www.infosmart.mx/	
-#####################################################
-## http://beatrock.infosmart.mx/
-#####################################################
+/**
+ * BeatRock
+ *
+ * Framework para el desarrollo de aplicaciones web.
+ *
+ * @author 		Iván Bravo <webmaster@infosmart.mx> @Kolesias123
+ * @copyright 	InfoSmart 2013. Todos los derechos reservados.
+ * @license 	http://creativecommons.org/licenses/by-sa/2.5/mx/  Creative Commons "Atribución-Licenciamiento Recíproco"
+ * @link 		http://beatrock.infosmart.mx/
+ *
+*/
 
-// Acción ilegal.
-if(!defined('BEATROCK'))
+# Acción ilegal.
+if ( !defined('BEATROCK') )
 	exit;
 
 ## ------------------------------------------------------------
@@ -35,8 +36,8 @@ $Info['code'] = 'Mentalist';
 
 $Info['mayor'] 		= '3';
 $Info['minor'] 		= '0';
-$Info['micro'] 		= '1';
-$Info['revision'] 	= '030';
+$Info['micro'] 		= '2';
+$Info['revision'] 	= '001';
 
 ## ---------------------------------------------------------
 ## Fase del desarrollo.
@@ -44,14 +45,14 @@ $Info['revision'] 	= '030';
 ## ---------------------------------------------------------
 
 $Info['fase'] 		= 'BETA';
-$Info['fase_ver'] 	= '3';
+$Info['fase_ver'] 	= '5';
 
 ## ---------------------------------------------------------
 ## Fecha de creación.
 ## ---------------------------------------------------------
 
-$Info['date'] 		= '28.12.2012';
-$Info['date_hour'] 	= '03:40 PM';
+$Info['date'] 		= '05.03.2013';
+$Info['date_hour'] 	= '11:00 AM';
 
 ## ---------------------------------------------------------
 ## Nombres.
@@ -65,6 +66,6 @@ $Info['version.date'] 		= "$Info[version] - $Info[date] $Info[date_hour]";
 $Info['version.fase'] 		= "$Info[fase] $Info[fase_ver]";
 $Info['version.full'] 		= $Info['version.code'] . " $Info[fase]$Info[fase_ver] Revisi?n: $Info[revision] - $Info[date] $Info[date_hour]";
 
-// Sea bueno y no modifique o elimine esta línea.
+# Sea bueno y no modifique o elimine esta línea.
 header('X-Powered-By: BeatRock v'.$Info['version'].': http://beatrock.infosmart.mx/');
 ?>
