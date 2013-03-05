@@ -3,6 +3,7 @@
 GENERAL
 ------------------------
 
+- El código es más limpio, ordenado y esta comentado.
 - Se han arreglado varios problemas con la sintaxis y malas traducciones.
 - La carpeta /Kernel/ ahora puede estar dentro de la carpeta de la aplicación o uno/dos niveles antes de la carpeta de la aplicación sin afectar el funcionamiento de las aplicaciones que lo requieran.
 - La carpeta /Kernel/BitRock/ y /Kernel/Languages/ ahora estan dentro de /App/
@@ -11,8 +12,7 @@ GENERAL
 - Se han agregado los ayudantes "StaticBase" y "Base" que contienen las funciones principales para la creación de un ayudante.
 - La función "Error()" ahora solo toma 2 parametros ($code y $message)
 - La función "Error()" ahora detecta de forma automática el archivo y la línea donde surgió el error. (FIXME: No siempre...)
-- Se ha agregado el ayudante "Str" para la creación de cadenas inteligentes o cadenas con POO.
-- Las variables $P y $G ahora son cadenas inteligentes (objetos Str), es posible pasar distintas funciones de procesamiento de cadenas, por ejemplo: $P['username']->valid(USERNAME) o $P['username']->upper();
+- Las variables $P y $G ahora son cadenas inteligentes (objetos Str), es posible pasar distintas funciones de procesamiento de cadenas, por ejemplo: $P['username']->valid(USERNAME) [Core::Valid($P['username', USERNAME])] o $P['username']->upper(); [strtoupper($P['username'])]
 
 BIT
 ------------------------
@@ -46,9 +46,32 @@ Str
 - Se agrego el ayudante "Str" que permite la creación de cadenas inteligentes o de uso con POO.
 - Str ahora detecta funciones de PHP de forma automática para pasar sobre la cadena iniciada.
 
+Zip
+------------------------
+
+- Ahora se usa [ZipArchive](http://www.php.net/manual/es/class.ziparchive.php "ZipArchive")
+
+Tpl
+------------------------
+
+- La función "jQuery" ahora se llama "AddjQuery"
+- La función "Meta" ahora se llama "AddMeta"
+- La función "AddStyle" ahora se llama "AddLink"
+- La función "Style" ahora se llama "AddLocalStyle"
+- La función "Script" ahora se llama "AddLocalScript"
+- La función "Stuff" ahora se llama "AddStuff"
+- La función "MoreHTML" ahora se llama "AttrHTML"
+- La función "MoreHead" ahora se llama "AttrHead"
+- La función "JavaAction" ahora se llama "JSAction" (Si, hay personas que les molesta "Java")
+
+- La función "Process" ahora puede ser usada con "new View()"
+- La función "SetParams", "SetLang", "Compress" ahora son parte del ayudante "View"
+
+
 Futuras implementaciones
 ------------------------
 
-- Nombre de espacios (Iván: No lo considero necesario... encerio.)
-- PostgreSQL
+- Espacio de nombres (Iván: No lo considero necesario... encerio.)
+- PostgreSQL.
 - Controladores (Iván: Si, esos que sirven para acceder a ciertas partes de la aplicación usando funciones [¿Quien invento esto?])
+- Jade. (Dudo mucho que la implementación actual siga funcionando)

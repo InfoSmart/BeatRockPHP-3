@@ -224,9 +224,9 @@ class Core
 
 	/**
 	 * Verifica que la información sea válida.
-	 * @param string $value Valor
+	 * @param string $value 	Valor
 	 * @param integer $type   	Tipo de información (EMAIL, USERNAME, IP, CREDIT_CARD, URL, PASSWORD, SUBDOMAIN, DOMAIN)
-	 * @return boolean 		Devuelve true en caso de que el valor tenga una estructura válida en caso contrario devolverá false.
+	 * @return boolean 			Devuelve true en caso de que el valor tenga una estructura válida en caso contrario devolverá false.
 	 */
 	static function Valid($value, $type = EMAIL)
 	{
@@ -275,6 +275,7 @@ class Core
 		$valid = preg_match("/$p", $value);
 		return ( !$valid ) ? false : true;
 	}
+
 	/**
 	 * Redirecciona a una página local o externa.
 	 * @param string  $url        Dirección web o página local.
@@ -321,7 +322,7 @@ class Core
 			$result = str_ireplace($row['word'], '*', $str);
 
 			# La nueva cadena no coincide con la original ¡una mala palabra!
-			if( $str !== $result )
+			if ( $str !== $result )
 				return true;
 		}
 
@@ -338,7 +339,7 @@ class Core
 	static function FilterBlocked($str, $replace = '****')
 	{
 		# Esto no es una cadena.
-		if( !is_string($str) )
+		if ( !is_string($str) )
 			return $str;
 
 		$query = Query('wordsfilter')->Select('word')->Run();
