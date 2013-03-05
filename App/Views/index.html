@@ -4,8 +4,8 @@
 <div class="content">
 	<h2>
 		<!--
-			Ejemplo de controladores propios.
-			Para ver el código visita /App/Controllers/MySite.php
+			Ejemplo de ayudantes propios.
+			Para ver el código visita /App/Helpers/MySite.php
 			(también para ver porque este "Hola mundo" no se traduce en tiempo real...)
 		-->
 		<?=MySite::HelloWorldLang()?>
@@ -24,7 +24,6 @@
 		- Para usar constantes de PHP 	| define('HELLO', 'Hola')
 		= {%HELLO}
 
-
 		- Para usar variables de vistas | _t('hello', 'Hola mundo')
 		= %hello%
 
@@ -34,7 +33,7 @@
 		<p>
 			%regards%
 		</p>
-		
+
 		<p>
 			%remember.path1% %PATH% %remember.path2% <b><?=PATH?></b>
 		</p>
@@ -51,7 +50,7 @@
 			%have.felt% <b>{%APP_TPL}index.tpl</b>
 		</p>
 
-		<? if(is_dir(ROOT . 'demos')) { ?>
+		<? if( is_dir(ROOT . 'demos') ) { ?>
 		<p>
 			%view.examples% <a href="%PATH%/demos/">%examples%</a>.
 		</p>
