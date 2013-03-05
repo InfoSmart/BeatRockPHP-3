@@ -1,48 +1,70 @@
 <?
-#####################################################
-## 					 BeatRock				   	   ##
-#####################################################
-## Framework avanzado de procesamiento para PHP.   ##
-#####################################################
-## InfoSmart © 2013 Todos los derechos reservados. ##
-## http://www.infosmart.mx/						   ##
-#####################################################
-## http://beatrock.infosmart.mx/				   ##
-#####################################################
+/**
+ * BeatRock
+ *
+ * Framework para el desarrollo de aplicaciones web.
+ *
+ * @author 		Iván Bravo <webmaster@infosmart.mx> @Kolesias123
+ * @copyright 	InfoSmart 2013. Todos los derechos reservados.
+ * @license 	http://creativecommons.org/licenses/by-sa/2.5/mx/  Creative Commons "Atribución-Licenciamiento Recíproco"
+ * @link 		http://beatrock.infosmart.mx/
+ * @version 	3.0
+ *
+ * @package 	Str
+ * Permite la creación de cadenas inteligentes.
+ *
+*/
 
 # Acción ilegal
-if( !defined('BEATROCK') )
+if ( !defined('BEATROCK') )
 	exit;
-
-###############################################################
-## Ayudante Str
-###############################################################
-## Permite la creación de cadenas inteligentes.
-###############################################################
-## Ejemplos:
-##
-## $manzanas = __('Me gustan las manazanas');
-## $manzanas->upper(); // ME GUSTAN LAS MANZANAS
-## $manzanas->undo()->replace('manzanas', 'peras'); // Me gustan las peras
-## $manzanas->split(1); // Devuelve un array
-###############################################################
 
 class Str
 {
-	public $str 		= '';		# Cadena
-	public $undo 		= '';		# Cadena antes del último cambio.
-	public $original 	= '';		# Cadena original.
+	/**
+	 * Cadena
+	 * @var string
+	 */
+	public $str 		= '';
+	/**
+	 * Cadena antes del último cambio.
+	 * @var string
+	 */
+	public $undo 		= '';
+	/**
+	 * Cadena original.
+	 * @var string
+	 */
+	public $original 	= '';
 
-	public $length;					# Longitud de la cadena.
-	public $md5;					# MD5 de la cadena.
-	public $sha1;					# SHA1 de la cadena.
+	/**
+	 * Longitud de la cadena.
+	 * @var [type]
+	 */
+	public $length;
+	/**
+	 * MD5 de la cadena.
+	 * @var [type]
+	 */
+	public $md5;
+	/**
+	 * SHA1 de la cadena.
+	 * @var [type]
+	 */
+	public $sha1;
 
-	private $first 		= false;	# Permite establecer si la cadena será el primer argumento a establecer.
+	/**
+	 * Permite establecer si la cadena será el primer
+	 * argumento en la ejecución de un método de PHP.
+	 * @var boolean
+	 */
+	private $first 		= false;
 
-	###############################################################
-	## Constructor
-	## - $str: Cadena.
-	###############################################################
+	/**
+	 * Constructor
+	 * @param string $str Cadena
+	 * @return Str
+	 */
 	function __construct($str)
 	{
 		# Ajustamos la cadena.
@@ -55,18 +77,16 @@ class Str
 		return $this;
 	}
 
-	###############################################################
-	## Pasa la cadena por algún tipo de codificación.
-	## - $type: Tipo.
-	## 		- utf8: 		utf8_encode
-	##		- base64: 		base64_encode
-	## 		- htmlentities: htmlentities
-	###############################################################
+	/**
+	 * Pasa la cadena por algún tipo de codificación.
+	 * @param  string $type Tipo. (utf8, base64, htmlentities)
+	 * @return Str
+	 */
 	function encode($type)
 	{
 		$this->undo = $this->str;
 
-		switch( $type )
+		switch ( $type )
 		{
 			case 'utf8':
 				$this->str = utf8_encode($this->str);
@@ -85,18 +105,16 @@ class Str
 		return $this;
 	}
 
-	###############################################################
-	## Pasa la cadena por algún tipo de descodificación.
-	## - $type: Tipo.
-	## 		- utf8: 		utf8_encode
-	##		- base64: 		base64_encode
-	## 		- htmlentities: htmlentities
-	###############################################################
+	/**
+	 * Pasa la cadena por algún tipo de descodifición.
+	 * @param  string $type Tipo. (utf8, base64, htmlentities)
+	 * @return Str
+	 */
 	function decode($type)
 	{
 		$this->undo = $this->str;
 
-		switch( $type )
+		switch ( $type )
 		{
 			case 'utf8':
 				$this->str = utf8_decode($this->str);
@@ -115,22 +133,29 @@ class Str
 		return $this;
 	}
 
+	/**
+	 * Verifica que la cadena sea válida.
+	 * @param integer $type   	Tipo de cadena (EMAIL, USERNAME, IP, CREDIT_CARD, URL, PASSWORD, SUBDOMAIN, DOMAIN)
+	 * @return boolean 			Devuelve true en caso de que el valor tenga una estructura válida en caso contrario devolverá false.
+	 */
 	function valid($type = EMAIL)
 	{
 		return Core::Valid($this->str, $type);
 	}
 
-	###############################################################
-	## Obtiene la longitud de la cadena.
-	###############################################################
+	/**
+	 * Obtiene la longitud de la cadena.
+	 * @return integer Longitud.
+	 */
 	function length()
 	{
 		return strlen($this->str);
 	}
 
-	###############################################################
-	## Actualiza información de acceso fácil de la cadena.
-	###############################################################
+	/**
+	 * Actualiza la información de la cadena.
+	 * @return Str
+	 */
 	function update()
 	{
 		$this->length 	= $this->length();
@@ -140,33 +165,35 @@ class Str
 		return $this;
 	}
 
-	###############################################################
-	## Devuelve la cadena a su estado anterior.
-	###############################################################
+	/**
+	 * Devuelve la cadena a su valor anterior.
+	 * @return Str
+	 */
 	function undo()
 	{
 		$this->str = $this->undo;
 		return $this;
 	}
 
-	###############################################################
-	## Llamado de alguna función.
-	## Decide que función trata de aplicarse a la cadena y devuelve
-	## el resultado.
-	###############################################################
+	/**
+	 * Decide que metodo (PHP) aplicar sobre la cadena.
+	 * @param  [type] $name      Nombre del metodo.
+	 * @param  [type] $arguments Argumentos.
+	 * @return string Valor o clase Str.
+	 */
 	function __call($name, $arguments)
 	{
 		$this->undo = $this->str;
 		$result 	= false;
 
 		# No hay argumentos, la cadena siempre es requerida.
-		if( empty($arguments) )
+		if ( empty($arguments) )
 			$arguments = array($this->str);
 		else
 		{
 			# Un intento fallido ha ocurrido, quizá la función
 			# a llamar precisa que la cadena se encuentre en el primer argumento.
-			if( $this->first )
+			if ( $this->first )
 				array_unshift($arguments, $this->str);
 
 			# Poner la cadena en el último argumento, siempre funciona.
@@ -175,34 +202,34 @@ class Str
 		}
 
 		# La función enrealidad se llama str_<funcion> (str_replace, str_split, etc...)
-		if( function_exists('str_' . $name) )
+		if ( function_exists('str_' . $name) )
 			$result = call_user_func_array('str_' . $name, $arguments);
 
 		# La función enrealidad se llama str<funcion> (strpos, strlen, etc...)
-		else if( function_exists('str' . $name) )
+		else if ( function_exists('str' . $name) )
 			$result = call_user_func_array('str' . $name, $arguments);
 
 		# La función enrealidad se llama strto<funcion> (strtolower, strtoupper, etc...)
-		else if( function_exists('strto' . $name) )
+		else if ( function_exists('strto' . $name) )
 			$result = call_user_func_array('strto' . $name, $arguments);
 
 		# La función se llama así mismo, veamos si esto funciona...
-		else if( function_exists($name) )
+		else if ( function_exists($name) )
 			$result = call_user_func_array($name, $arguments);
 
 		# El resultado es un array, devolverlo.
-		if( is_array($result) )
+		if ( is_array($result) )
 		{
 			$this->first 	= false;
 			return $result;
 		}
 
 		# El resultado ha fallado (¿un error con la función?)
-		else if( !is_string($result) )
+		else if ( !is_string($result) )
 		{
 			# Ni siquiera poner la cadena como primer argumento ha funcionado...
 			# evitamos un blucle infinito.
-			if( $this->first )
+			if ( $this->first )
 			{
 				$this->first = false;
 				return $this;
@@ -228,9 +255,10 @@ class Str
 		return $this;
 	}
 
-	###############################################################
-	## Devolver resultado en una solicitud de tipo string.
-	###############################################################
+	/**
+	 * Devuelve la cadena.
+	 * @return string Cadena
+	 */
 	function __toString()
 	{
 		return ( is_string($this->str) ) ? $this->str : $this->original;

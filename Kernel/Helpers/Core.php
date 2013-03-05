@@ -225,7 +225,7 @@ class Core
 	/**
 	 * Verifica que la información sea válida.
 	 * @param string $value Valor
-	 * @param int $type   	Tipo de información (EMAIL, USERNAME, IP, CREDIT_CARD, URL, PASSWORD, SUBDOMAIN, DOMAIN)
+	 * @param integer $type   	Tipo de información (EMAIL, USERNAME, IP, CREDIT_CARD, URL, PASSWORD, SUBDOMAIN, DOMAIN)
 	 * @return boolean 		Devuelve true en caso de que el valor tenga una estructura válida en caso contrario devolverá false.
 	 */
 	static function Valid($value, $type = EMAIL)
