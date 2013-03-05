@@ -64,7 +64,10 @@ if(!empty($_POST['errors_email_reports']) AND !Valid($_POST['errors_email_report
 if($_POST['sql_type'] == 'mysql')
 {
 	if(empty($error))
-		$mysql = new MySQLi($_POST['sql_host'], $_POST['sql_user'], $_POST['sql_pass'], '', $_POST['sql_port']) or $error[] = 'No se ha podido establecer una conexión con el servidor MySQL. Asegurese de que los datos para la conexión son correctos.';
+		$mysql = new MySQLi($_POST['sql_host'], $_POST['sql_user'], $_POST['sql_pass'], '', $_POST['sql_port']);
+
+	if($mysql->connect_error)
+		$error[] = 'No se ha podido establecer una conexión con el servidor MySQL. Asegurese de que los datos para la conexión son correctos - Error: ' . $mysql->connect_error;
 
 	if(empty($error))
 		$mysql->query('CREATE DATABASE IF NOT EXISTS ' . $_POST['sql_name'] . ' CHARACTER SET '.str_replace('-', '', CHARSET).';') or $error[] = 'La conexión al servidor MySQL fue éxitosa, sin embargo no hemos podido crear la base de datos. Asegurese de que el usuario que ha proporcionado tiene los permisos necesarios. - Error:' . $mysql->error;
