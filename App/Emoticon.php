@@ -34,5 +34,5 @@ Tpl::Image();
 Tpl::AllowCross('*');
 
 # Mostrar emoticon.
-echo Io::Read($path);
+echo file_get_contents($path);
 ?>
