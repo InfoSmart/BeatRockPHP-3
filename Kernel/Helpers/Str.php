@@ -144,6 +144,230 @@ class Str
 	}
 
 	/**
+	 * Verifica si una cadena contiene malas palabras.
+	 * @return boolean 		Devuelve true en caso de encontrar una mala palabra en caso contrario devolverá false.
+	 */
+	function blocked()
+	{
+		return Core::StrBlocked($this->str);
+	}
+
+	/**
+	 * Pasa la cadena por un filtro de malas palabras.
+	 * @param string $replace 	Reemplazo para las malas palabras.
+	 * @return string 			Devuelve la cadena filtrada.
+	 */
+	function filterBlocked($replace = '****')
+	{
+		$this->undo = $this->str;
+		$this->str 	= Core::FilterBlocked($this->str, $replace);
+
+		$this->update();
+		return $this;
+	}
+
+	function escape()
+	{
+		$this->undo = $this->str;
+		$this->str 	= SQL::Escape($this->str);
+
+		$this->update();
+		return $this;
+	}
+
+	/**
+	 * Filtra una cadena contra:
+	 * SQL Inyection, XSS Inyection y Caracteres inválidos.
+	 * @param boolean $html ¿Aplicar filtro XSS?
+	 * @param string  $from Codificación original.
+	 * @param string  $to   Codificación deseada.
+	 */
+	function filter($html = true, $from = '', $to = '')
+	{
+		$this->undo = $this->str;
+		$this->str 	= Core::Filter($this->str, $html, $from, $to);
+
+		$this->update();
+		return $this;
+	}
+
+	/**
+	 * Filtra una cadena contra:
+	 * XSS Inyection y Caracteres inválidos.
+	 * @param string  $from Codificación original.
+	 * @param string  $to   Codificación deseada.
+	 */
+	function clean($from = '', $to = '')
+	{
+		$this->undo = $this->str;
+		$this->str 	= Core::Clean($this->str, $from, $to);
+
+		$this->update();
+		return $this;
+	}
+
+	/**
+	 * Repara la codificación de una cadena.
+	 * @param string  $from Codificación original.
+	 * @param string  $to   Codificación deseada.
+	 * @param boolean $html ¿Aplicar filtro XSS? (Más efectivo en esta función)
+	 * @return string Cadena con la codificación arreglada.
+	 */
+	function fix($from = 'UTF-8', $to = 'ISO-8859-15', $html = false)
+	{
+		$this->undo = $this->str;
+		$this->str 	= Core::FixText($this->str, $from, $to);
+
+		$this->update();
+		return $this;
+	}
+
+	/**
+	 * Formatea una cadena para su uso en direcciones web.
+	 * @param boolean $lower  ¿Convertir a minusculas?
+	 * @param boolean $spaces ¿Convertir espacios en - en vez de eliminarlos?
+	 * @return string La cadena para ser usada en una dirección web.
+	 */
+	function formatToUrl($lower = true, $spaces = true)
+	{
+		$this->undo = $this->str;
+		$this->str 	= Core::FormatToUrl($this->str, $lower, $spaces);
+
+		$this->update();
+		return $this;
+	}
+
+	/**
+	 * Encuentra si una cadena contiene las palabras indicadas.
+	 * @param string  $words Palabra o array de palabras a encontrar.
+	 * @param boolean $lower ¿Convertir a minusculas?
+	 */
+	function contains($words, $lower = false)
+	{
+		return Core::Contains($this->str, $words, $lower);
+	}
+
+	/**
+	 * Encuentra en el diccionario la palabra más similar a la indicada.
+	 * Perfecto para crear un "¿No quiso decir... ?"
+	 * Método de busqueda: Menor numero de procesos a realizar (insertar, reemplazar, eliminar) para transformar $str a una palabra del diccionario.
+	 * @param array  $dic   	Diccionario
+	 * @param boolean $debug 	¿Devolver más información?
+	 * @return array La palabra más similar o false si la palabra se encontraba en el diccionario.
+	 */
+	function doMean($dic, $debug = false)
+	{
+		return Core::DoMean($this->str, $dic, $debug);
+	}
+
+	/**
+	 * Encuentra en el diccionario la palabra más similar a la indicada.
+	 * Perfecto para crear un "¿No quiso decir... ?"
+	 * Método de busqueda: Calcula el porcentaje de similitud entre $str y la cadena del diccionario.
+	 * @param array  $dic   	Diccionario
+	 * @param boolean $debug 	¿Devolver más información?
+	 * @return array La palabra más similar o false si la palabra se encontraba en el diccionario.
+	 */
+	function youMean($dic, $debug = false)
+	{
+		return Core::YouMean($this->str, $dic, $debug);
+	}
+
+	/**
+	 * Corta una cadena a la mitad.
+	 * @param integer $w     Número de veces a recortar
+	 * @param boolean $strip ¿Quitar etiquetas HTML?
+	 */
+	function cut($strip = true, $w = 2)
+	{
+		$this->undo = $this->str;
+		$this->str 	= Core::Cut($this->str, $strip, $w);
+
+		$this->update();
+		return $this;
+	}
+
+	/**
+	 * Convierte una cadena con códigos BBCode.
+	 * @param boolean $smilies ¿Convertir emoticones?
+	 */
+	function bbcode($smilies = false)
+	{
+		$this->undo = $this->str;
+		$this->str 	= Core::BBCode($this->str, $smilies);
+
+		$this->update();
+		return $this;
+	}
+
+	/**
+	 * Convierte una cadena con emoticones.
+	 * @param boolean $bbcode ¿Convertir códigos bbc?
+	 */
+	function smilies($bbcode = false)
+	{
+		$this->undo = $this->str;
+		$this->str 	= Core::Smilies($this->str, $bbcode);
+
+		$this->update();
+		return $this;
+	}
+
+	/**
+	 * Encripta una cadena.
+	 * @param integer $level Nivel de encriptación.
+	 * @return string Cadena codificada.
+	 */
+	function encrypt($level = 0)
+	{
+		$this->undo = $this->str;
+		$this->str 	= Core::Encrypt($this->str, $level);
+
+		$this->update();
+		return $this;
+	}
+
+	/**
+	 * Traduce una cadena usando el servicio de traducción de Microsoft.
+	 * @param string $from Lenguaje original.
+	 * @param [type] $to   Lenguaje deseado.
+	 * @param [type] $id   ID de la aplicación de desarrolladores.
+	 */
+	function translate($from = 'en', $to = LANG, $id = C9A399184CB7790D220EF5E812D7BFF636488705)
+	{
+		$this->undo = $this->str;
+		$this->str 	= Core::Translate($this->str, $from, $to, $id);
+
+		$this->update();
+		return $this;
+	}
+
+	/**
+	 * Convierte las direcciones web de una cadena en enlaces.
+	 */
+	function toURL()
+	{
+		$this->undo = $this->str;
+		$this->str 	= Core::ToURL($this->str);
+
+		$this->update();
+		return $this;
+	}
+
+	/**
+	 * Filtra los acentos de una cadena.
+	 * @return string Cadena sin acentos.
+	 */
+	function filterAccents()
+	{
+		$this->undo = $this->str;
+		$this->str 	= Core::FilterAccents($this->str);
+
+		$this->update();
+		return $this;
+	}
+
+	/**
 	 * Obtiene la longitud de la cadena.
 	 * @return integer Longitud.
 	 */
