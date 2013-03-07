@@ -21,7 +21,6 @@ if (!defined('BEATROCK') )
 
 /*
 	Agradecimientos de aportación:
-
 	Función: "Encriptación reversible" y desencriptación - http://www.emm-gfx.net/2008/11/encriptar-y-desencriptar-cadena-php/
 */
 
@@ -358,6 +357,7 @@ class Core
 	 * @param boolean $html ¿Aplicar filtro XSS?
 	 * @param string  $from Codificación original.
 	 * @param string  $to   Codificación deseada.
+	 * @return string La cadena sin inyecciones SQL y XSS.
 	 */
 	static function Filter($str, $html = true, $from = '', $to = '')
 	{
@@ -385,7 +385,8 @@ class Core
 			return $final;
 		}
 
-		# Esto no es una cadena o
+		# Esto no es una cadena y
+		# tampoco una instancia de cadena inteligente o
 		# no hemos establecido una conexión con el servidor SQL.
 		if ( !is_string($str) OR !SQL::Connected() )
 			return $str;
@@ -419,6 +420,7 @@ class Core
 	 * @param string $str   Cadena o Array con las cadenas.
 	 * @param string  $from Codificación original.
 	 * @param string  $to   Codificación deseada.
+	 * @return string Cadena sin inyecciones XSS.
 	 */
 	static function Clean($str, $from = '', $to = '')
 	{
@@ -502,6 +504,7 @@ class Core
 	 * @param string  $from Codificación original.
 	 * @param string  $to   Codificación deseada.
 	 * @param boolean $html ¿Aplicar filtro XSS? (Más efectivo en esta función)
+	 * @return string Cadena con la codificación arreglada.
 	 */
 	static function FixText($str, $from = 'UTF-8', $to = 'ISO-8859-15', $html = false)
 	{
@@ -524,122 +527,162 @@ class Core
 		return nl2br($str);
 	}
 
-	// Codifica una cadena en UTF-8
-	// Lo mismo que la función utf8_encode pero compatible con Array's.
-	// - $str: Cadena o Array de cadenas.
-	// - $noencode: ¿No codificar si ya estamos en UTF-8?
+	/**
+	 * Codifica una cadena en UTF-8
+	 * Los mismo que utf8_encode pero compatible con arrays.
+	 * @param string  $str      Cadena o Array de cadenas.
+	 * @param boolean $noencode ¿No codificar si ya estamos en UTF-8?
+	 */
 	static function UTF8Encode($str, $noencode = true)
 	{
-		if($noencode AND strtoupper(CHARSET) == 'UTF-8')
+		# No codificar si ya estamos en UTF-8
+		if ( $noencode AND strtoupper(CHARSET) == 'UTF-8' )
 			return $str;
 
-		if(!is_array($str))
+		# No es un array, codificar normalmente.
+		if ( !is_array($str) )
 			return utf8_encode($str);
 
 		$final = array();
 
-		foreach($str as $param => $value)
-			$final[$param] = self::UTF8Encode($value);
+		# Es un array, codificar cada cadena.
+		foreach ( $str as $key => $value )
+			$final[$key] = self::UTF8Encode($value);
 
 		return $final;
 	}
 
-	// Descodifica una cadena en UTF-8.
-	// Lo mismo que la función utf8_decode pero compatible con Array's.
-	// - $str: Cadena o Array de cadenas.
+	/**
+	 * Descodifica una cadena en UTF-8
+	 * Los mismo que utf8_decode pero compatible con arrays.
+	 * @param string $str Cadena o Array de cadenas.
+	 */
 	static function UTF8Decode($str)
 	{
-		if(!is_array($str))
+		# No es un array, descodificar normalmente.
+		if ( !is_array($str) )
 			return utf8_decode($str);
 
 		$final = array();
 
-		foreach($str as $param => $value)
-			$final[$param] = self::UTF8Decode($value);
+		# Es un array, descodificar cada cadena.
+		foreach ( $str as $key => $value )
+			$final[$key] = self::UTF8Decode($value);
 
 		return $final;
 	}
 
-	// Limpiar cadena para uso especial.
-	// - $str: Cadena a limpiar.
-	// - $lower (Bool): ¿Convertir a minusculas?
-	// - $spaces (Bool): ¿Quitar espacios?
-	static function CleanString($str, $lower = true, $spaces = true)
+	/**
+	 * Formatea una cadena para su uso en direcciones web.
+	 * @param string  $str    Cadena
+	 * @param boolean $lower  ¿Convertir a minusculas?
+	 * @param boolean $spaces ¿Convertir espacios en - en vez de eliminarlos?
+	 * @return string La cadena para ser usada en una dirección web.
+	 */
+	static function FormatToUrl($str, $lower = true, $spaces = true)
 	{
-		if(!is_string($str))
+		# Esto no es una cadena.
+		if ( !is_string($str) )
 			return $str;
 
+		# Quitamos espacios de más.
 		$str = trim($str);
-		$str = preg_replace('/\s\s+/',' ', preg_replace('/[^A-Za-z0-9-]/', ' ', $str));
+		# Reemplazamos caracteres.
+		$str = preg_replace('/[^A-Za-z0-9-]/', ' ', preg_replace('/\s\s+/',' ', $str));
 
-		if($lower)
+		# Convertir en mayusculas.
+		if( $lower )
 			$str = strtolower($str);
 
-		$str = ($spaces) ? str_replace(' ', '-', $str) : str_replace(' ', '', $str);
+		( $spaces ) ? $str = str_replace(' ', '-', $str) : $str = str_replace(' ', '', $str);
 		return nl2br($str);
 	}
 
-	// Verificar si una cadena contiene ciertas palabras.
-	// - $str: Cadena.
-	// - $words: Palabra o Array de palabras a verificar existencia.
-	// - $lower (Bool): ¿Convertir todo a minusculas?
+	/**
+	 * Encuentra si una cadena contiene las palabras indicadas.
+	 * @param string  $str   Cadena.
+	 * @param string  $words Palabra o array de palabras a encontrar.
+	 * @param boolean $lower ¿Convertir a minusculas?
+	 * @return boolean Devuelve true si alguna de las palabras fue encontrada dentro de la
+	 * cadena a buscar, false si no.
+	 */
 	static function Contains($str, $words, $lower = false)
 	{
-		if(!is_string($str))
+		# Esto no es una cadena.
+		if ( !is_string($str) )
 			return false;
 
-		if(!is_string($words) AND !is_array($words))
+		# La(s) palabra(s) a buscar no es una cadena ni un array.
+		if ( !is_string($words) AND !is_array($words) )
 			return false;
 
-		if($lower)
+		# Convertimos a minusculas la cadena donde buscar.
+		if ( $lower )
 			$str = strtolower($str);
 
-		if(!is_array($words))
+		# La busqueda no es un array
+		if ( !is_array($words) )
 		{
-			if($lower)
+			# Convertimos a minusculas la palabra a buscar.
+			if ( $lower )
 				$words = strtolower($words);
 
-			if(is_numeric(@strpos($str, $words)))
+			# ¡La encontramos!
+			if ( is_numeric(@strpos($str, $words)) )
 				return true;
 		}
 		else
 		{
-			foreach($words as $word)
+			# Buscamos palabra por palabra.
+			foreach ( $words as $word )
 			{
-				if($lower)
+				# Convertimos a minusculas la palabra a buscar.
+				if ( $lower )
 					$word = strtolower($word);
 
-				if(is_numeric(@strpos($str, $word)))
+				# ¡La encontramos!
+				if ( is_numeric(@strpos($str, $word)) )
 					return true;
 			}
 		}
 
+		# No encontramos ninguna palabra.
 		return false;
 	}
 
-	// Encontrar la palabra del diccionario más similar a la cadena especificada.
-	// Perfecto para hacer: ¿No quiso decir ...?
-	// Metodo: Menor numero de procesos a realizar (insertar, reemplazar y eliminar) para transfomar $str a una cadena del diccionario.
-	// - $str: Cadena.
-	// - $dic (Array): Diccionario de palabras a encontrar similitud.
-	// - $debug (Bool): ¿Retonar Array con más detalles?
+	/**
+	 * Encuentra en el diccionario la palabra más similar a la indicada.
+	 * Perfecto para crear un "¿No quiso decir... ?"
+	 * Método de busqueda: Menor numero de procesos a realizar (insertar, reemplazar, eliminar) para transformar $str a una palabra del diccionario.
+	 * @param string  $str   	Palabra
+	 * @param array  $dic   	Diccionario
+	 * @param boolean $debug 	¿Devolver más información?
+	 * @return array La palabra más similar o false si la palabra se encontraba en el diccionario.
+	 */
 	static function DoMean($str, $dic, $debug = false)
 	{
-		if(!is_string($str) OR !is_array($dic))
+		# La palabra no es una cadena o
+		# el diccionario no es un array.
+		if ( !is_string($str) OR !is_array($dic) )
 			return false;
 
 		$l = 0;
 		$r = array();
 
-		foreach($dic as $word)
+		# Buscamos palabra por palabra del diccionario.
+		foreach ( $dic as $word )
 		{
 			$i = levenshtein($str, $word);
 
-			if($i == 0)
-				return '';
+			# 0 cambios ¡Esta palabra es la misma!
+			if ( $i == 0 )
+				return false;
 
-			if($i < $l OR $l == 0)
+			# Si los cambios fueron menores a la palabra similar anterior
+			# o no hemos encontrado ninguna palabra similar.
+			if ( $i < $l OR $l == 0 )
 			{
+				# Cambios de la palabra más similar hasta ahora.
 				$l = $i;
 
 				$r['word'] 		= $str;
@@ -648,36 +691,45 @@ class Core
 				similar_text($str, $word, $r['porcent']);
 				$r['porcent']	= round($r['porcent']);
 			}
-
-			_r($r);
 		}
 
-		return ($debug) ? $r : $r['mean'];
+		# Devolvemos la palabra más similar
+		# o información de ¿porque es la más similar? ($debug)
+		return ( $debug ) ? $r : $r['mean'];
 	}
 
-	// Encontrar la palabra del diccionario más similar a la cadena especificada.
-	// Perfecto para hacer: ¿No quiso decir ...?
-	// Metodo: Porcentaje de similitud entre $str y una cadena del diccionario.
-	// - $str: Cadena.
-	// - $dic (Array): Diccionario de palabras a encontrar similitud.
-	// - $debug (Bool): ¿Retonar Array con más detalles?
+	/**
+	 * Encuentra en el diccionario la palabra más similar a la indicada.
+	 * Perfecto para crear un "¿No quiso decir... ?"
+	 * Método de busqueda: Calcula el porcentaje de similitud entre $str y la cadena del diccionario.
+	 * @param string  $str   	Palabra
+	 * @param array  $dic   	Diccionario
+	 * @param boolean $debug 	¿Devolver más información?
+	 * @return array La palabra más similar o false si la palabra se encontraba en el diccionario.
+	 */
 	static function YouMean($str, $dic, $debug = false)
 	{
-		if(!is_string($str) OR !is_array($dic))
+		# La palabra no es una cadena o
+		# el diccionario no es un array.
+		if ( !is_string($str) OR !is_array($dic) )
 			return false;
 
 		$l = 0;
 		$r = array();
 
-		foreach($dic as $word)
+		# Buscamos palabra por palabra del diccionario.
+		foreach ( $dic as $word )
 		{
 			similar_text($str, $word, $i);
 
-			if($i == 100)
-				return '';
+			# ¡100% de parecido! ¡Esta palabra es la misma!
+			if ( $i == 100 )
+				return false;
 
-			if($i > $l)
+			# Si el porcentaje es mayor al de la palabra similar anterior.
+			if ( $i > $l )
 			{
+				# Porcenaje de la palabra más similar hasta ahora.
 				$l = $i;
 
 				$r['word'] 		= $str;
@@ -686,107 +738,139 @@ class Core
 			}
 		}
 
-		return ($debug) ? $r : $r['mean'];
+		# Devolvemos la palabra más similar
+		# o información de ¿porque es la más similar? ($debug)
+		return ( $debug ) ? $r : $r['mean'];
 	}
 
-	// Cortar una cadena a la mitad.
-	// - $str: Cadena a cortar.
-	// - $strip: ¿Quitar las etiquetas HTML?
-	// - $w: Numero de veces a recortar.
-	static function Cut($str, $strip = true, $w = 2)
+	/**
+	 * Corta una cadena a la mitad.
+	 * @param string  $str   Cadena
+	 * @param integer $w     Número de veces a recortar
+	 * @param boolean $strip ¿Quitar etiquetas HTML?
+	 */
+	static function Cut($str, $w = 2, $strip = true)
 	{
-		if(!is_string($str))
+		# Esto no es una cadena.
+		if ( !is_string($str) )
 			return $str;
 
-		if($strip)
+		# Quitar códigos HTML.
+		if ( $strip )
 			$str = strip_tags($str);
 
+		# Longitud de la cadena.
 		$n 		= strlen($str);
-
 		$s 		= 0;
 		$c 		= false;
 
-		while(!$c)
+		# Mientras $c sea igual a false
+		while ( !$c )
 		{
+			# Aumentamos un intento.
 			++$s;
+			# ¿Nueva longitud?
 			$new = round($n / $w);
 
-			if($new > 5)
+			# Es mayor a 5, bien.
+			if ( $new > 5 )
 				$c = true;
 			else
 				++$w;
 
-			if($s >= 20)
+			# No pudimos lograr nuestro objetivo en 20 intentos...
+			if ( $s >= 20 )
 				return $str;
 		}
 
+		# Devolvemos la cadena recortada.
 		return substr($str, 0, $new);
 	}
 
-	// Convertir una cadena con códigos BBCode.
-	// Cambie los códigos BBCODE desde /App/Setup.php
-	// - $str: Cadena a convertir.
-	// - $smilies (Bool): ¿Incluir emoticones?
+	/**
+	 * Convierte una cadena con códigos BBCode.
+	 * @param string  $str     Cadena
+	 * @param boolean $smilies ¿Convertir emoticones?
+	 */
 	static function BBCode($str, $smilies = false)
 	{
-		if(!is_string($str))
+		# Esto no es una cadena.
+		if ( !is_string($str) )
 			return $str;
 
 		global $kernel;
 
+		# Los códigos BBCode son tomados directamente de
+		# /App/Setup.php
+
 		$str = _c($str);
 		$str = preg_replace($kernel['bbcode_search'], $kernel['bbcode_replace'], $str);
 
-		if($smilies)
+		# Convertir emoticones.
+		if ( $smilies )
 			$str = self::Smilies($str);
 
 		return $str;
 	}
 
-	// Convertir una cadena con emoticones.
-	// Cambie los emoticones desde /App/Setup.php
-	// - $str: Cadena a convertir.
-	// - $bbcode (Bool): ¿Incluir conversión de códigos BBC?
+	/**
+	 * Convierte una cadena con emoticones.
+	 * @param string  $str    Cadena
+	 * @param boolean $bbcode ¿Convertir códigos bbc?
+	 */
 	static function Smilies($str, $bbcode = false)
 	{
-		if(!is_string($str))
+		# Esto no es una cadena.
+		if ( !is_string($str) )
 			return $str;
 
 		global $kernel;
 
-		foreach($kernel['emoticons'] as $e => $i)
-			$str = str_replace($e, '<img src="' . PATH .  '/Kernel/Emoticon.php?e=' . $i . '" alt="' . $e . '" title="' . $e . '" />', $str);
+		# Los emoticones son tomados directamente de
+		# /App/Setup.php
 
-		if($bbcode)
+		foreach ( $kernel['emoticons'] as $e => $i )
+			$str = str_replace($e, '<img src="' . PATH .  '/App/Emoticon.php?e=' . $i . '" alt="' . $e . '" title="' . $e . '" />', $str);
+
+		# Convertir códigos bbc
+		if( $bbcode )
 			$str = self::BBCode($str);
 
 		return $str;
 	}
 
-	// Encriptar una cadena.
-	// - $str: Cadena a encriptar.
-	// - $level: Nivel de encriptación.
+	/**
+	 * Encripta una cadena.
+	 * @param string  $str   Cadena
+	 * @param integer $level Nivel de encriptación.
+	 * @return string Cadena codificada.
+	 */
 	static function Encrypt($str, $level = 0)
 	{
-		if(!is_string($str))
+		# Esto no es una cadena.
+		if( !is_string($str) )
 			return $str;
 
+		# Obtenemos el nivel de seguridad del archivo de configuración.
 		global $config;
 		$sec = $config['security'];
 
-		if($level == 0)
+		# El nivel de encriptación es 0, usar el del archivo de configuración.
+		if ( $level == 0 )
 			$level = $sec['level'];
 
-		// Nivel 1: MD5
-		if($level == 1)
+		# MD5
+		# No seguro para encriptar contraseñas.
+		if ( $level == 1 )
 			$str = md5($str . $sec['hash']);
 
-		// Nivel 2: SHA1
-		if($level == 2)
+		# SHA1
+		# No seguro para encriptar contraseñas.
+		if ( $level == 2 )
 			$str = sha1($str . $sec['hash']);
 
-		// Nivel 3: SHA256 con SHA1
-		if($level == 3)
+		# SHA256 con SHA1
+		if ( $level == 3 )
 		{
 			$s = hash_init('sha256', HASH_HMAC, $sec['hash']);
 			hash_update($s, sha1($str));
@@ -794,8 +878,8 @@ class Core
 			$str = hash_final($s);
 		}
 
-		// Nivel 4: SHA256 con SHA1 y MD5
-		if($level == 4)
+		# SHA256 con SHA1 y MD5
+		if ( $level == 4 )
 		{
 			$s = hash_init('sha256', HASH_HMAC, $sec['hash']);
 			hash_update($s, sha1($str));
@@ -804,12 +888,12 @@ class Core
 			$str = md5($sec['hash'] . $str);
 		}
 
-		// Nivel 5: Codificación reversible.
-		if($level == 5)
+		# Codificación reversible.
+		if ( $level == 5 )
 		{
 			$result = '';
 
-			for($i = 0; $i < strlen($str); $i++)
+			for ( $i = 0; $i < strlen($str); $i++ )
 			{
 				$char = substr($str, $i, 1);
 				$keychar = substr($sec['hash'], ($i % strlen($sec['hash'])) -1, 1);
@@ -823,11 +907,15 @@ class Core
 		return $str;
 	}
 
-	// Desencriptar una cadena encriptada con el Nivel 5.
-	// - $str: Cadena a desencriptar.
+	/**
+	 * Desencriptar una cadena con codificación reversible.
+	 * @param string $str Cadena codificada.
+	 * @return string Cadena descodificada.
+	 */
 	static function Decrypt($str)
 	{
-		if(!is_string($str))
+		# Esto no es una cadena.
+		if ( !is_string($str) )
 			return $str;
 
 		global $config;
@@ -836,7 +924,7 @@ class Core
 		$result = '';
 		$str 	= base64_decode($str);
 
-		for($i = 0; $i < strlen($str); $i++)
+		for ( $i = 0; $i < strlen($str); $i++ )
 		{
 			$char 		= substr($str, $i, 1);
 			$keychar 	= substr($sec['hash'], ($i % strlen($sec['hash']))-1, 1);
@@ -847,32 +935,38 @@ class Core
 		return $result;
 	}
 
-	// Generar una cadena al azar.
-	// - $length (Int): Numero de caracteres.
-	// - $letters (Bool): ¿Incluir letras?
-	// - $numbers (Bool): ¿Incluir numeros?
-	// - $other (Bool): ¿Incuir otros caracteres?
+	/**
+	 * Genera una cadena al azar.
+	 * @param integer $length  Longitud.
+	 * @param boolean $letters ¿Incluir letras?
+	 * @param boolean $numbers ¿Incluir números?
+	 * @param boolean $other   ¿Incluir caracteres especiales? ( *, %, ^, etc... )
+	 */
 	static function Random($length, $letters = true, $numbers = true, $other = false)
 	{
-		if(!is_numeric($length))
+		# La longitud no es un valor numerico.
+		if ( !is_numeric($length) )
 			return;
 
 		$result = '';
-		$poss = '';
-		$i = 0;
+		$poss 	= '';
+		$i 		= 0;
 
-		if($letters)
+		# Debe tener letras.
+		if ( $letters )
 			$poss .= 'abcdefghijklmnopqrstuvwxyz';
 
-		if($numbers)
+		# Debe tener números.
+		if ( $numbers )
 			$poss .= '0123456789';
 
-		if($other)
-			$poss .= 'ABCDEFHIJKL@%&^*/(){}-_';
+		# Debe tener caracteres especiales.
+		if ( $other )
+			$poss .= '@%&^*/(){}-_';
 
 		$poss = str_split($poss, 1);
 
-		for($i = 1; $i < $length; ++$i)
+		for ( $i = 1; $i < $length; ++$i )
 		{
 			mt_srand((double)microtime() * 1000000);
 
@@ -883,48 +977,60 @@ class Core
 		return $result;
 	}
 
-	// Ocultar un error.
+	/**
+	 * Oculta un error según sea adecuado.
+	 */
 	static function HideError()
 	{
 		global $config;
 
-		if(!$config['errors']['hidden'])
+		# Esta función esta desactivada.
+		if ( !$config['errors']['hidden'] )
 			return;
 
-		if(!is_numeric($_SESSION['beatrock']['hidden']))
+		# Es la primera vez que intentamos ocultar un error.
+		if ( !is_numeric($_SESSION['beatrock']['hidden']) )
 			$_SESSION['beatrock']['hidden'] = 0;
 
+		# Un intento más.
 		++$_SESSION['beatrock']['hidden'];
 
-		if($_SESSION['beatrock']['hidden'] < 5)
+		# Si han ocurrido menos de 5 intentos, redireccionar a la misma página.
+		if ( $_SESSION['beatrock']['hidden'] < 5 )
 			exit("<META HTTP-EQUIV='refresh' CONTENT='0; URL=$PHP_SELF'>");
 
-		else if($_SESSION['beatrock']['hidden'] < 10)
+		# Si han ocurrido menos de 10 intentos (pero obviamente, más de 5)
+		# rediccionar a la página principal (El error no se soluciono)
+		else if ( $_SESSION['beatrock']['hidden'] < 10 )
 			self::Redirect(PATH);
 
+		# De otra forma eliminar la sesión e intentar evitar otro error.
 		else
 			unset($_SESSION['beatrock']['hidden']);
 	}
 
-	// Selecionar un dato al azar de los especificados.
-	// - $options (Array): Datos.
+	/**
+	 * Selecciona una llave al azar de un array.
+	 * @param array $options Array
+	 */
 	static function SelectRandom($options)
 	{
-		if(!is_array($options))
+		# Esto no es un array.
+		if ( !is_array($options) )
 			return false;
 
 		$i = 0;
 		$m = rand(2, 9);
 
-		while($i <= $m)
+		while ( $i <= $m )
 		{
-			foreach($options as $option)
+			foreach ( $options as $option )
 			{
 				$i++;
 
-				if($i == $m)
+				if ( $i == $m )
 				{
-					if(!empty($option))
+					if ( !empty($option) )
 						return $option;
 					else
 						$i--;
@@ -935,40 +1041,44 @@ class Core
 		return false;
 	}
 
-	// Obtener el dominio de una dirección web.
-	// - $url: Dirección web.
+	/**
+	 * Obtiene el dominio de una dirección web.
+	 * @param string $url Dirección web.
+	 */
 	static function GetDomain($url)
 	{
 		$bits = explode('/', $url);
 
-		if ($bits[0]=='http:' || $bits[0]=='https:')
-			$url= $bits[2];
+		if ( $bits[0]=='http:' || $bits[0]=='https:' )
+			$url = $bits[2];
 		else
-			$url= $bits[0];
+			$url = $bits[0];
 
 		unset($bits);
 
 		$bits = explode('.', $url);
-		$idz = count($bits);
+		$idz  = count($bits);
 		$idz -= 3;
 
-		if (strlen($bits[($idz+2)])==2)
+		if ( strlen($bits[($idz+2)])==2 )
 			$url = $bits[$idz] . '.' . $bits[($idz+1)] . '.' . $bits[($idz+2)];
-		else if (strlen($bits[($idz+2)])==0)
-			$url=$bits[($idz)] . '.' . $bits[($idz+1)];
+		else if ( strlen($bits[($idz+2)])==0 )
+			$url = $bits[($idz)] . '.' . $bits[($idz+1)];
 		else
-			$url=$bits[($idz+1)] . '.' . $bits[($idz+2)];
+			$url = $bits[($idz+1)] . '.' . $bits[($idz+2)];
 
 		return $url;
 	}
 
-	// Obtener el host de una dirección web.
-	// - $url: Dirección web.
+	/**
+	 * Obtiene el host de una dirección web.
+	 * @param string $url Dirección web.
+	 */
 	static function GetHost($url)
 	{
 		$parseUrl = parse_url(trim($url));
 
-		if($parseUrl['host'])
+		if ( $parseUrl['host'] )
 			$result = trim($parseUrl['host']);
 		else
 		{
@@ -979,8 +1089,10 @@ class Core
 		return $result;
 	}
 
-	// Obtener la página de una dirección web.
-	// - $url: Dirección web.
+	/**
+	 * Obtiene la página de una dirección web.
+	 * @param string $url Dirección web.
+	 */
 	static function GetPage($url)
 	{
 		$r  = "^(?:(?P<scheme>\w+)://)?";
@@ -992,53 +1104,70 @@ class Core
         $r .= "(?:#(?P<anchor>\w+))?";
         $r = "!$r!";
 
-        preg_match ($r, $url, $out);
+        preg_match($r, $url, $out);
 
-		if(!empty($out['file']))
+		if ( !empty($out['file']) )
 			return $out['file'];
-		else if(!empty($out['path']) AND $out['path'] !== "/")
+		else if ( !empty($out['path']) AND $out['path'] !== "/" )
 			return $out['path'];
-		else
-			return '';
+
+		return '';
 	}
 
-	// Traducir una cadena.
-	// Usando el servicio de traducción de Microsoft.
-	// - $str: Cadena.
-	// - $from: Lenguaje original.
-	// - $to: Lenguaje a traducir.
-	// - $id: ID de aplicación de desarrolladores "Microsoft".
+	/**
+	 * Traduce una cadena usando el servicio de traducción de Microsoft.
+	 * @param [type] $str  Cadena
+	 * @param string $from Lenguaje original.
+	 * @param [type] $to   Lenguaje deseado.
+	 * @param [type] $id   ID de la aplicación de desarrolladores.
+	 */
 	static function Translate($str, $from = 'en', $to = LANG, $id = C9A399184CB7790D220EF5E812D7BFF636488705)
 	{
-		if(empty($id) OR empty($str))
+		# Esto no es una cadena.
+		if ( empty($str) )
 			return $str;
+
+		# La ID de la aplicación esta vacia, usar la de InfoSmart.
+		if ( empty($id) )
+			$id = C9A399184CB7790D220EF5E812D7BFF636488705;
 
 		global $site;
 
-		if(empty($to))
+		# El lenguaje deseado esta vacio, usar el lenguaje del sitio.
+		if ( empty($to) )
 			$to = $site['site_language'];
 
+		# Generamos el MD5 de la palabra.
 		$sstr = md5($str);
+		# Existe caché guardada para esta palabra.
 		$data = self::CACHE('translate_' . $sstr);
 
-		if(!empty($data))
-			return $data;
+		# ¡Hay caché guardada! Devolverla.
+		//if( !empty($data) )
+		//	return $data;
 
+		# Eliminamos las etiquetas HTML.
 		$str = strip_tags($str);
+		# Traducimos la cadena desde BeatRock.
 		$str = _l($str);
+		# Codificamos en modo de URL.
 		$str = rawurlencode($str);
 
+		# Dirección de la API de Microsoft.
 		$url = "http://api.microsofttranslator.com/v2/Http.svc/Translate?appId=$id&text=$str&from=$from&to=$to";
 
-		$data = strip_tags(Io::Read($url));
-		$data = ucfirst($data);
+		# Quitamos las etiquetas y devolvemos resultado.
+		$data = strip_tags(file_get_contents($url));
 
+		# Guardamos en caché.
 		self::CACHE('translate_' . $sstr, $data);
 		return $data;
 	}
 
-	// Transforma las direcciones en links encontradas en la cadena.
-	// - $str: Cadena.
+	/**
+	 * Convierte las direcciones web de una cadena en enlaces.
+	 * @param string $str Cadena
+	 */
 	static function ToURL($str)
 	{
 		$str = html_entity_decode($str);
@@ -1048,25 +1177,36 @@ class Core
 		return $str;
 	}
 
-	// Carga un archivo JSON y devuelve el array.
-	// Esta función también "limpia" los comentarios de tipo /* */
-	// - $file: Ruta/Dirección web del archivo JSON.
+	/**
+	 * Carga un archivo JSON ignorando los comentarios.
+	 * @param string $file Ruta del archivo JSON.
+	 * @return array Resultado en array o el error al cargar JSON.
+	 */
 	static function LoadJSON($file)
 	{
-		if(!file_exists($file))
+		# Este archivo no existe.
+		if ( !file_exists($file) )
 			return false;
 
+		# Obtenemos el archivo.
 		$data 	= file_get_contents($file);
+		# Eliminamos comentarios /* */
 		$data 	= preg_replace('/\/\*(.*?)\*\//is', '', $data);
+		# Descodificamos.
 		$data 	= json_decode($data, true);
 
+		# Obtenemos el último error de JSON.
 		$error 	= json_last_error();
 
-		return (!empty($error)) ? $error : $data;
+		# Devolvemos el array resultante o el error.
+		return ( !empty($error) ) ? $error : $data;
 	}
 
-	// Filtra los acentos de una cadena.
-	// - $str: Cadena.
+	/**
+	 * Filtra los acentos de una cadena.
+	 * @param string $str Cadena
+	 * @return string Cadena sin acentos.
+	 */
 	static function FilterAccents($str)
 	{
 		$str = htmlentities($str, ENT_QUOTES, 'UTF-8');
@@ -1116,33 +1256,41 @@ class Core
 		return $str;
 	}
 
-	// Agrega $append1 al principio y $append2 al final de cada valor.
-	// - $array (Array): El array con los datos.
-	// - $append1: Cadena que se agregara al principio.
-	// - $append2: Cadena que se agregara al final.
-	static function SplitArray($array, $append1 = '', $append2 = '<br />')
+	/**
+	 * Divide un array poniendo $prepend al principio y $append al final
+	 * de cada valor.
+	 * @param array $array    Array
+	 * @param string $prepend Cadena que se adjuntara al principio.
+	 * @param string $append  Cadena que se adjuntara al final.
+	 */
+	static function SplitArray($array, $prepend = '', $append = '<br />')
 	{
-		if(!is_array($array))
+		# Esto no es array.
+		if ( !is_array($array) )
 			return false;
 
 		$result = array();
 
-		foreach($array as $param => $value)
-			$result[$param] .= $append1 . $value . $append2;
+		foreach ( $array as $key => $value )
+			$result[$key] .= $prepend . $value . $append;
 
 		return $result;
 	}
 
+	/**
+	 * Convierte código XML a un Array
+	 * @param string $xml Código XML.
+	 */
 	static function Xml2Array($xml)
 	{
 		$result = array();
 
-		foreach($xml as $element)
+		foreach ( $xml as $element )
 		{
 			$tag 	= $element->getName();
 			$e 		= get_object_vars($element);
 
-			if(!empty($e))
+			if ( !empty($e) )
 				$result[$tag] = ($element instanceof SimpleXMLElement) ? self::Xml2Array($element) : $e;
 			else
 				$result[$tag] = trim($element);
@@ -1151,23 +1299,29 @@ class Core
 		return $result;
 	}
 
-	// Obtener el uso de memoria en bytes por el proceso de Apache.
-	// El proceso se llama "httpd"
+	/**
+	 * Obtiene el uso de memoria en bytes para el proceso Apache.
+	 * Compatible con Windows y Linux.
+	 * @return integer Uso de memoria.
+	 */
 	static function memory_usage()
     {
-    	if(!function_exists('exec'))
+    	# ¿Bloqueado por usar Hosting barato?
+    	if ( !function_exists('exec') )
     		return false;
 
-        if(substr(PHP_OS, 0, 3) == 'WIN')
+    	# Windows
+        if ( substr(PHP_OS, 0, 3) == 'WIN' )
         {
             $output = array();
             exec('tasklist /FI "PID eq ' . getmypid() . '" /FO LIST', $output);
 
             return preg_replace('/[\D]/', '', $output[5]) * 1024;
         }
+        # Linux
 		else
         {
-            $pid = getmypid();
+            $pid 	= getmypid();
             exec("ps -eo%mem,rss,pid | grep $pid", $output);
             $output = explode('  ', $output[0]);
 
@@ -1175,24 +1329,28 @@ class Core
         }
     }
 
-	// Obtener el uso de la carga media del sistema.
-	// La carga del CPU.
+	/**
+	 * Obtiene el uso de CPU.
+	 * @return integer Porcentaje de uso.
+	 */
 	static function sys_load()
 	{
-        if(substr(PHP_OS, 0, 3) == 'WIN')
+		# Windows
+        if ( substr(PHP_OS, 0, 3) == 'WIN' )
         {
-        	if(!extension_loaded('com_dotnet'))
+        	if ( !extension_loaded('com_dotnet') )
         		return 0;
 
-			$wmi = new COM('WinMgmts:\\\\.');
-			$cpus = $wmi->InstancesOf('Win32_Processor');
-			$load = 0;
+			$wmi 	= new COM('WinMgmts:\\\\.');
+			$cpus 	= $wmi->InstancesOf('Win32_Processor');
+			$load 	= 0;
 
-			foreach($cpus as $c)
+			foreach ( $cpus as $c )
 				$load += $c->LoadPercentage;
 
 			return $load;
 		}
+		# Linux
 		else
         {
 			$load = sys_getloadavg();
@@ -1200,8 +1358,11 @@ class Core
 		}
 	}
 
-	// Convertir una cadena a un dato bool (true o false).
-	// - $str: Cadena.
+	/**
+	 * Convierte una cadena en un valor bool.
+	 * @param string $str Cadena
+	 * @return boolean Valor.
+	 */
 	static function Bool($str)
 	{
 		if(is_bool($var))
@@ -1256,8 +1417,11 @@ class Core
 			return true;
 	}
 
-	// Identificar si la cadena es de codificación UTF-8.
-	// - $str: Cadena.
+	/**
+	 * Intenta identificar si la cadena es de codificación UTF-8
+	 * @param string $str Cadena
+	 * @return boolean Devuelve true si es UTF-8 o false si no.
+	 */
 	static function IsUTF8($str)
 	{
 		$len = strlen($str);
