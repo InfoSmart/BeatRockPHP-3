@@ -1,405 +1,816 @@
 <?
-#####################################################
-## 					 BeatRock				   	   ##
-#####################################################
-## Framework avanzado de procesamiento para PHP.   ##
-#####################################################
-## InfoSmart © 2012 Todos los derechos reservados. ##
-## http://www.infosmart.mx/						   ##
-#####################################################
-## http://beatrock.infosmart.mx/				   ##
-#####################################################
+/**
+ * BeatRock
+ *
+ * Framework para el desarrollo de aplicaciones web.
+ *
+ * @author 		IvÃ¡n Bravo <webmaster@infosmart.mx> @Kolesias123 & Simon Samtleben <web@lemmingzshadow.net>
+ * @copyright 	InfoSmart 2013. Todos los derechos reservados.
+ * @license 	http://creativecommons.org/licenses/by-sa/2.5/mx/  Creative Commons "AtribuciÃ³n-Licenciamiento RecÃ­proco"
+ * @link 		http://beatrock.infosmart.mx/ - http://lemmingzshadow.net/
+ * @version 	3.0
+ *
+ * @package 	Server
+ * Permite la creaciÃ³n de un servidor de tipo Sockets o WebSockets
+ *
+*/
 
-// Acción ilegal.
-if(!defined('BEATROCK'))
+# AcciÃ³n ilegal.
+if ( !defined('BEATROCK') )
 	exit;
+
+/*
+* Compatibilidad con WebSockets:
+* https://github.com/lemmingzshadow/php-websocket/blob/master/server/lib/WebSocket/
+*/
 
 class Server
 {
-	// Socket del servidor.
-	static $socket 			= null;
-	// Array con los recursos "Connection" de las conexiones entrantes.
-	static $rsock 			= array();
-	// Array de los recursos de escucha de las conexiones entrantes.
-	static $asock 			= array();
+	public $logFile 	= './server.log.txt';
+	public $debug 		= false;
 
-	// Numero de conexiones entrantes online.
-	static $count 			= 0;
-	// Numero de conexiones recibidas.
-	static $conn_count 		= 0;
+	public $host 		= '127.0.0.1';
+	public $port 		= 1212;
 
-	// Último chequeo de Ping.
-	static $last_ping_time 	= 0;
-	static $ping_time 		= 3;
-	// Última vez que se imprimieron las estadisticas.
-	static $last_stats_time = 0;
-	static $stats_time 		= 10;
-	// Tiempo máximo de inactividad de la conexión entrante.
-	static $conn_timeout 	= 5;
+	public $socket 		= null;
+	public $webSocket 	= false;
 
-	// Numero de conexiones entrantes máximas.
-	static $max_connections = 100;
-	// Numero de conexiones online máximas.
-	static $max_online 		= 5;
+	public $checkOrigin 	= false;
+	public $allowedOrigins 	= array();
 
-	static $actions = array();
+	public $aClients 	= array();
+	public $aSockets 	= array();
+	public $ipStorage 	= array();
 
-	static function GetCount()
+	public $online 		= 0;
+	public $connections = 0;
+
+	public $lastPingCheck 	= 0;
+	public $checkPing 		= 8;
+
+	public $lastPrintStats 	= 0;
+	public $printStats 		= 20;
+
+	public $idleTimeout 	= 30;
+
+	public $maxConnections 		= 100;
+	public $maxConnectionsPerIp = 2;
+	public $maxOnline 			= 10;
+
+	public $packetSplit;
+	public $packetKey 	= 'packet';
+	public $packetValue = 'value';
+
+	public function Error($code, $message)
 	{
-		return self::$count;
+		// TODO
+		echo '[ERROR] ' . $code . ' - ' . $message;
+		exit;
 	}
 
-	static function GetConnCount()
-	{
-		return self::$conn_count;
-	}
+	//######################################################################
+	// CONSOLA
+	//######################################################################
 
-	static function SetConnTimeout($timeout = 5)
+	public function Write($message, $onlyDebug = false)
 	{
-		self::$conn_timeout = $timeout;
-	}
+		$message = '[' . date('H:i:s') . '] ' . $message . PHP_EOL;
+		@file_put_contents($this->logFile, $message, FILE_APPEND);
 
-	static function SetMaxConnections($max = 100)
-	{
-		self::$max_connections = $max;
-	}
-
-	static function SetMaxOnline($max = 5)
-	{
-		self::$max_online = $max;
-	}
-
-	static function SetPingTime($time)
-	{
-		self::$ping_time = $time;
-	}
-
-	// Función - Lanzar error.
-	// - $code: Código de error.
-	// - $function: Función causante.
-	// - $message: Mensaje del error.
-	static function Error($code, $function, $message = '')
-	{		
-		if(empty($message) AND is_resource(self::$socket))
-			$message = socket_strerror(socket_last_error(self::$socket));
-		
-		BitRock::SetStatus($message, __FILE__, array('function' => $function));
-		BitRock::LaunchError($code);
-		
-		return false;
-	}
-	
-	// Función - ¿Hay alguna conexión activa?
-	static function Ready()
-	{
-		if(self::$socket == null OR !is_resource(self::$socket))
-			return false;
-			
-		return true;
-	}
-	
-	// Función - Destruir conexión activa.
-	static function Kill()
-	{
-		if(!self::Ready())
+		if ( $onlyDebug AND !$this->debug )
 			return;
-		
-		socket_shutdown(self::$socket);
-		socket_close(self::$socket);
-		
-		BitRock::log('Se ha apagado el servidor correctamente.');
-		self::Write('SERVIDOR APAGADO CORRECTAMENTE');
-		
-		self::$socket 			= null;
-		self::$rsock 			= array();
-		self::$asoc 			= array();
 
-		self::$count 			= 0;
-		self::$connections 		= 0;
-
-		self::$last_ping_time 	= 0;
-		self::$last_stats_time 	= 0;
-	}
-	
-	// Función - Imprimir un log.
-	// - $mesage: Mensaje.
-	static function Write($message)
-	{
-		// Convertir el mensaje a ISO-8859-1
-		$message = iconv('ISO-8859-1', "ASCII//TRANSLIT//IGNORE", $message);
-		// Imprimir el mensaje.
-		echo "[" . date('H:i:s') . "] - $message", PHP_EOL;
+		//$message = iconv('UTF-8', "ASCII//TRANSLIT//IGNORE", $message);
+		echo $message;
 		@ob_flush();
 	}
 
-	static function BreakLine($line = false)
+	public function BreakLine($line = false)
 	{
-		if($line == true)
+		if ( $line )
 			echo '--------------------------------------------------------------', PHP_EOL;
 		else
 			echo PHP_EOL;
 
 		@ob_flush();
 	}
-	
-	// Función - Preparar un servidor interno.
-	// - $local: Dirección para la conexión.
-	// - $port (Int): Puerto de escucha.
-	// - $timeout (Int): Tiempo de ejecución limite.
-	// - $ctimeout (Int): Tiempo de inactividad limite para las conexiones entrantes.
-	function __construct($local = '127.0.0.1', $port = 1212, $ctimeout = 5, $timeout = 0)
+
+	//######################################################################
+	// SERVIDOR
+	//######################################################################
+
+	/**
+	 * Â¿El servidor esta preparado?
+	 */
+	private function Prepared()
 	{
-		set_time_limit($timeout);
-		ob_implicit_flush(1);
-		
-		self::Kill();	
-		self::Write('Preparando servidor...');
-		
-		// Crear el Socket para el servidor.
-		$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or self::Error('01s', __FUNCTION__);		
-		socket_set_option($socket, SOL_SOCKET, SO_REUSEADDR, 1);
-		socket_bind($socket, $local, $port) or self::Error('01s', __FUNCTION__);
-		
-		self::Write('Conexión creada.');
-		
-		// Crear el Socket encargado de escuchar las nuevas conexiones.
-		socket_listen($socket) or self::Error('02s', __FUNCTION__);
-		
-		// Estableciendo el Socket del servidor.
-		self::$socket 	= $socket;
-		// Estableciendo en el array el socket de escucha.
-		self::$asock 	= array($socket);
+		if ( $this->socket == null )
+			return false;
 
-		// Estamos en un servidor, esto evitará que se cargue el sistema de plantillas.
-		Socket::$server = true;
-		
-		self::Write('Escuchando conexiones entrantes desde el puerto: ' . $port);
-		self::Write('SERVIDOR INICIADO.');
-
-		if(!is_numeric($ctimeout) OR $ctimeout < 0)
-			$ctimeout = 5;
-	
-		// Estableciendo el tiempo máximo de inactividad.		
-		self::$conn_timeout = $ctimeout;
-		// Estableciendo la última vez que se hizo chequeo de Ping.
-		self::$last_ping_time 	= time();
-		// Estableciendo la última vez que se imprimieron las estadisticas.
-		self::$last_stats_time 	= time();
-		
-		// Empezar a escuchar conexiones.
-		self::Process();
+		return true;
 	}
-	
-	// Función - Recibir conexiones.
-	static function Process()
+
+	/**
+	 * Destruye el servidor.
+	 */
+	public function Kill()
 	{
-		if(!self::Ready())
-			self::Error('03s', __FUNCTION__);
-		
-		// Bucle infinito para escuchar conexiones.
-		while(true)
-			self::Check();
-	}
-	
-	// Función - Checar sockets y conexiones.
-	static function Check()
-	{
-		if(!self::Ready())
-			self::Error('03s', __FUNCTION__);
-
-		// Antes de todo chechar las estadisticas y el Ping.
-		self::Stats();
-
-		$w = $r = NULL;
-		
-		$asock = self::$asock;
-		// ¿Han habido cambios en los Sockets?
-		$updates = socket_select($asock, $w, $r, 0);
-
-		// No aún no...
-		if($updates == false)
+		# Debe haber un servidor ya preparado.
+		if ( !$this->Prepared() )
 			return;
-		
-		foreach($asock as $conn)
-		{			
-			// Si el Socket a revisar es el Socket que escucha nuevas conexiones...
-			if($conn == self::$socket)
-				self::NewConnection();
-			// Si el Socket a revisar es un Socket de usuario.
+
+		# [Evento] Antes de matar al servidor.
+		$this->PreKill();
+
+		# Matamos al servidor.
+		stream_socket_shutdown($this->socket, STREAM_SHUT_RDWR);
+
+		# [Eveneto] DespuÃ©s de matar al servidor.
+		$this->PostKill();
+
+		# Reiniciamos variables importantes.
+		$this->socket 		= null;
+		$this->webSocket 	= false;
+		$this->aClients 	= array();
+		$this->aSockets 	= array();
+		$this->ipStorage 	= array();
+		$this->online 		= 0;
+		$this->connections 	= 0;
+	}
+
+	/**
+	 * Crea un nuevo servidor.
+	 * @param string  $host        Host/DirecciÃ³n ip para acceder al servidor.
+	 * @param integer $port        Puerto para acceder al servidor.
+	 * @param boolean $webSocket   Â¿Compatible con WebSockets?
+	 */
+	public function __construct($host = '127.0.0.1', $port = 1212, $webSocket = false)
+	{
+		# Sin tiempo limite.
+		set_time_limit(0);
+		# Imprimir logs al momento que se crean.
+		ob_implicit_flush(true);
+
+		# Matamos cualquier servidor activo.
+		$this->Kill();
+		$this->Write('Preparando servidor...');
+
+		# Creamos el Socket.
+		$url 		= 'tcp://' . $host . ':' . $port;
+		$context 	= stream_context_create();
+		$socket 	= stream_socket_server($url, $errno, $err, STREAM_SERVER_BIND | STREAM_SERVER_LISTEN, $context);
+
+		# Hubo un problema al crear el Socket.
+		if ( !$socket )
+			$this->Error('server.socket.create', $err);
+
+		$this->Write('Socket establecido.');
+
+		# Establecemos el Socket del servidor.
+		$this->socket 		= $socket;
+		$this->aSockets[] 	= $socket;
+
+		# Establecemos la ubicaciÃ³n del servidor.
+		$this->host = $host;
+		$this->port = $port;
+
+		# Establecemos mÃ¡s informaciÃ³n.
+		$this->lastPingCheck 	= time();
+		$this->lastPrintStats 	= time();
+		$this->webSocket 		= $webSocket;
+
+		return $this;
+	}
+
+	/**
+	 * Destructor
+	 */
+	public function __destruct()
+	{
+		$this->Kill();
+	}
+
+	/**
+	 * Inicia el servidor.
+	 */
+	public function Start()
+	{
+		# Debe haber un servidor ya preparado.
+		if ( !$this->Prepared() )
+			$this->Error('server.need');
+
+		$this->Write('Recibiendo conexiones desde el puerto: ' . $this->port);
+		$this->Write('SERVIDOR INICIADO.');
+
+		# Â¡Bucle!
+		while( true )
+			$this->Check();
+	}
+
+	/**
+	 * Verifica si hay nuevas conexiones o paquetes entrantes.
+	 */
+	private function Check()
+	{
+		# Debe haber un servidor ya preparado.
+		if ( !$this->Prepared() )
+			$this->Error('server.need');
+
+		# Imprimimos estadisticas y verificamos Ping.
+		$this->Stats();
+		$write = $except = NULL;
+
+		# Obtenemos nuevas conexiones/paquetes.
+		$updates = $this->aSockets;
+		@stream_select($updates, $write, $except, 0, 5000);
+
+		# AÃºn no hay nuevas conexiones/paquetes.
+		if ( !$updates )
+			return;
+
+		# Â¡Si hay!
+		foreach ( $updates as $socket )
+		{
+			# Se trata de una nueva conexiÃ³n.
+			if ( $socket == $this->socket )
+				$this->NewConnection();
+
+			# Se trata de un paquete.
 			else
-				self::NewData($conn);
+				$this->NewPacket($socket);
 		}
 	}
 
-	static function NewConnection()
+	/**
+	 * Crea un nuevo cliente.
+	 * @param resource $socket  Socket del cliente.
+	 * @param string $clientId  IdentificaciÃ³n.
+	 * @param object $server    Servidor.
+	 */
+	public function CreateClient($socket, $clientId)
 	{
-		// LIMITE DE CONEXIONES ALCANZADA.
-		if(self::$conn_count > self::$max_connections AND self::$max_connections !== 0)
-		{
-			// AQUÍ PUEDES ENVIAR UN PAQUETE DE RESPUESTA INDICANDO QUE EL SERVIDOR YA NO ESTA DISPONIBLE.
-			return false;
-		}
-
-		// ¿Alguien se quiere conectar a nuestro servidor?
-		$incoming = socket_accept(self::$socket);
-				
-		// Hasta ahora nadie...
-		if($incoming < 0)
-			return false;
-
-		// LIMITE DE USUARIOS ONLINE ALCANZADO
-		if(self::$count > self::$max_online AND self::$max_online !== 0)
-		{
-			self::Write('SERVIDOR LLENO');
-			// AQUÍ PUEDES ENVIAR UN PAQUETE DE RESPUESTA INDICANDO QUE EL SERVIDOR ESTA LLENO.
-			return false;
-		}
-
-		// Inicializando instancia "Connection" para la nueva conexión.
-		$newconn = new Connection($incoming, self::$conn_count);
-
-		// Guardando esta nueva instancia en $rsock
-		self::$rsock[self::$conn_count] = $newconn;
-		// Guarando el Socket de esta conexión en $asock
-		array_push(self::$asock, $incoming);
-						
-		// Uno más en nuestro servidor ;)
-		self::BreakLine(true);
-		self::Write('NUEVA CONEXIÓN ENTRANTE #' . self::$conn_count);
-		++self::$conn_count;
-
-		if(self::$conn_count > self::$max_connections AND self::$max_connections !== 0)
-			self::Write('LIMITE DE CONEXIONES ALCANZADO, NO SE ACEPTARÁN MÁS CONEXIONES.');
+		return new ServerClient($socket, $clientId, $this);
 	}
 
-	static function NewData($conn)
+	/**
+	 * Recibe una nueva conexiÃ³n.
+	 */
+	private function NewConnection()
 	{
-		// Revisar si se ha recibido información del Socket. (Paquetes)
-		$bytes = @socket_recv($conn, $data, 2048, 0);
-				
-		// Al parecer no... ¡Siguiente!
-		if(empty($data) OR !is_numeric($bytes))
-			continue;
-				
-		// Obtener la ID del Socket.
-		$i = array_search($conn, self::$asock);
-				
-		// Mmm... ¿Se le fue el Internet?
-		if($i == false)
-			continue;
-				
-		// FIXME - Un ajuste de ID.
-		$i 			= $i - 1;
-		// Obtener lista de acciones.
-		$actions 	= self::$actions;
-		// Obtener el recurso "Connection" de este Socket.
-		$connection = self::$rsock[$i];
-				
-		self::Write('RECIBIENDO DATOS ('.$data.')');
-				
-		// Al parecer hay una acción para esta información/paquete.
-		if(isset($actions[$data]))
-		{
-			// Ejecutar acción.
-			$callback = $actions[$data];
-			$callback($connection);
-		}
-					
-		// Al parecer hay una acción a ejecutar al recibir cualquier información/paquete.
-		if(isset($actions['*']))
-		{
-			// Ejecutar acción.
-			$callback = $actions['*'];
-			$callback($connection, $data);
-		}
-				
-		// Última actividad de la conexión/usuario.
-		$connection->last = time();
-	}
-	
-	// Función - Chequeo de conexiones.
-	static function Stats()
-	{
-		if(!self::Ready())
-			self::Error('03s', __FUNCTION__);
+		# Debe haber un servidor ya preparado.
+		if ( !$this->Prepared() )
+			$this->Error('server.need');
 
-		$count = count(self::$rsock);
+		# Limite de conexiones superado.
+		# [Evento] No mÃ¡s conexiones.
+		if ( $this->maxConnections !== 0 AND $this->connections > $this->maxConnections )
+			return $this->NoMoreConnections();
 
-		// Checar Ping y obtener usuarios online.
-		if(self::$last_ping_time <= (time() - self::$ping_time))
-		{
-			$count = self::Ping();
-			// Estableciendo la última vez que se hizo chequeo de Ping.
-			self::$last_ping_time 	= time();
-		}
-			
-		// Imprimir las estadisticas.
-		if(self::$last_stats_time <= (time() - self::$stats_time))
-		{
-			self::Write($count . ' conexiones activas - '.self::$conn_count.' conexiones entrantes - ' . round(memory_get_usage() / 1024,1) . ' KB de Memoria.');
-			// Estableciendo la última vez que se imprimieron las estadisticas.
-			self::$last_stats_time 	= time();
-		}
-		
-		// Estableciendo usuarios online.
-		self::$count 			= $count;
+		# Limite de clientes online superado.
+		# [Evento] Servidor lleno.
+		if ( $this->maxOnline !== 0 AND $this->online > $this->maxOnline )
+			return $this->FullServer();
+
+		# Obtenemos el socket de entrada.
+		$incoming = stream_socket_accept($this->socket);
+
+		# Â¡Uy! Â¿Se le fue el internet?
+		if ( !$incoming )
+			return $this->Error('socket.accept', $incoming);
+
+		# Obtenemos una ID Ãºnica.
+		$clientId 	= uniqid();
+		# Creamos el nuevo cliente.
+		$client 	= $this->CreateClient($incoming, $clientId);
+
+		# Algo ocurrio mal...
+		if( $client->socket == NULL )
+			return $this->Write('No ha sido posible crear un nuevo cliente.');
+
+		# Guardamos el nuevo cliente.
+		$this->aClients[$clientId] 	= $client;
+		$this->aSockets[$clientId] 	= $incoming;
+
+		# Agregamos la direcciÃ³n IP.
+		$this->Write('NUEVA CONEXIÃ“N ENTRANTE #' . $this->connections . ' - ID ASIGNADA: ' . $clientId);
+		$this->AddIP($client->GetIp());
+
+		# Â¡Esta direcciÃ³n IP ha superado el limite de conexiones online por IP!
+		# [Evento] Limite de conexiones superado.
+		if ( $this->GetIPConnections($client->GetIp()) > $this->maxConnectionsPerIp )
+			return $client->onLimitIPReached();
+
+		# Una conexiÃ³n mÃ¡s.
+		++$this->connections;
+
+		# El limite de conexiones ha sido superado, advertir.
+		# [Evento] Advertir de no mÃ¡s conexiones.
+		if ( $this->maxConnections !== 0 AND $this->connections > $this->maxConnections )
+			$this->AlertNoMoreConnections();
 	}
-	
-	// Función - Ping de conexiones.
-	static function Ping()
+
+	/**
+	 * Recibe un nuevo paquete.
+	 * @param resource $socket Socket del cliente.
+	 */
+	private function NewPacket($socket)
 	{
-		if(!self::Ready())
-			self::Error('03s', __FUNCTION__);
-			
-		// Verificando conexión por conexión.
-		foreach(self::$rsock as $conn)
+		# Debe haber un servidor ya preparado.
+		if ( !$this->Prepared() )
+			$this->Error('server.need');
+
+		# Obtenemos el cliente que envio el paquete.
+		$client = $this->GetClientBySocket($socket);
+
+		# Â¡Esto no es un cliente!
+		if ( !is_object($client) )
+			return;
+
+		# Leemos el buffer
+		$buffer = $this->ReadBuffer($socket);
+		$bytes 	= strlen($buffer);
+
+		# Algo sucedio mal...
+		if ( $bytes == 0 )
+			return $client->Disconnect();
+
+		else if ( $buffer == false )
+			return $this->DestroyClient($client);
+
+		# El cliente acaba de presentar actividad.
+		$client->Active();
+
+		# Consola.
+		$client->Write('Recibiendo datos (' . trim($buffer) . ')', true);
+		$this->BreakLine();
+
+		# Ejecutar el paquete.
+		$client->Packet($buffer); 			// En el cliente
+		$this->Packet($buffer, $client); 	// En el servidor
+	}
+
+	/**
+	 * Lee el buffer de entrada.
+	 * @param resource $socket Socket
+	 */
+	public function ReadBuffer($socket)
+	{
+		$buffer 					= '';
+		$buffsize 					= 8192;
+		$metadata['unread_bytes'] 	= 0;
+
+		do
 		{
-			$connection = $conn->socket;
-			
-			// La conexión se ha desconectado pacíficamente, quitarla de la lista.
-			if($connection == null)
+			if ( feof($socket) )
+				return false;
+
+			$result = fread($socket, $buffsize);
+
+			if ( !$result OR feof($socket) )
+				return false;
+
+			$buffer 	.= $result;
+			$metadata 	= stream_get_meta_data($socket);
+			$buffsize 	= ( $metadata['unread_bytes'] > $buffsize ) ? $buffsize : $metadata['unread_bytes'];
+		}
+		while( $metadata['unread_bytes'] > 0 );
+
+		return $buffer;
+	}
+
+	//######################################################################
+	// ESTADISTICAS
+	//######################################################################
+
+	/**
+	 * Verifica el ping de los clientes e imprime estadisticas
+	 * en la consola.
+	 */
+	public function Stats()
+	{
+		# Debe haber un servidor ya preparado.
+		if ( !$this->Prepared() )
+			$this->Error('server.need');
+
+		# Â¿Cuantos clientes estan online?
+		$count = count($this->aClients);
+
+		# Â¡Hora de checar Ping!
+		if ( $this->lastPingCheck <= (time() - $this->checkPing) )
+		{
+			$count 					= $this->CheckPing();
+			$this->lastPingCheck 	= time();
+		}
+
+		# Â¡Hora de imprimir las estadisticas!
+		if ( $this->lastPrintStats <= (time() - $this->printStats) )
+		{
+			$this->PrintStats($count);
+			$this->lastPrintStats 	= time();
+		}
+
+		# Clientes online.
+		$this->online = $count;
+	}
+
+	/**
+	 * Checa el ping de los clientes.
+	 */
+	public function CheckPing()
+	{
+		# Debe haber un servidor ya preparado.
+		if ( !$this->Prepared() )
+			$this->Error('server.need');
+
+		# Verificamos cliente por cliente.
+		foreach ( $this->aClients as $id => $client )
+		{
+			# Obtenemos su Socket.
+			$socket = $client->GetSocket();
+
+			# Â¡El cliente ha sido destruido/desconectao!
+			if ( $socket == null )
 			{
-				self::Write('DESCONEXIÓN #' . $conn->id);
-				unset(self::$rsock[$conn->id]);
-				
+				$this->Write('LA CONEXIÃ“N ' . $id . ' SE HA DESCONECTADO.');
+
+				# Intentamos destruir el cliente.
+				$result = $this->DestroyClientById($id, false);
+
+				# DestrucciÃ³n fallida, lo eliminamos de nuestras listas.
+				if ( !$result )
+				{
+					unset( $this->aClients[$id] );
+					unset( $this->aSockets[$id] );
+				}
+
+				# Siguiente.
 				continue;
 			}
-			
-			// La conexión ha pasado el tiempo de inactividad, quitarla de la lista.
-			if($conn->last <= (time() - (self::$conn_timeout)))
-			{
-				$conn->Kill();				
-				unset(self::$rsock[$conn->id]);
 
-				self::Write('CONEXIÓN CERRADA #' . $conn->id);
-				
+			# El cliente no ha tenido actividad
+			# y el tiempo de inactividad esta establecido.
+			if ( $client->GetLastActive() <= (time() - $this->idleTimeout) AND $this->idleTimeout !== 0 )
+			{
+				$this->Write('LA CONEXIÃ“N ' . $id . ' HA SIDO EXPULSADA POR INACTIVIDAD.');
+
+				# Intentamos destruir el cliente.
+				$this->DestroyClient($client);
+
+				# DestrucciÃ³n fallida, lo eliminamos de nuestras listas.
+				if ( !$result )
+				{
+					unset( $this->aClients[$id] );
+					unset( $this->aSockets[$id] );
+				}
+
+				# Siguiente.
 				continue;
 			}
 		}
-		
-		// Devolver usuarios online.
-		return count(self::$rsock);
-	}
-	
-	// Función - Enviar datos a todas las conexiones.
-	static function SendAll($data)
-	{		
-		foreach(self::$rsock as $conn)
-			$conn->Send($data, false);
+
+		# Clientes sobrevivientes (online).
+		return count($this->aClients);
 	}
 
-	// Función - Agregar una acción.
-	// - $data: Dato a recibir para activar acción.
-	// - $action: Función a realizar.
-	static function AddAction($data, $action = '')
+	/**
+	 * Imprime las estadisticas.
+	 * @param string $online Clientes online.
+	 */
+	public function PrintStats($online = '')
 	{
-		if(is_array($data))
+		# No hay un nÃºmero nuevo de clientes online, usar el actual.
+		if ( empty($online) )
+			$online = $this->online;
+
+		$this->Write($online . ' conexiones online - ' . $this->connections . ' conexiones aceptadas - ' . round(memory_get_usage() / 1024,1) . ' KB de Memoria.');
+	}
+
+	//######################################################################
+	// CONEXIONES
+	//######################################################################
+
+	/**
+	 * Envia un paquete a todos los clientes conectados.
+	 * @param string $data Paquete
+	 */
+	public function SendAll($data)
+	{
+		# Enviamos el paquete a cada cliente.
+		foreach ( $this->aClients as $client )
+			$client->Send($data, false);
+	}
+
+	/**
+	 * Obtiene el cliente mediante su Socket.
+	 * @param resource $socket Socket
+	 */
+	public function GetClientBySocket($socket)
+	{
+		# Checamos cliente por cliente.
+		foreach ( $this->aClients as $client )
 		{
-			foreach($data as $key => $value)
-				self::$actions[$key] = $value;
+			# Â¡Encontramos al cliente que tiene este Socket!
+			if ( $client->socket == $socket )
+				return $client;
 		}
-		else
-			self::$actions[$data] = $action;
+
+		# El cliente no existe.
+		return false;
+	}
+
+	/**
+	 * Obtiene el cliente mediante su Id.
+	 * @param string $id IdentificaciÃ³n.
+	 */
+	public function GetClientByID($id)
+	{
+		# El cliente no es un objeto, no existe.
+		if ( !is_object($this->aClients[$id]) )
+			return false;
+
+		return $this->aClients[$id];
+	}
+
+	/**
+	 * Obtiene el Socket mediante la Id de un cliente.
+	 * @param string $id IdentificaciÃ³n.
+	 */
+	public function GetSocketByID($id)
+	{
+		# El Socket no es un recurso, no es vÃ¡lido.
+		if ( !is_resource($this->aClients[$id]->socket) )
+			return false;
+
+		return $this->aClients[$id]->socket;
+	}
+
+	/**
+	 * Destruye un cliente.
+	 * @param object  $client     Cliente
+	 * @param boolean $disconnect Â¿Intentar desconectarlo?
+	 */
+	public function DestroyClient($client, $disconnect = true)
+	{
+		# Obtenemos su IdentificaciÃ³n e Ip.
+		$id = $client->GetID();
+		$ip = $client->GetIp();
+
+		# Intentamos desconectarlo.
+		if ( $disconnect )
+			$client->Disconnect(false);
+
+		# Removemos esta Ip.
+		$this->RemoveIP($ip);
+
+		# Lo quitamos de nuestras listas.
+		unset($this->aClients[$id]);
+		unset($this->aSockets[$id]);
+	}
+
+	/**
+	 * Destruye un cliente mediante su Socket.
+	 * @param resource  $socket    Socket
+	 * @param boolean $disconnect  Â¿Intentar desconectarlo?
+	 */
+	public function DestroyClientBySocket($socket, $disconnect = true)
+	{
+		# Obtenemos el cliente que tiene este Socket.
+		$client = $this->GetClientBySocket($socket);
+
+		# No se encontro...
+		if ( !$client )
+			return false;
+
+		# Destruimos al cliente.
+		$this->DestroyClient($client, $disconnect);
+	}
+
+	/**
+	 * Destruye un cliente mediante su IdentificaciÃ³n.
+	 * @param string  $id         IdentificaciÃ³n.
+	 * @param boolean $disconnect Â¿Intentar desconectarlo?
+	 */
+	public function DestroyClientById($id, $disconnect = true)
+	{
+		# Obtenemos el cliente que tiene esta Id.
+		$client = $this->GetClientByID($id);
+
+		# No se encontro...
+		if ( !$client )
+			return false;
+
+		# Destruimos al cliente.
+		$this->DestroyClient($client, $disconnect);
+	}
+
+	/**
+	 * Agrega una Ip a la base de conexiones.
+	 * @param string $ip DirecciÃ³n Ip.
+	 */
+	public function AddIP($ip)
+	{
+		# Es la primera vez que se conecta, establecer a 0 su contador.
+		if ( !is_numeric($this->ipStorage[$ip]) )
+			$this->ipStorage[$ip] = 0;
+
+		# Esta Ip tiene otra conexiÃ³n mÃ¡s.
+		++$this->ipStorage[$ip];
+	}
+
+	/**
+	 * Remueve una Ip de la base de conexiones.
+	 * @param string $ip DirecciÃ³n Ip.
+	 */
+	public function RemoveIP($ip)
+	{
+		# Una conexiÃ³n de esta Ip menos.
+		--$this->ipStorage[$ip];
+
+		# Esta Ip ya no tiene ninguna conexiÃ³n, eliminarla.
+		if ( $this->ipStorage[$ip] <= 0 )
+			unset($this->ipStorage[$ip]);
+	}
+
+	/**
+	 * Obtiene el nÃºmero de conexiones online de una Ip.
+	 * @param string $ip DirecciÃ³n Ip.
+	 */
+	public function GetIPConnections($ip)
+	{
+		# No existe, establecer a 0 su contador.
+		if ( !is_numeric($this->ipStorage[$ip]) )
+			$this->ipStorage[$ip] = 0;
+
+		return $this->ipStorage[$ip];
+	}
+
+	//######################################################################
+	// EVENTOS
+	//######################################################################
+
+	/**
+	 * [Evento]
+	 * Se ejecuta antes de matar al servidor.
+	 */
+	public function PreKill()
+	{
+
+	}
+
+	/**
+	 * [Evento]
+	 * Se ejecuta despuÃ©s de matar al servidor.
+	 */
+	public function PostKill()
+	{
+		$this->Write('SERVIDOR APAGADO CORRECTAMENTE');
+	}
+
+	/**
+	 * [Evento]
+	 * Se ejecuta cuando el servidor esta lleno.
+	 */
+	public function FullServer()
+	{
+
+	}
+
+	/**
+	 * [Evento]
+	 * Se ejecuta cuando ya no se aceptan mÃ¡s conexiones.
+	 */
+	public function NoMoreConnections()
+	{
+		return false;
+	}
+
+	/**
+	 * [Evento]
+	 * Se ejecuta cuando se debe alerta de ya no aceptar mÃ¡s conexiones.
+	 */
+	public function AlertNoMoreConnections()
+	{
+		$this->Write('Limite de conexiones superada, ya no se aceptarÃ¡n mÃ¡s conexiones.');
+	}
+
+	//######################################################################
+	// PAQUETES
+	//######################################################################
+
+	/**
+	 * Ejecuta un paquete.
+	 * @param string $packet Paquete recibido.
+	 * @param object $client Cliente que lo envio.
+	 */
+	public function Packet($packet, $client)
+	{
+
+	}
+
+	//######################################################################
+	// UTILIDADES
+	//######################################################################
+
+	public function SetLogFile($path)
+	{
+		$this->logFile = $path;
+		return $this;
+	}
+
+	public function SetDebug($value = false)
+	{
+		$this->debug = $value;
+		return $this;
+	}
+
+	public function GetOnline($checkPing = false)
+	{
+		$online = $this->online;
+
+		if ( $checkPing )
+			$online = $this->CheckPing();
+
+		return $online;
+	}
+
+	public function SetMaxConnections($value = 100)
+	{
+		$this->maxConnections = $value;
+		return $this;
+	}
+
+	public function SetMaxConnectionsPerIp($value = 2)
+	{
+		$this->maxConnectionsPerIp = $value;
+		return $this;
+	}
+
+	public function SetMaxOnline($value = 60)
+	{
+		$this->maxOnline = $value;
+		return $this;
+	}
+
+	/**
+	 * Â¿Es un servidor para WebSockets?
+	 */
+	public function IsWebSocket()
+	{
+		return $this->webSocket;
+	}
+
+	/**
+	 * Â¿Esta permitido este dominio?
+	 * @param string $domain Dominio.
+	 */
+	public function AllowedOrigin($domain = '')
+	{
+		# Dominio vacio, retornar si la verificaciÃ³n esta activada.
+		if ( empty($domain) )
+			return $this->checkOrigin;
+
+		# Quitamos cosas innecesarias...
+		$domain = str_replace('http://', '', 	$domain);
+		$domain = str_replace('https://', '', 	$domain);
+		$domain = str_replace('www.', '', 		$domain);
+		$domain = str_replace('/', '', 			$domain);
+
+		# Â¿Este dominio se encuentra en la lista blanca?
+		return isset($this->allowedOrigins[$domain]);
+	}
+
+	/**
+	 * Establece si estarÃ¡ permitido verificar el dominio de origen.
+	 * @param boolean $value Valor
+	 */
+	public function SetCheckOrigin($value = false)
+	{
+		$this->checkOrigin = $value;
+		return $this;
+	}
+
+	/**
+	 * Agrega un dominio a la lista blanca de origenes.
+	 * @param string $domain Dominio.
+	 */
+	public function AddAllowedOrigin($domain)
+	{
+		# Ya ha sido agregado.
+		if ( isset($this->allowedOrigins[$domain]) )
+			return $this;
+
+		$this->allowedOrigins[$domain] = true;
+		return $this;
+	}
+
+	/**
+	 * Remueve un dominio de la lista blanca de origenes.
+	 * @param string $domain Dominio.
+	 */
+	public function RemoveAllowedOrigin($domain)
+	{
+		unset($this->allowedOrigins[$domain]);
+		return $this;
 	}
 }
 ?>
