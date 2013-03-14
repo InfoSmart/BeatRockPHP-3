@@ -1,123 +1,97 @@
 <?
-#####################################################
-## 					 BeatRock				   	   ##
-#####################################################
-## Framework avanzado de procesamiento para PHP.   ##
-#####################################################
-## InfoSmart © 2012 Todos los derechos reservados. ##
-## http://www.infosmart.mx/						   ##
-#####################################################
-## http://beatrock.infosmart.mx/				   ##
-#####################################################
+/**
+ * BeatRock
+ *
+ * Framework para el desarrollo de aplicaciones web.
+ *
+ * @author 		Iván Bravo <webmaster@infosmart.mx> @Kolesias123
+ * @copyright 	InfoSmart 2013. Todos los derechos reservados.
+ * @license 	http://creativecommons.org/licenses/by-sa/2.5/mx/  Creative Commons "Atribución-Licenciamiento Recíproco"
+ * @link 		http://beatrock.infosmart.mx/
+ * @version 	3.0
+ *
+ * @package 	Socket
+ * Permite crear una conexión de tipo Socket.
+ *
+*/
 
-// Acción ilegal.
-if(!defined('BEATROCK'))
-	exit;	
+# Acción ilegal.
+if( !defined('BEATROCK') )
+	exit;
 
-class Socket
+class Socket extends Base
 {
-	static $socket 		= null;	
-	static $server 		= false;
-	static $actions 	= array();
-	
-	// Función privada - Lanzar error.
-	// - $code: Código de error.
-	// - $function: Función causante.
-	// - $msg: Mensaje del error.
-	static function Error($code, $function, $message = '')
-	{		
-		if(empty($message) AND is_resource(self::$socket))
-			$message = socket_strerror(socket_last_error(self::$socket));
-		
-		BitRock::SetStatus($message, __FILE__, array('function' => $function));
-		BitRock::LaunchError($code);
-		
-		return false;
-	}
-	
-	// Función privada - ¿Hay alguna conexión activa?
-	static function Ready()
+	public $socket = null;
+
+	function Error($code, $message = '')
 	{
-		if(self::$socket == null OR !is_resource(self::$socket))
+		if ( empty($message) AND $this->Connected() )
+			$message = socket_strerror(socket_last_error($this->socket));
+
+		return parent::Error($code, $message);
+	}
+
+	function __construct($host, $port = 80, $timeout = 0, $showError = false)
+	{
+		$this->Disconnect();
+		set_time_limit($timeout);
+
+		$socket 	= socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or $this->Error('socket.create');
+		$connect 	= socket_connect($socket, $host, $port);
+
+		if ( !$connect AND $showError )
+			$this->Error('socket.connect');
+
+		Reg();
+		$this->socket = $socket;
+
+		return $this;
+	}
+
+	function Connected()
+	{
+		if ( $this->socket == null )
 			return false;
-			
+
 		return true;
 	}
-	
-	// Función - Destruir conexión activa.
-	static function Crash()
-	{
-		if(!self::Ready())
-			return;
-		
-		socket_close(self::$socket);
-		Reg('Se ha desconectado del servidor Socket correctamente.');
-		
-		self::$socket 	= null;
-		self::$server 		= false;
-		self::$actions 		= array();
-	}
-	
-	// Función - Conectarse y preparar un servidor Socket.
-	// - $host: Host de conexión.
-	// - $port (Int): Puerto del servidor.
-	// - $timeout (Int): Tiempo de ejecución limite.
-	// - $e (Bool): ¿Mostrar error en caso de que el servidor se encuentre apagado?
-	static function Connect($host, $port = 80, $timeout = 0, $e = false)
-	{
-		self::Crash();		
-		set_time_limit($timeout);
-		
-		$s = socket_create(AF_INET, SOCK_STREAM, SOL_TCP) or self::Error('01s', __FUNCTION__);		
-		$r = socket_connect($s, $host, $port);
-		
-		if($r == false AND $e == true)
-			self::Error('02s', __FUNCTION__);
 
-		Reg("Se ha establecido una conexión al servidor Socket en '$host:$port' correctamente.");		
-		self::$socket = $s;
-		
-		return $r;
-	}
-	
-	// Función - Enviar datos al servidor.
-	// - $data: Datos a enviar.
-	// - $response (Bool): ¿Queremos esperar una respuesta?
-	static function Send($data, $response = false)
+	function Disconnect()
 	{
-		if(!self::Ready())
-			self::Error('03s', __FUNCTION__);
-			
+		if ( !$this->Connected() )
+			return;
+
+		socket_close($this->socket);
+
+		$this->socket = null;
+	}
+
+	function Send($data, $waitResponse = false)
+	{
+		if ( !$this->Connected() )
+			$this->Error('socket.need.connection');
+
 		$len = strlen($data);
 		$off = 0;
-		
-		while($off < $len)
-		{
-			$send = socket_write(self::$socket, substr($data, $off), $len - $off);
 
-			if(!$send)
+		while ( $off < $len )
+		{
+			$send = socket_write($this->socket, substr($data, $off), $len - $off);
+
+			if ( !$send )
 				break;
 
 			$off += $send;
 		}
-		
-		if($off < $len)
-			self::Error('04s', __FUNCTION__, 'Ha ocurrido un error al mandar '.$data.' al servidor.');
-		
-		if(!$response)
-			return true;
-		
-		$bytes = @socket_recv(self::$socket, $data, 2048, 0);
-		return $data;
-	}
 
-	// Función - Preparar un servidor interno.
-	// - $local: Dirección para la conexión.
-	// - $port (Int): Puerto de escucha.
-	// - $timeout (Int): Tiempo de ejecución limite.
-	static function Listen($local = '127.0.0.1', $port = 1212, $timeout = 0, $ctimeout = 5)
-	{
-		return new Server($local, $port, $timeout);
+		if ( $off < $len )
+			$this->Error('socket.send', 'Ha ocurrido un problema al enviar el paquete al servidor: ' . $data);
+
+		if ( !$waitResponse )
+			return true;
+
+		$bytes = @socket_recv($this->socket, $data, 2048, 0);
+		return $data;
 	}
 }
 ?>
