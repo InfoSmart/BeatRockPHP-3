@@ -402,6 +402,38 @@ function __($str)
 	return $str;
 }
 
+function __f($str, $clean = false)
+{
+	if ( is_array($str) )
+	{
+		foreach ( $str as $key => $value )
+		{
+			$str[$key] = new Str($value);
+
+			if ( !$clean )
+				$str[$key]->filter();
+			else
+				$str[$key]->clean();
+		}
+
+		return $str;
+	}
+
+	if ( is_string($str) )
+	{
+		$str = new Str($str);
+
+		if ( !$clean )
+			$str->filter();
+		else
+			$str->clean();
+
+		return $str;
+	}
+
+	return $str;
+}
+
 ################################################################
 ## Guardar un log.
 ## - $message: 		Mensaje a guardar.
@@ -548,21 +580,22 @@ Tpl::Set($site);
 # Filtramos los datos de $_GET, $_POST y $_REQUEST (Anti SQL/XSS Inyection)
 # y las ponemos en variables más cortas.
 
-$G 	= __($_GET);
-$GC = _c($_GET);
+$G 	= __f($_GET);
+$GC = __f($_GET, true);
 
-$P 	= __($_POST);
-$PC = _c($_POST);
+$P 	= __f($_POST);
+$PC = __f($_POST, true);
 
-$R 	= __($_REQUEST);
-$RC = _c($_REQUEST);
+$R 	= __f($_REQUEST);
+$RC = __f($_REQUEST, true);
 
 $PA = $_POST;
 $GA = $_GET;
 $RA = $_REQUEST;
 
 # Sospechas de inyección.
-foreach( $_REQUEST as $key => $value )
+/*
+foreach ( $_REQUEST as $key => $value )
 {
 	$value = strtoupper(urldecode($value));
 
@@ -575,6 +608,7 @@ foreach( $_REQUEST as $key => $value )
 	if( count($verify) !== 0 OR count($verify2) !== 0 OR count($verify3) !== 0 )
 		Core::SendWait();
 }
+*/
 
 # Si el modo seguro esta activado filtrar toda
 # información proveniente del usuario y las sesiones.
