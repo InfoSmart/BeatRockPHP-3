@@ -166,6 +166,9 @@ class Str
 		return $this;
 	}
 
+	/**
+	 * Aplicar filtro anti SQL Inyection a una cadena.
+	 */
 	function escape()
 	{
 		$this->undo = $this->str;
