@@ -46,6 +46,12 @@ const	EMAIL 			= 1,
 		IP 				= 7,
 		URL 			= 8;
 
+/**
+ * Usado para las SDK.
+ */
+const 	GET 	= 1,
+		POST 	= 2;
+
 class Core
 {
 	/**
