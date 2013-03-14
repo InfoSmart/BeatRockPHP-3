@@ -85,7 +85,7 @@ class BaseSQL extends BaseStatic
 		}
 
 		# Definimos información.
-		self::$error_other = array('query' => self::$last_query);
+		self::$errorOther = array('query' => self::$lastQuery);
 		return parent::Error($code, $message);
 	}
 
