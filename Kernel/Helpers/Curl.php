@@ -1,21 +1,27 @@
 <?
-#####################################################
-## 					 BeatRock				   	   ##
-#####################################################
-## Framework avanzado de procesamiento para PHP.   ##
-#####################################################
-## InfoSmart © 2012 Todos los derechos reservados. ##
-## http://www.infosmart.mx/						   ##
-#####################################################
-## http://beatrock.infosmart.mx/				   ##
-#####################################################
+/**
+ * BeatRock
+ *
+ * Framework para el desarrollo de aplicaciones web.
+ *
+ * @author 		Iván Bravo <webmaster@infosmart.mx> @Kolesias123
+ * @copyright 	InfoSmart 2013. Todos los derechos reservados.
+ * @license 	http://creativecommons.org/licenses/by-sa/2.5/mx/  Creative Commons "Atribución-Licenciamiento Recíproco"
+ * @link 		http://beatrock.infosmart.mx/
+ * @version 	3.0
+ *
+ * @package 	Example
+ * Permite crear un sistema de usuarios avanzado.
+ *
+*/
 
-// Acción ilegal.
-if(!defined('BEATROCK'))
-	exit;	
+# Acción ilegal.
+if ( !defined('BEATROCK') )
+	exit;
 
-class Curl
+class Curl extends Base
 {
+	public $cURL 		= null;
 	private $host 		= '';
 	private $params 	= array();
 
@@ -23,181 +29,237 @@ class Curl
 	public $error 		= '';
 
 	public $fileSupport = false;
-	
-	// Lanzar error.
-	// - $function: Función causante.
-	// - $message: Mensaje del error.
-	function Error($code, $function, $message = '')
+
+	/**
+	 * ¿Ya estamos preparados?
+	 */
+	function Prepared()
 	{
-		Bit::Status($message, __FILE__, array('function' => $function));
-		Bit::LaunchError($code);
+		return ( empty($this->address) ) ? false : true;
 	}
-	
-	// ¿Hay alguna conexión activa?
-	function Ready()
-	{
-		return empty($this->host) ? false : true;
-	}
-	
-	// Destruir conexión activa.
+
+	/**
+	 * Destruya la instancia actual.
+	 */
 	function Destroy()
 	{
-		if(!$this->Ready())
+		if ( !$this->Prepared() )
 			return false;
-			
-		$this->host 	= null;
-		$this->params 	= [];
+
+		$this->address 	= null;
+		$this->params 	= array();
+
+		curl_close($this->cURL);
 	}
-	
-	// Preparar una conexión cURL.
-	// - $host: Host de la conexión.
-	// - $params (Array): Opciones para la conexión.
-	function __construct($host, $params = [])
+
+	/**
+	 * Prepara una nueva conexión cURL.
+	 * @param string $host   	Dirección de conexión
+	 * @param array $params 	Opciones
+	 */
+	function __construct($host, $params = array())
 	{
-		Lang::SetSection('mod.curl');
+		Lang::SetSection('helper.curl');
 		$this->Destroy();
-		
-		if(empty($params['agent']))
+
+		# Agente vacio, usamos el del navegador.
+		if ( empty($params['agent']) )
 			$params['agent'] 	= AGENT;
-			
-		if(!is_numeric($params['timeout']))
+
+		# No se ha definido un timeout, usar 60 segundos.
+		if ( !is_numeric($params['timeout']) )
 			$params['timeout'] 	= 60;
-			
-		if(!is_bool($params['cookies']))
-			$params['cookies'] 	= false;
-			
-		if(!is_array($params['params']))
-			$params['params'] 	= [];
-			
-		if(empty($params['header']) OR !is_array($params['header']))
-			$params['header'] 	= [];
-			
+
+		# No usar cookies
+		//if ( !is_bool($params['cookies']) )
+		//	$params['cookies'] 	= false;
+
+		# Parametros para configurar la conexión.
+		if ( !is_array($params['params']) )
+			$params['params'] 	= array();
+
+		# Sin cabeceras.
+		if ( empty($params['header']) OR !is_array($params['header']) )
+			$params['header'] 	= array();
+
+		# Cabeceras predeterminadas.
 		$params['header'][] = 'Accept-Language: ' . $_SERVER['HTTP_ACCEPT_LANGUAGE'];
 		$params['header'][] = 'Accept-Charset: UTF-8, ISO-8859-1,ISO-8859-15';
 		$params['header'][] = 'Expect: ';
-		
-		$this->host 	= $host;
+
+		# Establecemos los valores.
+		$this->address 	= $host;
 		$this->params 	= $params;
-		
+		$this->cURL 	= $this->Connect();
+
 		Reg('%configuration%');
 	}
 
+	/**
+	 * Destructor
+	 */
 	function __destruct()
 	{
-		curl_close($this->host);
+		$this->Destroy();
 	}
-	
-	// Realizar una conexión cURL.
+
+	/**
+	 * Realiza la conexión cURL.
+	 * @return cURL Manipulador de cURL
+	 */
 	function Connect()
 	{
-		if(!$this->Ready())
-			$this->Error('curl.instance', __FUNCTION__);
-			
+		# Aún no estamos preparados.
+		if ( !$this->Prepared() )
+			$this->Error('curl.instance');
+
+		# Parametros
 		$params = $this->params;
-		
-		if($params['cookies'] == true OR is_array($params['cookies']))
-		{			
+
+		# Usaremos COOKIES
+		if ( $params['cookies'] == true OR is_array($params['cookies']) )
+		{
 			$file 		= BIT . 'Temp' . DS . 'cookie.' . time() . '.txt';
 			$cookies 	= '';
 
-			if(is_array($params['cookies']))
+			# Usar las COOKIES definidas.
+			if ( is_array($params['cookies']) )
 				$COOKIE = $params['cookies'];
+
+			# Usar las COOKIES del navegador.
 			else
 			{
 				global $_COOKIE;
 				$COOKIE = $_COOKIE;
 			}
-			
-			foreach($COOKIE as $param => $value)
+
+			# Ponemos las cookies en texto.
+			foreach ( $COOKIE as $key => $value )
 			{
-				if(is_array($value))
+				# ¿Esta cookie es un array?
+				if ( is_array($value) )
 					continue;
-					
-				$cookies .= "$param=$value; ";
+
+				$cookies .= "$key=$value; ";
 			}
 		}
-		
+
+		# Iniciamos la conexión.
 		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $this->host);
-		curl_setopt($ch, CURLOPT_USERAGENT, $params['agent']);
-		curl_setopt($ch, CURLOPT_TIMEOUT, $params['timeout']);
-		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $params['timeout']);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $params['header']);
-		curl_setopt($ch, CURLOPT_HEADER, false);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-		
-		if(!empty($cookies))
+		curl_setopt($ch, CURLOPT_URL, 				$this->address);
+		curl_setopt($ch, CURLOPT_USERAGENT, 		$params['agent']);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 			$params['timeout']);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 	$params['timeout']);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, 		$params['header']);
+		curl_setopt($ch, CURLOPT_HEADER, 			false);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 	false);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 	false);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 	true);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 	true);
+
+		# Usaremos COOKIES.
+		if ( !empty($cookies) )
 		{
-			curl_setopt($ch, CURLOPT_COOKIE, $cookies);
-			curl_setopt($ch, CURLOPT_COOKIEFILE, $file);
+			curl_setopt($ch, CURLOPT_COOKIE, 		$cookies);
+			curl_setopt($ch, CURLOPT_COOKIEFILE, 	$file);
 		}
-		
-		if(is_array($params['params']))
+
+		# Establecer opciones extras para la conexión.
+		if ( is_array($params['params']) )
 		{
-			foreach($params['params'] as $param => $value)
+			foreach ( $params['params'] as $key => $value )
 			{
-				if(!is_integer($param))
+				# Las llaves deben ser de tipo entero.
+				if ( !is_integer($key) )
 					continue;
-					
-				curl_setopt($ch, $param, $value);
+
+				# Establecemos la opción.
+				curl_setopt($ch, $key, $value);
 			}
 		}
-		
+
 		return $ch;
 	}
-	
-	// Obtener las cabeceras de la conexión.
+
+	/**
+	 * Reconectarse.
+	 */
+	function Reconnect()
+	{
+		curl_close($this->cURL);
+		$this->cURL = $this->Connect();
+	}
+
+	/**
+	 * Obtiene las cabeceras de la conexión.
+	 */
 	function Headers()
 	{
-		$ch = $this->Connect();
-		curl_setopt($ch, CURLOPT_POST, false);
-		curl_exec($ch);
-		$re = curl_getinfo($ch, CURLINFO_HEADER_OUT);
-	
-		$this->errno = curl_errno($ch);
-		$this->error = curl_error($ch);
-		
+		curl_setopt($this->cURL, CURLOPT_POST, 			false);
+		curl_setopt($this->cURL, CURLINFO_HEADER_OUT, 	true);
+
+		$re = curl_getinfo($this->cURL, CURLINFO_HEADER_OUT);
+
+		$this->errno = curl_errno($this->cURL);
+		$this->error = curl_error($this->cURL);
+
 		return $re;
 	}
 
-	// Obtener la respuesta de la conexión.
+	/**
+	 * Obtiene la información de una conexión.
+	 */
+	function Info()
+	{
+		curl_setopt($this->cURL, CURLOPT_POST, false);
+		$re = curl_getinfo($this->cURL);
+
+		$this->errno = curl_errno($this->cURL);
+		$this->error = curl_error($this->cURL);
+
+		return $re;
+	}
+
+	/**
+	 * Lanza una petición de tipo GET a la conexión.
+	 */
 	function Get()
 	{
-		$ch = $this->Connect();
-		curl_setopt($ch, CURLOPT_POST, false);
-		$re = curl_exec($ch);
+		curl_setopt($this->cURL, CURLOPT_POST, false);
+		$re = curl_exec($this->cURL);
 
-		$this->errno = curl_errno($ch);
-		$this->error = curl_error($ch);
+		$this->errno = curl_errno($this->cURL);
+		$this->error = curl_error($this->cURL);
 
 		return $re;
 	}
-	
-	// Enviar información a la conexión.
-	// - $data (Array): Información a enviar.
+
+	/**
+	 * Lanza una petición de tipo POST a la conexión
+	 * @param array $data Información a enviar
+	 */
 	function Post($data)
 	{
-		if(!is_array($data))
+		# No hay información a enviar
+		# ¿entonces para que usas POST?
+		if ( !is_array($data) )
 			return false;
 
-		if($this->fileSupport == true)
+		# Soporte para el envio de archivos.
+		if ( $this->fileSupport == true )
 		{
 			$post 				= $data;
 			$this->fileSupport 	= false;
 		}
 		else
 			$post = http_build_query($data, null, '&');
-		
-		$ch = $this->Connect();
-		curl_setopt($ch, CURLOPT_POST, true);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
-		$re = curl_exec($ch);
 
-		$this->errno = curl_errno($ch);
-		$this->error = curl_error($ch);
+		curl_setopt($this->cURL, CURLOPT_POST, 			true);
+		curl_setopt($this->cURL, CURLOPT_POSTFIELDS, 	$post);
+		$re = curl_exec($this->cURL);
+
+		$this->errno = curl_errno($this->cURL);
+		$this->error = curl_error($this->cURL);
 
 		Reg('%datasend.correct%');
 		return $re;
