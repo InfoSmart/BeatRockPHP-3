@@ -25,6 +25,7 @@ CORE
 
 - La función Core::Valid(str, type) ahora acepta una constante número de tipo EMAIL, USERNAME, IP, CREDIT_CARD, URL, PASSWORD, SUBDOMAIN y DOMAIN en su parametro type
 - La función Core::Valid(str, type) ahora puede ser llamada desde la instancia de una cadena inteligente (Str) usando la función valid(type)
+- La función "CleanString" ahora se llama "FormatToUrl"
 
 SQL
 ------------------------
@@ -35,23 +36,23 @@ SQL
 	- {DP} es lo mismo que usar {DB_PREFIX}
 	- {DA} es lo mismo que usar {DB_PREFIX} (Legacy)
 
-View
+VIEW
 ------------------------
 
 - Se agrego el ayudante "View" para cargar vistas de forma individual.
 
-Str
+STR
 -------------------------
 
 - Se agrego el ayudante "Str" que permite la creación de cadenas inteligentes o de uso con POO.
 - Str ahora detecta funciones de PHP de forma automática para pasar sobre la cadena iniciada.
 
-Zip
+ZIP
 ------------------------
 
 - Ahora se usa [ZipArchive](http://www.php.net/manual/es/class.ziparchive.php "ZipArchive")
 
-Tpl
+TPL
 ------------------------
 
 - La función "jQuery" ahora se llama "AddjQuery"
@@ -67,11 +68,39 @@ Tpl
 - La función "Process" ahora puede ser usada con "new View()"
 - La función "SetParams", "SetLang", "Compress" ahora son parte del ayudante "View"
 
+CURL
+------------------------
+
+- Ahora Curl ya no reconectara/reconfigurará la conexión cada vez que se realice una petición, permitiendo crear consultas a partir de la consulta hecha anteriormente.
+- Se agrego la función "Info" que devuelve toda la información de una conexión.
+- Se ha solucionado un problema con la función "Headers" que no permitia obtener las cabeceras de una conexión.
+- Se agrego la función "Reconnect" para volver a reconectar/reconfigurar la conexión.
+
+DATE
+------------------------
+
+- Se han arreglado problemas en las funciones.
+
+DNS
+------------------------
+
+- Se ha removido la función "CheckEmail" por motivos de mal funcionamiento y compatibilidad.
+
+EMAIL
+------------------------
+
+- Se agrego el ayudante "Email" que permite de una manera mas ordenada y avanzada el envio de correos electrónicos.
+
+FTP
+------------------------
+
+- Se agrego la función "GetFileList" para obtener una lista con información detallada de los archivos de un directorio.
+- La función "DeleteDir" ahora puede eliminar directorios NO vacios.
 
 Futuras implementaciones
 ------------------------
 
-- Espacio de nombres (Iván: No lo considero necesario... encerio.)
+- Espacio de nombres (Iván: No lo considero necesario... encerio. [Que alguien me de una buena razón para hacerlo])
 - PostgreSQL.
 - Controladores (Iván: Si, esos que sirven para acceder a ciertas partes de la aplicación usando funciones [¿Quien invento esto?])
 - Jade. (Dudo mucho que la implementación actual siga funcionando)
