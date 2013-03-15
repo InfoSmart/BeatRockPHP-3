@@ -71,8 +71,8 @@ class Curl extends Base
 			$params['timeout'] 	= 60;
 
 		# No usar cookies
-		//if ( !is_bool($params['cookies']) )
-		//	$params['cookies'] 	= false;
+		if ( !is_bool($params['cookies']) AND !is_array($params['cookies']) )
+			$params['cookies'] 	= false;
 
 		# Parametros para configurar la conexión.
 		if ( !is_array($params['params']) )
