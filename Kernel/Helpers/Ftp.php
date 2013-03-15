@@ -1,134 +1,179 @@
-<?
-#####################################################
-## 					 BeatRock				   	   ##
-#####################################################
-## Framework avanzado de procesamiento para PHP.   ##
-#####################################################
-## InfoSmart © 2012 Todos los derechos reservados. ##
-## http://www.infosmart.mx/						   ##
-#####################################################
-## http://beatrock.infosmart.mx/				   ##
-#####################################################
+<?php
+/**
+ * BeatRock
+ *
+ * Framework para el desarrollo de aplicaciones web.
+ *
+ * @author 		Iván Bravo <webmaster@infosmart.mx> @Kolesias123
+ * @copyright 	InfoSmart 2013. Todos los derechos reservados.
+ * @license 	http://creativecommons.org/licenses/by-sa/2.5/mx/  Creative Commons "Atribución-Licenciamiento Recíproco"
+ * @link 		http://beatrock.infosmart.mx/
+ * @version 	3.0
+ *
+ * @package 	Ftp
+ * Permite la conexión con un servidor Ftp.
+ *
+*/
 
-// Acción ilegal.
-if(!defined('BEATROCK'))
-	exit;	
+# Acción ilegal
+if ( !defined('BEATROCK') )
+	exit;
 
-class Ftp
+class Ftp extends Base
 {
-	public $connection = null;
+	public $server 		= NULL;
 	public $host 		= '';
 	public $username 	= '';
 	public $password 	= '';
 	public $port 		= 21;
 	public $ssl 		= false;
 	public $pasv 		= true;
-	
-	// Lanzar error.
-	// - $code: Código del error.
-	// - $function: Función causante.
-	// - $message: Mensaje del error.
-	function Error($code, $function, $message = '')
+
+	/**
+	 * ¿Nos hemos conectado al servidor Ftp?
+	 * @return boolean Devuelve SI o NO.
+	 */
+	function Connected($e = false)
 	{
-		BitRock::SetStatus($message, __FILE__, array('function' => $function));
-		BitRock::LaunchError($code);
+		return ( $this->server == NULL ) ? false : true;
 	}
-	
-	// ¿Hay alguna conexión activa?
-	// - $e: ¿Lanzar error en caso de que no haya una conexión activa?
-	function Ready($e = false)
+
+	/**
+	 * Desconectarse del servidor Ftp.
+	 */
+	function Disconnect()
 	{
-		return (empty($this->host)) ? false : true;
-	}
-	
-	// Función - Destruir conexión activa.
-	function Crash()
-	{
-		if(!$this->Ready())
+		# Necesitamos habernos conectado.
+		if ( !$this->Connected() )
 			return;
-		
-		ftp_quit($this->connection);
-		
-		$this->connection 	= null;
-		$this->host 		= null;
+
+		# Nos desconectamos.
+		ftp_quit($this->server);
+
+		# Reiniciamos variables.
+		$this->server 		= null;
+		$this->host 		= '';
 		$this->username 	= '';
 		$this->password 	= '';
 		$this->port 		= 21;
 		$this->ssl 			= false;
 		$this->pasv 		= true;
 	}
-	
-	// Preparar una conexión FTP.
-	// - $host: Host para la conexión.
-	// - $username: Nombre de usuario.
-	// - $password: Contraseña.
-	// - $port (Int): Puerto (Predeterminado: 21).
-	// - $ssl (Bool): ¿Usar conexión segura?
-	// - $pasv (Bool): ¿Modo pasivo?
+
+	/**
+	 * Conexión al servidor Ftp.
+	 * @param string  $host     Host de conexión
+	 * @param string  $username Nombre de usuario.
+	 * @param string  $password Contraseña
+	 * @param integer $port     Puerto del servidor.
+	 * @param boolean $ssl      ¿Conexión SSL?
+	 * @param boolean $pasv     ¿Modo pasivo?
+	 */
 	function __construct($host, $username, $password, $port = 21, $ssl = false, $pasv = true)
 	{
 		Lang::SetSection('mod.ftp');
-		$this->Crash();
-		
-		if(!is_numeric($port))
+		parent::__construct($this);
+
+		# Desconectamos cualquier servidor activo.
+		$this->Disconnect();
+
+		# El puerto es inválido, usamos el predeterminado.
+		if ( !is_numeric($port) )
 			$port = 21;
-		
-		if(!is_bool($ssl))
+
+		# La conexión SSL es inválida, no la usamos.
+		if ( !is_bool($ssl) )
 			$ssl = false;
-		
-		if(!is_bool($pasv))
+
+		# El modo pasivo es inválido, la usamos.
+		if ( !is_bool($pasv) )
 			$pasv = true;
-		
+
+		# Establecemos las variables.
 		$this->host 	= $host;
 		$this->username = $username;
 		$this->password = $password;
 		$this->port 	= $port;
 		$this->ssl 		= $ssl;
 		$this->pasv 	= $pasv;
-		
+
 		Reg('%ftp.connect% '.$host.'.');
 	}
-	
-	// Conectarse.
+
+	/**
+	 * Realiza la conexión al servidor (si es la primera vez)
+	 * @return resource Conexión FTP.
+	 */
 	function Connect()
 	{
-		if(!$this->Ready())
-			$this->Error('ftp.need', __FUNCTION__);
-
 		Lang::SetSection('mod.ftp');
-		
-		if($this->connection !== null)
-			return $this->connection;
-		
-		$f = ($this->ssl) ? ftp_ssl_connect($this->host, $this->port) or $this->Error('ftp.connect', __FUNCTION__) : ftp_connect($this->host, $this->port) or $this->Error('ftp.connect', __FUNCTION__);
 
-		ftp_login($f, $this->username, $this->password) or $this->Error("ftp.connect", __FUNCTION__, '%error.ftp.login%');
-		ftp_pasv($f, $this->pasv);
-		
-		$this->connection = $f;		
-		return $f;
+		# La conexión se ha establecido.
+		if ( $this->server !== NULL )
+			return $this->server;
+
+		# Nos conectamos.
+		$ftp = ( $this->ssl ) ? ftp_ssl_connect($this->host, $this->port) or $this->Error('ftp.connect') : ftp_connect($this->host, $this->port) or $this->Error('ftp.connect');
+
+		# Iniciamos sesión.
+		ftp_login($ftp, $this->username, $this->password) or $this->Error('ftp.connect', '%error.ftp.login%');
+		ftp_pasv($ftp, $this->pasv);
+
+		$this->server = $ftp;
+		return $ftp;
 	}
-	
-	// Obtener el directorio actual.
+
+	/**
+	 * Obtiene el directorio actual.
+	 */
 	function GetDir()
 	{
 		$f = $this->Connect();
 		$d = ftp_pwd($f);
-		
+
 		return $d;
 	}
-	
-	// Ir a un directorio.
-	// - $dir: Ruta del directorio a ir.
+
+	/**
+	 * Obtiene una lista detalla de los archivo en el directorio.
+	 */
+	function GetFileList($path)
+	{
+		$f 			= $this->Connect();
+		$rfiles 	= ftp_rawlist($f, $path);
+
+		foreach ( $rfiles as $line )
+		{
+			preg_match("#([drwx\-]+)([\s]+)([0-9]+)([\s]+)([a-zA-Z0-9\.]+)([\s]+)([a-zA-Z0-9\.]+)([\s]+)([0-9]+)([\s]+)([a-zA-Z]+)([\s ]+)([0-9]+)([\s]+)([0-9]+):([0-9]+)([\s]+)([a-zA-Z0-9\.\-\_ ]+)#si", $line, $out);
+
+			if ( $out[3] !== 1 AND ($out[18] == "." || $out[18] == "..") )
+				continue;
+
+			$files[$out[18]]['rights'] 			= $out[1];
+            $files[$out[18]]['type'] 			= ( $out[3] == 1 ) ? 'file': 'folder';
+            $files[$out[18]]['owner_id'] 		= $out[5];
+            $files[$out[18]]['owner'] 			= $out[7];
+            $files[$out[18]]['date_modified'] 	= $out[11].' '.$out[13] . ' '.$out[13].':'.$out[16].'';
+		}
+
+		return $files;
+	}
+
+	/**
+	 * Cambia la ubicación actual.
+	 * @param string $dir Directorio a donde ir.
+	 */
 	function ToDir($dir)
 	{
 		$f = $this->Connect();
 		$r = ftp_chdir($f, $dir);
-		
+
 		return $r;
 	}
 
-	// Volver al directorio padre.
+	/**
+	 * Vuelve al directorio anterior.
+	 */
 	function BackDir()
 	{
 		$f = $this->Connect();
@@ -136,82 +181,108 @@ class Ftp
 
 		return $r;
 	}
-	
-	// Escribir un archivo.
-	// - $to: Ruta del archivo de destino.
-	// - $data: Datos/Bits del archivo.
+
+	/**
+	 * Escribe un archivo.
+	 * @param string $to   Ruta del archivo en la conexión FTP.
+	 * @param string $data Datos del archivo.
+	 */
 	function Write($to, $data)
 	{
 		$file = Io::SaveTemporal($data);
 		return $this->Upload($file, $to);
 	}
-	
-	// Subir un archivo.
-	// - $file: Ruta del archivo a subir.
-	// - $to: Ruta del archivo de destino.
+
+	/**
+	 * Sube un archivo.
+	 * @param string $file Ruta del archivo a subir.
+	 * @param string $to   Ruta del archivo en la conexión FTP.
+	 */
 	function Upload($file, $to)
 	{
 		$f = $this->Connect();
 		ftp_alloc($f, filesize($file));
 		$r = ftp_put($f, $to, $file, FTP_BINARY);
-		
+
 		return $r;
 	}
-	
-	//Leer/Bajar un archivo.
-	// - $file: Ruta del archivo que queremos.
-	// - $to: Ruta del archivo donde guardar/bajar.	
+
+	/**
+	 * Lee y/o baja un archivo.
+	 * @param string $file Ruta del archivo en la conexión FTP.
+	 * @param string $to   Ruta en donde descargar el archivo.
+	 */
 	function Read($file, $to = '')
 	{
-		if(empty($to))
+
+		# No hay ruta donde descargar, solo queremos leerlo.
+		if ( empty($to) )
 			$to = BIT . 'Temp' . DS . Core::Random(20);
-			
+
 		$f = $this->Connect();
 		ftp_get($f, $to, $file, FTP_BINARY);
-		
+
 		return Io::Read($to);
 	}
-	
-	// Eliminar un archivo.
-	// - $file: Ruta del archivo que queremos eliminar.
+
+	/**
+	 * Elimina un archivo.
+	 * @param string $file Ruta del archivo en la conexión FTP.
+	 */
 	function Delete($file)
 	{
 		$f = $this->Connect();
 		$r = ftp_delete($f, $file);
-		
+
 		return $r;
 	}
-	
-	// Crear un directorio.
-	// - $dir: Ruta del directorio que queremos crear.
+
+	/**
+	 * Crea un directorio.
+	 * @param string $dir Ruta del directorio en la conexión FTP.
+	 */
 	function NewDir($dir)
 	{
 		$f = $this->Connect();
 		$r = ftp_mkdir($f, $dir);
-		
+
 		return $r;
 	}
-	
-	// Eliminar un directorio y sus archivos.
-	// - $dir: Ruta del directorio que queremos eliminar.
+
+	/**
+	 * Elimina un directorio y todos sus archivos dentro.
+	 * @param string $dir Ruta del directorio en la conexión FTP.
+	 */
 	function DeleteDir($dir)
 	{
-		$f = $this->Connect();
+		$f 		= $this->Connect();
+		$files 	= $this->GetFileList($dir);
+
+		if ( count($files) > 0 )
+		{
+			foreach ( $files as $file => $data )
+			{
+				if ( $data['type'] == 'file' )
+					$this->Delete($dir . $file);
+				else
+					$this->DeleteDir($dir . $file . '/');
+			}
+		}
+
 		$r = ftp_rmdir($f, $dir);
-		
 		return $r;
 	}
-	
+
 	// Ejecutar un comando FTP.
 	// - $c: Comando a ejecutar.
 	function Command($c)
 	{
 		$f = $this->Connect();
 		$r = ftp_exec($f, $c);
-		
+
 		return $r;
 	}
-	
+
 	// Cambiar los permisos de un archivo/directorio.
 	// - $file: Ruta del archivo a cambiar permisos.
 	// - $mode (Int): Permisos.
@@ -219,7 +290,7 @@ class Ftp
 	{
 		$f = $this->Connect();
 		$r = ftp_chmod($f, $mode, $file);
-		
+
 		return $r == false ? false : true;
 	}
 }
