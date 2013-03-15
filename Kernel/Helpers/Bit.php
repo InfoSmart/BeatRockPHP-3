@@ -365,13 +365,13 @@ class Bit
 		# Algunos ayudantes necesitan iniciarse.
 		# TODO: ¿Mejorar esto?
 
-		if( method_exists($name, '_construct') AND $name !== 'StaticBase' )
+		if ( method_exists($name, '_construct') AND $name !== 'StaticBase' )
 			$name::_construct($name);
 
-		if( $name == 'DNS' )
-			require_once APP_CTRLS . 'External' . DS . 'SMTPValidate.php';
+		if ( $name == 'DNS' )
+			require_once KERNEL . 'Helpers' . DS . 'External' . DS . 'SMTPValidate.php';
 
-		if( self::HelperLoaded('Lang') )
+		if ( self::HelperLoaded('Lang') )
 		{
 			Lang::SetSection('helper.bitrock');
 			Reg("%helper.loaded%: $name.");
