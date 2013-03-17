@@ -20,7 +20,7 @@ class Robot
 	// - $link: Dirección web.
 	static function Data($link)
 	{
-		if(!Core::isValid($link, 'url'))
+		if(!Core::Valid($link, URL))
 			return false;
 
 		$result = array();
@@ -56,7 +56,7 @@ class Robot
 
 		if(!empty($res))
 			return $res;
-						
+
 		preg_match('/<title>([^<]+)<\/title>/i', $html, $title);
 		return (!empty($title[1])) ? $title[1] : false;
 	}
@@ -65,10 +65,10 @@ class Robot
 	// - $html: Dirección web o código HTML del sitio.
 	static function GetMetas($html)
 	{
-		if(Core::isValid($html, 'url'))
+		if(Core::Valid($html, URL))
 			$html = self::GetHtml($html);
-		
-		BitRock::$ignore = true;
+
+		Bit::$ignore = true;
 
 		$link 	= Io::SaveTemporal($html);
 		$res 	= get_meta_tags($link);
@@ -94,7 +94,7 @@ class Robot
 	// - $html: Dirección web o código HTML del sitio.
 	static function GetLinks($html, $debug = false)
 	{
-		if(Core::isValid($html, 'url'))
+		if(Core::Valid($html, URL))
 			$html = self::GetHtml($html);
 
 		preg_match_all('/<a\s+.*?href=[\"\']?([^\"\' >]*)[\"\']?[^>]*>(.*?)<\/a>/i', $html, $links, PREG_SET_ORDER);
@@ -116,7 +116,7 @@ class Robot
 	// - $html: Dirección web o código HTML del sitio.
 	static function GetRobots($html)
 	{
-		if(Core::isValid($html, 'url'))
+		if(Core::Valid($html, URL))
 			$html = self::GetHtml($html);
 
 		$meta = self::GetMetas($html);
@@ -142,12 +142,12 @@ class Robot
 	{
 		global $site;
 
-		Curl::Init($link, array(
+		$curl = new Curl($link, array(
 			'agent' 	=> 'BeatRobot V1',
 			'timeout' 	=> 10
 		));
 
-		return Curl::Get();
+		return $curl->Get();
 	}
 }
 ?>
