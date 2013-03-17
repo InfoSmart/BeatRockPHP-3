@@ -34,20 +34,20 @@ class SQL extends BaseSQL
 	{
 		global $config;
 		$sql = $config['sql'];
-		
+
 		Lang::SetSection('controller.mysql');
 
 		# Desconectamos cualquier servidor activo.
 		self::Disconnect();
-		
+
 		# $host O $username estan vacios, usar los del archivo de configuración.
 		if( empty($host) OR empty($username) )
-		{			
+		{
 			$host 		= $sql['host'];
 			$username 	= $sql['user'];
 			$password 	= $sql['pass'];
-			$dbname 	= $sql['name'];	
-			$port		= $sql['port'];		
+			$dbname 	= $sql['name'];
+			$port		= $sql['port'];
 		}
 
 		# ¡Aún siguen vacios! Algo raro esta pasando aquí...
@@ -78,7 +78,7 @@ class SQL extends BaseSQL
 
 		# Hacemos prueba de acceso a la tabla site_config
 		$test = $con->query("SELECT null FROM $sql[prefix]site_config");
-		
+
 		# ¡Prueba fallida! Al parecer no existe la tabla.
 		# Intentamos recuperar la base de datos.
 		if( !$test )
@@ -102,7 +102,7 @@ class SQL extends BaseSQL
 		# Si no existe, la recuperamos.
 		self::$server->select_db($dbname) or self::Recover($dbname);
 	}
-	
+
 	/**
 	 * Ejecutar una consulta.
 	 * @param  string  $query Consulta.
@@ -125,7 +125,7 @@ class SQL extends BaseSQL
 
 			return $result;
 		}
-		
+
 		# Traducimos los posibles "accesos directos"
 		# includos {DA} y {DP}
 		$query 	= Keys($query, array('DA' => DB_PREFIX, 'DP' => DB_PREFIX));
@@ -138,7 +138,7 @@ class SQL extends BaseSQL
 		# !!FIX
 		# Es necesario ajustarla antes de realizar la consulta para que en caso
 		# de un error se tome esta variable como referencia.
-		self::$lastQuery 	= $query;	
+		self::$lastQuery 	= $query;
 		# Realizamos la consulta.
 		$result 			= self::$server->query($query) or self::Error('sql.query');
 
@@ -155,14 +155,14 @@ class SQL extends BaseSQL
 			self::$lastResource 	= $result;
 
 		gc_collect_cycles();
-		
+
 		Reg('%query.correct%', 'sql');
 		return $result;
 	}
-	
+
 	/**
 	 * Obtener el numero de filas de una consulta.
-	 * @param string $query Consulta O recurso de la consulta. Si 
+	 * @param string $query Consulta O recurso de la consulta. Si
 	 * se deja vacio se usará el recurso de la última consulta hecha.
 	 */
 	static function Rows($query = '')
@@ -191,15 +191,18 @@ class SQL extends BaseSQL
 			# ¡No contiene SELECT!
 			if( !Contains($query, 'SELECT', true) )
 				return self::Error('sql.query.novalid');
-			
+
 			# Ejecutamos la consulta y obtenemos su recurso.
 			$sql = self::query($query);
 		}
 
+		else if ( is_object($query) )
+			$sql = $query;
+
 		# Establecemos el recurso de la última consulta hecha.
 		else
 			$sql = self::$lastResource;
-		
+
 		# Obtenemos las filas.
 		$result = $sql->num_rows;
 
@@ -209,10 +212,10 @@ class SQL extends BaseSQL
 
 		return $result;
 	}
-	
+
 	/**
 	 * Obtener los valores de una consulta.
-	 * @param string $query Consulta O recurso de la consulta. Si 
+	 * @param string $query Consulta O recurso de la consulta. Si
 	 * se deja vacio se usará el recurso de la última consulta hecha.
 	 */
 	static function Assoc($query = '')
@@ -241,11 +244,13 @@ class SQL extends BaseSQL
 			# ¡No contiene SELECT!
 			if( !Contains($query, 'SELECT', true) )
 				return self::Error('sql.query.novalid');
-			
+
 			# Ejecutamos la consulta y obtenemos su recurso.
 			$sql 	= self::query($q);
 			$result = ( self::Rows($sql) > 0 ) ? $sql->fetch_assoc() : false;
 		}
+		else if ( is_resource($query) )
+			$result = $query->fetch_assoc();
 		else
 		{
 			# Establecemos el recurso de la última consulta hecha.
@@ -256,13 +261,13 @@ class SQL extends BaseSQL
 		# Liberamos memoria.
 		if( self::$freeResult )
 			self::Free();
-		
+
 		return $result;
 	}
 
 	/**
 	 * Obtener los valores de una consulta.
-	 * @param string $query Consulta O recurso de la consulta. Si 
+	 * @param string $query Consulta O recurso de la consulta. Si
 	 * se deja vacio se usará el recurso de la última consulta hecha.
 	 */
 	static function Object($query = '')
@@ -291,7 +296,7 @@ class SQL extends BaseSQL
 			# ¡No contiene SELECT!
 			if( !Contains($query, 'SELECT', true) )
 				return self::Error('sql.query.novalid');
-			
+
 			# Ejecutamos la consulta y obtenemos su recurso.
 			$sql 	= self::query($q);
 			$result = ( self::Rows($sql) > 0 ) ? $sql->fetch_object() : false;
@@ -306,13 +311,13 @@ class SQL extends BaseSQL
 		# Liberamos memoria.
 		if( self::$freeResult )
 			self::Free();
-		
+
 		return $result;
 	}
 
 	/**
 	 * Obtener los valores de una consulta.
-	 * @param string $query Consulta O recurso de la consulta. Si 
+	 * @param string $query Consulta O recurso de la consulta. Si
 	 * se deja vacio se usará el recurso de la última consulta hecha.
 	 */
 	static function GetArray($query = '')
@@ -341,7 +346,7 @@ class SQL extends BaseSQL
 			# ¡No contiene SELECT!
 			if( !Contains($query, 'SELECT', true) )
 				return self::Error('sql.query.novalid');
-			
+
 			# Ejecutamos la consulta y obtenemos su recurso.
 			$sql 	= self::query($q);
 			$result = ( self::Rows($sql) > 0 ) ? $sql->fetch_array() : false;
@@ -356,13 +361,13 @@ class SQL extends BaseSQL
 		# Liberamos memoria.
 		if( self::$freeResult )
 			self::Free();
-		
+
 		return $result;
 	}
 
 	/**
 	 * Obtener los valores de una consulta.
-	 * @param string $query Consulta O recurso de la consulta. Si 
+	 * @param string $query Consulta O recurso de la consulta. Si
 	 * se deja vacio se usará el recurso de la última consulta hecha.
 	 */
 	static function Row($query = '')
@@ -391,7 +396,7 @@ class SQL extends BaseSQL
 			# ¡No contiene SELECT!
 			if( !Contains($query, 'SELECT', true) )
 				return self::Error('sql.query.novalid');
-			
+
 			# Ejecutamos la consulta y obtenemos su recurso.
 			$sql 	= self::query($q);
 			$result = ( self::Rows($sql) > 0 ) ? $sql->fetch_row() : false;
@@ -406,7 +411,7 @@ class SQL extends BaseSQL
 		# Liberamos memoria.
 		if( self::$freeResult )
 			self::Free();
-		
+
 		return $result;
 	}
 
@@ -441,7 +446,7 @@ class SQL extends BaseSQL
 			return self::Error('sql.query.novalid');
 
 		# En caso de haber varios valores estos se separan por comas.
-		$pp 	= explode(',', $params[1]);	
+		$pp 	= explode(',', $params[1]);
 		# Ejecutamos la consulta.
 		$row 	= self::Assoc($query);
 		# Resultado predeterminado.
@@ -466,7 +471,7 @@ class SQL extends BaseSQL
 
 		return $result;
 	}
-	
+
 	/**
 	 * Insertar datos en una tabla.
 	 * @param string $table Tabla
@@ -477,16 +482,16 @@ class SQL extends BaseSQL
 	{
 		if( !self::Connected() )
 			return self::Error('sql.need.connection');
-		
+
 		if( !is_array($data) )
 			return false;
-			
+
 		$values = array_values($data);
 		$keys 	= array_keys($data);
-		
+
 		return self::query("INSERT INTO {DP}$table (" . implode(',', $keys) . ") VALUES ('" . implode('\',\'', $values) . "')");
 	}
-	
+
 	/**
 	 * Actualizar los datos de una tabla.
 	 * @param string  $table   	Tabla
@@ -500,36 +505,36 @@ class SQL extends BaseSQL
 		# Necesitamos habernos conectado.
 		if( !self::Connected() )
 			return self::Error('sql.need.connection');
-		
+
 		# Los datos a actualizar no son un array.
 		if( !is_array($updates) )
 			return false;
-		
+
 		# Construimos la consulta.
-		
+
 		$query 	= "UPDATE {DP}$table SET ";
 		$i 		= 0;
-		
+
 		foreach( $updates as $key => $value )
 		{
-			$i++;			
+			$i++;
 			$query .= "$key = '$value'";
-			
+
 			if( count($updates) !== $i )
 				$query .= ',';
 		}
-		
+
 		if( !empty($where) )
 		{
 			$query .= ' WHERE ';
-			
+
 			foreach( $where as $key )
 				$query .= "  $key";
 		}
-		
+
 		if( $limit !== 0 )
 			$query .= " LIMIT $limit";
-		
+
 		return self::query($query);
 	}
 
@@ -610,22 +615,22 @@ class SQL extends BaseSQL
 		# $query esta vacia y no se ha hecho ninguna consulta antes.
 		if( empty($query) AND !self::FirstQuery() )
 			return self::Error('sql.query.need');
-		
+
 		# Establecemos el recurso de la última consulta hecha.
 		if( empty($query) )
 			$query = self::$lastResource;
 
-		# Devolvemos la variable $freeResult a false 
+		# Devolvemos la variable $freeResult a false
 		if( self::$freeResult )
 			self::$freeResult = false;
 
 		return $query->free();
 	}
-	
+
 	/**
 	 * Obtener un valor especifico de un recurso o la última consulta hecha.
 	 * @param string $row   Valor
-	 * @param string $query Consulta O recurso de la consulta. Si 
+	 * @param string $query Consulta O recurso de la consulta. Si
 	 * se deja vacio se usará el recurso de la última consulta hecha.
 	 * @return string Valor
 	 */
@@ -634,31 +639,31 @@ class SQL extends BaseSQL
 		# $query esta vacia y no se ha hecho ninguna consulta antes.
 		if( empty($query) AND !self::FirstQuery() )
 			return self::Error('sql.query.need');
-		
+
 		# Establecemos el recurso de la última consulta hecha.
 		if( empty($query) )
 			$query = self::$lastResource;
-			
+
 		$result = self::Assoc($query);
 		return $result[$row];
 	}
-	
+
 	/**
 	 * Cambia el motor de las tablas especificadas.
 	 * @param string $engine Nuevo motor (MYISAM o INNODB)
 	 * @param string $tables Tablas afectadas.
 	 */
 	static function Engine($engine = 'MYISAM', $tables = '')
-	{	
+	{
 		# Por ahora solo MYISAM y INNODB son aceptadas.
 		if( $engine !== 'MYISAM' AND $engine !== 'INNODB' )
 			return self::Error('sql.engine');
-		
-		# Afectar a todas las tablas.	
+
+		# Afectar a todas las tablas.
 		if( empty($tables) )
 		{
 			$query = self::query('SHOW TABLES');
-			
+
 			while( $tmp = self::GetArray($query) )
 				self::query("ALTER TABLE $tmp[0] ENGINE = $engine");
 		}
@@ -669,21 +674,21 @@ class SQL extends BaseSQL
 			foreach( $tables as $t )
 				self::query("ALTER TABLE $t ENGINE = $engine");
 		}
-		
+
 		Reg("%engine_correct% $engine");
 	}
-	
+
 	/**
 	 * Optimiza las tablas especificadas.
 	 * @param array $tables Tablas afectadas.
 	 */
 	static function Optimize($tables = '')
 	{
-		# Afectar a todas las tablas.	
+		# Afectar a todas las tablas.
 		if( empty($tables) )
 		{
 			$query = self::query('SHOW TABLES');
-			
+
 			while( $tmp = self::GetArray($query) )
 				self::query("OPTIMIZE TABLE $tmp[0]");
 		}
@@ -694,21 +699,21 @@ class SQL extends BaseSQL
 			foreach( $tables as $t )
 				self::query("OPTIMIZE TABLE $t");
 		}
-		
+
 		Reg('%optimize_correct%');
 	}
-	
+
 	/**
 	 *  Reparar las tablas especificadas.
 	 * @param array $tables Tablas afectadas.
 	 */
 	static function Repair($tables = '')
 	{
-		# Afectar a todas las tablas.	
+		# Afectar a todas las tablas.
 		if( empty($tables) )
 		{
 			$query = self::query('SHOW TABLES');
-			
+
 			while( $tmp = self::GetArray($query) )
 				self::query("REPAIR TABLE $tmp[0]");
 		}
@@ -719,7 +724,7 @@ class SQL extends BaseSQL
 			foreach( $tables as $t )
 				self::query("REPAIR TABLE $t");
 		}
-		
+
 		Reg('%repair.correct%');
 	}
 
@@ -732,14 +737,14 @@ class SQL extends BaseSQL
 	{
 		$result = array();
 		$query 	= self::query('SHOW TABLES');
-		
+
 		while( $row = self::Row($query) )
 		{
 			$fix = str_replace('_', ' ', $row[0]);
 
 			$columns 		= self::query("SHOW COLUMNS FROM $row[0]");
 			$row_columns 	= array();
-			
+
 			if( self::Rows($columns) > 0 )
 			{
 				while( $col = self::Assoc($columns) )
@@ -749,8 +754,8 @@ class SQL extends BaseSQL
 			$row[0] = str_replace(DA, '', $row[0]);
 
 			$tables[] = array(
-				'name' 			=> $row[0], 
-				'name_fix' 		=> $fix, 
+				'name' 			=> $row[0],
+				'name_fix' 		=> $fix,
 				'translated' 	=> Core::Translate($fix),
 				'fields' 		=> $row_columns
 			);
@@ -763,7 +768,7 @@ class SQL extends BaseSQL
 
 		return $result;
 	}
-	
+
 	###############################################################
 	## Recuperar/Restaurar la base de datos.
 	## - $dbname: 	Nombre de la base de datos.
@@ -773,12 +778,12 @@ class SQL extends BaseSQL
 	{
 		global $config;
 		$backup = _SESSION('backup_db');
-		
+
 		# La recuperación inteligente esta desactivada o
 		# no hay copia de seguridad existente.
 		if( !$config['server']['backup'] OR empty($backup) )
 			self::Error('sql.recovery', '%backup.disable%');
-		
+
 		# Paso 1
 		if( $type == 1 )
 		{
@@ -786,7 +791,7 @@ class SQL extends BaseSQL
 			self::$server->query("CREATE DATABASE IF NOT EXISTS $dbname");
 			# Selccionamos la base de datos creada.
 			self::$server->select_db($dbname) or self::Error('sql.recovery', '%error.db%');
-			
+
 			Reg('%backup.createdb%');
 			# Ahora el segundo paso.
 			self::Recover($dbname, 2);
@@ -797,7 +802,7 @@ class SQL extends BaseSQL
 		{
 			# Separamos cada línea del backup como una consulta.
 			$backup = explode(";\n", $backup);
-			
+
 			foreach( $backup as $query )
 			{
 				# Eliminamos espacios en blanco.
@@ -806,18 +811,18 @@ class SQL extends BaseSQL
 				# ¿Esta vacia?
 				if( empty($query) )
 					continue;
-				
+
 				# Ejecutamos la consulta.
 				$result = self::$server->query($query) or self::Error('sql.recovery', '%error.backup.query% ' . $query);
 			}
-			
+
 			Reg('%backup.correct%');
 		}
 
 		# Enviamos correo electrónico de que pudimos recuperar la DB.
 		Email::SendWarn('recover');
 	}
-	
+
 	/**
 	 * Crear un backup de la base de datos.
 	 * @param array  $tables 	Tablas a recuperar
@@ -831,55 +836,55 @@ class SQL extends BaseSQL
 		if( empty($tables) )
 		{
 			$query = self::query('SHOW TABLES');
-			
+
 			while( $row = $query->fetch_row() )
 				$tables[] = $row[0];
 		}
 		else
 			$tables = ( is_array($tables) ) ? $tables : explode(',', $tables);
-			
+
 		foreach( $tables as $table )
 		{
 			$result 	= self::query("SELECT * FROM $table");
 			$num_fields = $result->field_count;
-    
+
 			$return 	.= "DROP TABLE IF EXISTS $table;";
 			$row2 		= self::query("SHOW CREATE TABLE $table")->fetch_row();
 			$return		.= "\n\n". $row2[1] . ";\n\n";
-    
-			for ( $i = 0; $i < $num_fields; $i++ ) 
+
+			for ( $i = 0; $i < $num_fields; $i++ )
 			{
 				while( $row = $result->fetch_row() )
 				{
 					$return.= "INSERT INTO $table VALUES(";
-				
-					for( $j=0; $j < $num_fields; $j++ ) 
+
+					for( $j=0; $j < $num_fields; $j++ )
 					{
 						$row[$j] = addslashes($row[$j]);
 						$row[$j] = str_replace("\n","\\n", $row[$j]);
-					
+
 						if( isset($row[$j]) )
 							$return.= '"' . $row[$j] . '"' ;
 						else
 							$return.= '""';
-						
+
 						if( $j < ($num_fields-1) )
 							$return.= ',';
 					}
-				
+
 					$return.= ");\n";
 				}
 			}
-		
+
 			$return.="\n\n\n";
 		}
-		
+
 		if( empty($return) )
 			return false;
-			
+
 		$return = str_replace('CREATE TABLE', 'CREATE TABLE IF NOT EXISTS', $return);
 		Reg('%backup.create%');
-			
+
 		if( !$out )
 		{
 			$bname = 'DB-Backup-' . date('d_m_Y') . '-' . time() . '.sql';
@@ -887,10 +892,10 @@ class SQL extends BaseSQL
 
 			if( $site['site_backups_servers'] == 'true' )
 				Bit::Send_FTPBackup(BIT . 'Backups' . DS . $bname, $bname);
-			
+
 			return $bname;
 		}
-		
+
 		return $return;
 	}
 }
