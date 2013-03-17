@@ -18,14 +18,14 @@ if( !defined('BEATROCK') )
 ## Controlador Tpl
 ###############################################################
 ## Controla el funcionamiento y la configuración relacionada
-## a la vista de página actual. ( $page['id'] ) 
+## a la vista de página actual. ( $page['id'] )
 ###############################################################
 
 class Tpl extends BaseStatic
 {
 	static $html;				# Código HTML de la vista actual.
 	static $params 	= array();	# Variables de plantilla definidas.
-	
+
 	static $METAS;				# Meta etiquetas
 	static $LINKS;				# Archivos Enlazados.
 	static $JS;					# Archivos JavaScript
@@ -207,7 +207,7 @@ class Tpl extends BaseStatic
 	{
 		global $page, $site;
 
-		# Obtenemos información de la caché de esta página.	
+		# Obtenemos información de la caché de esta página.
 		$cache = Site::GetCache($page['id']);
 
 		# Esta página no debe ser guardada en caché.
@@ -220,21 +220,21 @@ class Tpl extends BaseStatic
 		# Lenguaje vacio, usar el lenguaje del visitante.
 		if( empty($lang) )
 			$lang = LANG;
-			
+
 		# La configuración del sitio nos obliga a usar un lenguaje en especifico.
 		if( !empty($site['site_translate']) )
-			$lang = $site['site_translate'];		
+			$lang = $site['site_translate'];
 
 		# El servidor Memcache no esta preparado.
 		if( !Mem::Ready() )
 		{
 			# Este debería ser el archivo de la caché.
 			$file = BIT . 'Cache' . DS . $page['id'] . '.' . $lang . '.cache';
-			
+
 			# El archivo no existe.
 			if( !file_exists($file) )
-				return false;		
-			
+				return false;
+
 			# Retornar el código HTML de la caché.
 			return Io::Read($file);
 		}
@@ -252,7 +252,7 @@ class Tpl extends BaseStatic
 			return $data;
 		}
 	}
-	
+
 	###############################################################
 	## Establecer variable de plantilla.
 	## - $param (string, array): 	Nombre de la variable.
@@ -262,7 +262,7 @@ class Tpl extends BaseStatic
 	{
 		# La variable es un array, estamos guardando más de una variable de plantilla.
 		if( is_array($param) )
-		{	
+		{
 			# Guardar cada una de ellas.
 			foreach( $param as $key => $val )
 			{
@@ -278,7 +278,7 @@ class Tpl extends BaseStatic
 		else if( is_string($param) )
 			self::$params[$param] = $value;
 	}
-	
+
 	###############################################################
 	## Eliminar variable.
 	## - $param: Nombre de la variable.
@@ -287,7 +287,7 @@ class Tpl extends BaseStatic
 	{
 		unset(self::$params[$param]);
 	}
-	
+
 	###############################################################
 	## Implementar la librería jQuery a la página.
 	## - $resources (bool): ¿Agregarlo desde los recursos globales?
@@ -297,7 +297,7 @@ class Tpl extends BaseStatic
 		$file = ( $resources ) ? RESOURCES_GLOBAL . '/js/jquery.js' : '//code.jquery.com/jquery-latest.min.js';
 		self::AddScript($file);
 	}
-	
+
 	###############################################################
 	## Agregar una meta etiqueta.
 	## - $name: 		Nombre de la META.
@@ -311,7 +311,7 @@ class Tpl extends BaseStatic
 
 		self::$METAS .= '	' . $html->Build() . "\r\n";
 	}
-	
+
 	###############################################################
 	## Agregar un archivo enlazado.
 	## - $file: 	Ruta del archivo.
@@ -332,11 +332,11 @@ class Tpl extends BaseStatic
 
 		if( !empty($media) )
 			$html->Set('media', $media);
-		
-		self::$LINKS .= '	' . $html->Build() . "\r\n";	
+
+		self::$LINKS .= '	' . $html->Build() . "\r\n";
 		return true;
 	}
-	
+
 	###############################################################
 	## Agregar un archivo de estilo desde una ubicación local.
 	## - $file: 			Archivo CSS.
@@ -349,10 +349,10 @@ class Tpl extends BaseStatic
 
 		if( $external )
 			$path = $path . '/external';
-			
+
 		self::AddLink("$path/$file.css");
 	}
-	
+
 	###############################################################
 	## Agregar un archivo JavaScript.
 	## - $file: 		Ruta del archivo.
@@ -363,16 +363,16 @@ class Tpl extends BaseStatic
 	{
 		$html = new Html('script');
 		$html->Set('src', $file);
-		
+
 		if( !empty($id) )
 			$html->Set('id', $id);
-		
+
 		if( $async )
 			$html->Set('async', $async);
-			
+
 		self::$JS .= '	' . $html->Build() . "\r\n";
 	}
-	
+
 	###############################################################
 	## Agregar un archivo Javascript desde una ubicación local.
 	## - $file: 			Archivo JavaScript.
@@ -381,14 +381,14 @@ class Tpl extends BaseStatic
 	###############################################################
 	static function AddLocalScript($file, $global = false, $external = false)
 	{
-		$path = ( !$system ) ? RESOURCES . '/js' : RESOURCES_GLOBAL . '/js';
-			
+		$path = ( !$global ) ? RESOURCES . '/js' : RESOURCES_GLOBAL . '/js';
+
 		if( $external )
 			$path = $path . '/external';
-			
+
 		self::AddScript("$path/$file.js");
 	}
-	
+
 	###############################################################
 	## Agregar variable/función/definición JavaScript.
 	## - $param:	Nombre de la Variable/Función/Definición.
@@ -399,11 +399,11 @@ class Tpl extends BaseStatic
 	{
 		if( $string )
 			$value = '"' . $value . '"';
-		
+
 		$html = "$param = $value;\r\n";
 		self::$VARS .= $html;
 	}
-	
+
 	###############################################################
 	## Agregar código HTML a la cabecera.
 	## - $html: HTML
@@ -444,7 +444,7 @@ class Tpl extends BaseStatic
 		$html .= ' ';
 		self::$ATTRS_HEAD .= $html;
 	}
-	
+
 	###############################################################
 	## Agregar una tarea para la barra de tareas especial de Internet Explorer 9+
 	## - $name: 	Nombre de la tarea.
@@ -455,16 +455,16 @@ class Tpl extends BaseStatic
 	{
 		self::AddMeta('msapplication-task', "name=$name;action-uri=$url;icon-uri=$icon");
 	}
-	
+
 	###############################################################
 	## Ejecutar un código JavaScript al terminar de cargar la página.
 	## - action: 	Acción JavaScript.
 	###############################################################
 	static function JSAction($action)
-	{			
+	{
 		self::$JAVASCRIPT .= " $action ";
 	}
-	
+
 	###############################################################
 	## Ejecutar una alerta JavaScript.
 	## - $message: 	Mensaje.
@@ -486,7 +486,7 @@ class Tpl extends BaseStatic
 		header('Access-Control-Max-Age: ' . 		$max_age);
 		header('Access-Control-Allow-Methods: ' . 	$methods);
 	}
-	
+
 	###############################################################
 	## Envio de cabeceras para la protección de Frames.
 	## - $frame: 	De donde permitir.
