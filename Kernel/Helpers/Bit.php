@@ -495,7 +495,7 @@ class Bit
 		if( self::$ignore OR self::$inerror )
 		{
 			# Enviamos un correo electrónico de reporte.
-			Core::SendError();
+			//Core::SendError();
 			return;
 		}
 
