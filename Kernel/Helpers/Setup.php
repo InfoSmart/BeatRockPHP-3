@@ -1,4 +1,4 @@
-<?
+<?php
 #####################################################
 ## 					 BeatRock				   	   ##
 #####################################################
@@ -160,41 +160,44 @@ class Setup
 		global $config, $page, $Kernel;
 		$site = $config['site'];
 
-		# Estamos accediendo con https:// (SSL)
-		if(SSL == 'on')
+		if ( defined('SSL') )
 		{
-			# Evitamos errores internos por usar SSL
-			error_reporting(E_CORE_ERROR & E_RECOVERABLE_ERROR);
-
-			# La aplicación no permite acceder con SSL
-			# Espero que por una razón lógica...
-			if( $config['server']['ssl'] == false )
+			# Estamos accediendo con https:// (SSL)
+			if(SSL == 'on')
 			{
-				# Guardamos la información en $_POST
-				Client::SavePost();
-				# Redireccionamos a la misma página pero en http://
-				Core::Redirect('http://' . URL);
+				# Evitamos errores internos por usar SSL
+				error_reporting(E_CORE_ERROR & E_RECOVERABLE_ERROR);
+
+				# La aplicación no permite acceder con SSL
+				# Espero que por una razón lógica...
+				if( $config['server']['ssl'] == false )
+				{
+					# Guardamos la información en $_POST
+					Client::SavePost();
+					# Redireccionamos a la misma página pero en http://
+					Core::Redirect('http://' . URL);
+				}
+
+				$protocol = 'https://';
+				Bit::Log('%using.ssl%');
 			}
 
-			$protocol = 'https://';
-			Bit::Log('%using.ssl%');
-		}
-
-		# Estamos accediendo con http:// (Normal)
-		else
-		{
-			# La aplicación requiere que accedamos con https:// (SSL)
-			# ¡Yey!
-			if( $config['server']['ssl'] == true )
+			# Estamos accediendo con http:// (Normal)
+			else
 			{
-				# Guardamos la información en $_POST
-				Client::SavePost();
-				# Redireccionamos a la misma página pero en https://
-				Core::Redirect('https://' . URL);
-			}
+				# La aplicación requiere que accedamos con https:// (SSL)
+				# ¡Yey!
+				if( $config['server']['ssl'] == true )
+				{
+					# Guardamos la información en $_POST
+					Client::SavePost();
+					# Redireccionamos a la misma página pero en https://
+					Core::Redirect('https://' . URL);
+				}
 
-			$protocol = 'http://';
-			Bit::Log('%using.http%');
+				$protocol = 'http://';
+				Bit::Log('%using.http%');
+			}
 		}
 
 		# La aplicación o la página actual piden usar la compresión GZIP.
