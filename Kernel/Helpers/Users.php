@@ -17,49 +17,62 @@
 
 # Acción ilegal.
 if( !defined('BEATROCK') )
-	exit;	
+	exit;
 
 class Users
 {
-	// Obtener la edad dependiendo del año.
-	// - $year: Año - Tiempo Unix - Fecha completa
-	// - $pos (int): Posición desde 0 donde se encuentra el año en formatos de tipo 24/05/1995 o con -
+	/**
+	 * Obtiene la edad a base del año.
+	 * @param integer $year Año, Tiempo Unix o formato de fecha.
+	 * @param integer $pos  Si en $year escribe un formato de fecha de tipo 24/05/1995, $pos es la posición empezando de 0
+	 * en donde se encuentra el año partiendo la fecha con / o -
+	 */
 	static function Age($year, $pos = 2)
 	{
 		$the = _l('%the%', 'global');
 
-		if( Contains($year, '-') )
+		# Formato de fecha separado por -
+		if ( Contains($year, '-') )
 		{
 			$split 	= explode('-', $year);
 			$year 	= $year[$pos];
 		}
 
-		if(Contains($year, '/'))
+		# Formato de fecha separado por /
+		if ( Contains($year, '/') )
 		{
 			$split 	= explode('/', $year);
 			$year 	= $split[$pos];
 		}
 
-		if(Contains($year, $the))
+		# Solo para el idioma ingles.
+		if ( Contains($year, $the) )
 		{
 			$split 	= explode($the, $year);
 			$year 	= trim($split[$pos]);
 		}
 
-		if($year > 10000)
+		# El año es mayor a 10000, efectivamente es tiempo unix.
+		if ( $year > 10000 )
 			$year = date('Y', $year);
 
+		# Año en el que vivimos.
 		$actual = date('Y');
 
-		if(!is_numeric($year) || $year < 1990 || $year > $actual)
+		if ( !is_numeric($year) )
 			return $year;
-			
-		return ($actual - $year);
+
+		return ( $actual - $year );
 	}
-	
+
 	// Obtener el número de usuarios registrados.
 	// - $online (Bool): ¿Usuarios online?
 	// - $online_time (Int): Tiempo de la última actividad para considerarse online.
+	/**
+	 * [Count description]
+	 * @param boolean $online      [description]
+	 * @param integer $online_time [description]
+	 */
 	static function Count($online = false, $online_time = 0)
 	{
 		if($online)
@@ -72,7 +85,7 @@ class Users
 		else
 			return Query('users')->Select('null')->Rows();
 	}
-	
+
 	// Obtener una lista de los usuarios online.
 	// - $limit (Int): Limite de usuarios.
 	// - $online_time (Int): Tiempo de la última actividad para considerarse online.
@@ -80,12 +93,12 @@ class Users
 	{
 		if($online_time == 0)
 			$online_time = (time() - (8 * 60));
-		
+
 		$q = Query('users')->Select()->Add('lastonline', $online_time, 'WHERE', '>');
-		
+
 		if($limit > 0)
 			$q->Order('RAND()')->Limit($limit);
-			
+
 		return $q->Run();
 	}
 
@@ -98,13 +111,13 @@ class Users
 			$online_time = (time() - (8 * 60));
 
 		$online = self::Data('lastonline', $id);
-		
+
 		if($online >= $online_time)
 			return ($t == true) ? 'Online' : true;
 
 		return ($t == true) ? 'Offline' : false;
 	}
-	
+
 	// Verificar si cierta información ya existe en algún usuario.
 	// Por ejemplo para válidar si un nombre de usuario ya esta registrado.
 	// - $data: Información a verificar.
@@ -130,7 +143,7 @@ class Users
 		$q = $q->Limit()->Rows();
 		return ($q > 0) ? true : false;
 	}
-	
+
 	// Iniciar sesión.
 	// Realiza los procesos necesarios para un inicio de sesión seguro.
 	// - $id (Int): ID del usuario.
@@ -138,21 +151,21 @@ class Users
 	static function Login($id, $cookie = true)
 	{
 		_SESSION('login_id', $id);
-		
+
 		if($cookie)
 		{
 			$secret 	= self::Data('secret', $id);
 			$cookie 	= Core::Encrypt(md5($id . $secret . time()));
-			
+
 			self::UpdateData('cookie', $cookie, $id);
 			_COOKIE('session', $cookie);
 		}
-		
+
 		self::Enter($id);
 
 		return ($cookie) ? $cookie : true;
 	}
-	
+
 	// Desconectarse.
 	// Realiza los procesos necesarios para cerrar sesión.
 	// - $force (Bool) - ¿Destruir todas las sesiones?
@@ -162,13 +175,13 @@ class Users
 			session_destroy();
 		else
 			_DELSESSION('login_id');
-		
+
 		_DELCOOKIE('session');
 
 		self::UpdateData('cookie', '');
 		self::Out(ME_ID);
 	}
-	
+
 	// Actualiza la información del usuario al iniciar sesión.
 	// - $id: ID - Nombre de usuario - Correo electrónico.
 	static function Enter($id)
@@ -179,7 +192,7 @@ class Users
 			'ip' => IP
 		), $id);
 	}
-	
+
 	// Actualiza la información del usuario al cerrar sesión.
 	// - $id: ID - Nombre de usuario - Correo electrónico.
 	static function Out($id)
@@ -189,7 +202,7 @@ class Users
 			'ip' => IP
 		), $id);
 	}
-	
+
 	// Agregar un nuevo usuario.
 	// - $username: Nombre de usuario.
 	// - $password: Contraseña en texto plano.
@@ -205,16 +218,16 @@ class Users
 		{
 			if(!is_numeric($photo['size']))
 				$photo['size'] 		= 80;
-			
+
 			if(empty($photo['rating']))
 				$photo['rating'] 	= 'g';
-				
+
 			$photo = self::GetGravatar($email, '', $photo['size'], $photo['default'], $photo['rating']);
 		}
 
 		if(!empty($password))
 			$password = Core::Encrypt($password);
-		
+
 		$data = array(
 			'username' 			=> $username,
 			'password' 			=> $password,
@@ -231,19 +244,19 @@ class Users
 			'country'			=> COUNTRY,
 			'secret'			=> md5(sha1(time()))
 		);
-		
+
 		if(is_array($params))
 			$data = array_merge($params, $data);
-		
+
 		Insert('users', $data);
 		$id = last_id();
-		
+
 		if($auto)
 			self::Login($id);
-			
+
 		return $id;
 	}
-	
+
 	// Agregar un nuevo servicio de conexión.
 	// - $id: Identificación del usuario en el servicio.
 	// - $service (facebook, twitter, google, steam): Código del servicio.
@@ -262,7 +275,7 @@ class Users
 			if($q == 0)
 				$hash_ready = true;
 		}
-		
+
 		Insert('users_services', array(
 			'identification' 	=> $id,
 			'service' 			=> $service,
@@ -271,10 +284,10 @@ class Users
 			'info' 				=> _F($info, false),
 			'date' 				=> time()
 		));
-		
+
 		return $hash;
 	}
-	
+
 	// Verificar si un servicio ya ha sido registrado y tiene un enlace hacia algún usuario.
 	// - $id: Identificación del usuario en el servicio.
 	// - $service (facebook, twitter, google, steam): Servicio.
@@ -283,7 +296,7 @@ class Users
 		$q = Query('users_services')->Select('null')->Add('identification', $id)->Add('service', $service, 'AND')->Limit()->Rows();
 		return ($q > 0) ? true : false;
 	}
-	
+
 	// Actualizar información masiva de un servicio.
 	// - $data (Array): Información a actualizar.
 	// - $id: ID del servicio.
@@ -291,7 +304,7 @@ class Users
 	{
 		Query('users_services')->Update($data)->Add('id', $id)->Limit()->Run();
 	}
-	
+
 	// Obtener la información de un servicio.
 	// - $id: Identificación del usuario en el servicio.
 	// - $service (facebook, twitter, google, steam): Servicio.
@@ -300,7 +313,7 @@ class Users
 		q("SELECT * FROM {DA}users_services WHERE (id = '$id' OR identification = '$id') AND service = '$service' LIMIT 1");
 		return (num_rows() > 0) ? fetch_assoc() : false;
 	}
-	
+
 	// Obtener la información del usuario con un servicio.
 	// - $hash: Hash del enlace.
 	static function UserService($hash)
@@ -323,7 +336,7 @@ class Users
 	{
 		Query('users_services')->Delete()->Add('id', $id)->Limit()->Run();
 	}
-	
+
 	// Actualizar información masiva de un usuario.
 	// - $data (Array): Información a actualizar.
 	// - $id: ID - Nombre de usuario - Correo electrónico - Valor de la columna personalizada.
@@ -335,7 +348,7 @@ class Users
 
 		Query('users')->Update($data)->Add('id', $id)->Limit()->Run();
 	}
-	
+
 	// Actualizar información de un usuario.
 	// - $data: Campo a actualizar.
 	// - $value: Nuevo valor.
@@ -345,7 +358,7 @@ class Users
 	{
 		self::Update(array($data => $value), $id, $row);
 	}
-	
+
 	// Obtener cierta información de un usuario.
 	// - $data: Información a obtener.
 	// - $id: ID - Nombre de usuario - Correo electrónico - Valor de la columna personalizada.
@@ -354,7 +367,7 @@ class Users
 	{
 		return Query('users')->Select($data)->Add('id', $id)->Add('username', $id, 'OR')->Add('email', $id, 'OR')->Add($row, $id, 'OR')->Limit()->Get($data);
 	}
-	
+
 	// Obtener cierta información de un usuario a partir de una sola columna.
 	// Este método proporciona más protección y exactitud.
 	// - $data: Información a obtener.
@@ -364,7 +377,7 @@ class Users
 	{
 		return Query('users')->Select($data)->Add($row, $id)->Limit()->Get($data);
 	}
-	
+
 	// Obtener TODA la información de un usuario.
 	// - $id: ID - Nombre de usuario - Correo electrónico - Valor de la columna personalizada.
 	// - $row: Columna personalizada.
@@ -383,7 +396,7 @@ class Users
 		Query('users')->Select()->Add($row, $id)->Limit()->Run();
 		return (num_rows() > 0) ? fetch_assoc() : false;
 	}
-	
+
 	// Validar la identificación y la contraseña.
 	// - $id: Identificación (Nombre de usuario - Correo electrónico)
 	// - $password: Contraseña en texto plano.
@@ -399,42 +412,42 @@ class Users
 		if($service !== false)
 			$query .= "AND service = '$service' ";
 
-		$query .= 'LIMIT 1';	
+		$query .= 'LIMIT 1';
 		$q 		= Rows($query);
 
 		return ($q > 0) ? true : false;
 	}
-	
+
 	// Buscar una sesión activa.
 	// - $loginId: ID del usuario a finjir inicio de sesión.
 	static function Session($loginId = '')
 	{
 		if(empty($loginId))
 			$loginId = _F(_SESSION('login_id'));
-		
+
 		if(empty($loginId) OR !self::Exist($loginId, 'id'))
 			goto nosession;
-		
+
 		global $me, $ms;
-			
-		$me = self::User($loginId);		
+
+		$me = self::User($loginId);
 		$ms = @json_decode(_SESSION('service_info'), true);
-		
+
 		foreach($me as $key => $value)
 			Tpl::Set('me_' . $key, $value);
-			
+
 		if(is_array($ms))
 		{
 			foreach($ms as $key => $value)
 				Tpl::Set('ms_' . $key, $value);
 		}
-		
+
 		define('ME_ID', 		$me['id']);
 		define('ME_RANK', 		$me['rank']);
 		define('ME_USERNAME', 	$me['username']);
 		define('ME_NAME', 		$me['name']);
 		define('LOG_IN', 		true);
-		
+
 		self::Update(array(
 			'lastonline' 	=> time(),
 			'ip' 	=> IP,
@@ -443,20 +456,20 @@ class Users
 			'lasthost' 		=> HOST,
 			'os' 			=> OS
 		));
-		
+
 		return true;
-		
-		nosession: 
+
+		nosession:
 		{
 			define('ME_ID', 		'0');
 			define('ME_RANK', 		'0');
 			define('ME_USERNAME', 	'');
 			define('ME_NAME', 		'');
-			define('LOG_IN', 		false);			
+			define('LOG_IN', 		false);
 			return false;
 		}
 	}
-	
+
 	// Buscar una cookie activa.
 	// Iniciar sesión automaticamente al volver.
 	static function Cookie()
@@ -469,19 +482,19 @@ class Users
 
 		if(empty($session))
 			return;
-		
+
 		if(!self::Exist($session, 'cookie') OR !is_numeric($userId))
 		{
 			self::Logout();
 			return false;
 		}
-		
+
 		self::Login($userId);
 		Client::SavePost();
 
 		Core::Redirect(PATH_NOW);
 	}
-	
+
 	// Obtener el "Gravatar" de un correo electrónico.
 	// - $email: Correo electrónico.
 	// - $to: Ruta del archivo de destino donde guardar la imagen.
@@ -492,12 +505,12 @@ class Users
 	{
 		$email 		= md5(strtolower(trim($email)));
 		$default 	= urlencode($default);
-		
+
 		$gravatar 	= "https://www.gravatar.com/avatar/$email?s=$size&d=$default&r=$rating";
-		
+
 		if(!empty($to))
 			Io::Write($to, $gravatar);
-			
+
 		return $gravatar;
 	}
 }
